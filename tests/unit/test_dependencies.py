@@ -136,3 +136,28 @@ def test_runtime_critical_imports_are_declared(module: str) -> None:
     asyncio layer needs it at runtime and fails with a confusing error without it.
     """
     assert _is_declared(module, _declared()), module
+
+
+def test_the_python_version_is_pinned_and_consistent() -> None:
+    """Heroku's buildpack refuses to build without an explicit version, and
+    without this file it defaulted to 3.14 — a different interpreter from the
+    one everything here is tested against.
+
+    The pin also has to agree with `requires-python` and ruff's target, or the
+    linter enforces rules for one version while another actually runs.
+    """
+    pinned = (REPO / ".python-version").read_text().strip()
+    assert pinned, ".python-version is empty"
+
+    with (REPO / "pyproject.toml").open("rb") as fh:
+        data = tomllib.load(fh)
+
+    requires = data["project"]["requires-python"]
+    assert pinned in requires or requires.startswith(f">={pinned}"), (
+        f".python-version says {pinned} but requires-python says {requires}"
+    )
+
+    ruff_target = data["tool"]["ruff"]["target-version"]
+    assert ruff_target == "py" + pinned.replace(".", ""), (
+        f"ruff targets {ruff_target} but the runtime is {pinned}"
+    )
