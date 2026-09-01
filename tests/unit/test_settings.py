@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import pytest
 from pydantic import ValidationError
-from pydantic_core import PydanticUndefined
+
+# pydantic's own module, not the transitive pydantic-core distribution — an
+# import of the latter would be relying on someone else's dependency tree.
+from pydantic.fields import PydanticUndefined
 
 from config.settings import MIN_ADMIN_KEY_LENGTH, WEAK_ADMIN_KEYS, Settings
 

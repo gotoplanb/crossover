@@ -23,6 +23,17 @@ dependencies = [
     "jinja2>=3.1",
     "python-multipart>=0.0.20",
     "mcp>=2.0",
+    # Telemetry. Hard dependencies, not extras: main.py instruments the app at
+    # module import time (it has to — Starlette freezes the middleware stack
+    # before the lifespan runs), so the imports happen even when OTEL_ENABLED is
+    # false and the exporters stay idle.
+    "opentelemetry-api>=1.28",
+    "opentelemetry-sdk>=1.28",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.28",
+    "opentelemetry-instrumentation-fastapi>=0.49b0",
+    "opentelemetry-instrumentation-httpx>=0.49b0",
+    "opentelemetry-instrumentation-sqlalchemy>=0.49b0",
+    "prometheus-client>=0.21",
 ]
 
 [build-system]
