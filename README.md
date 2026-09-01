@@ -27,6 +27,26 @@ The two surfaces divide by *moment*, not capability: capture in conversation,
 consume on the rack. Same user identity across both, so a bookmark made by voice
 mid-chapter shows up on the rack with no sync step.
 
+## Deploy your own
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/gotoplanb/crossover)
+
+Provisions a dyno and Postgres, generates its own admin key, and seeds the
+reader you name. **What you get immediately:** the King in Black reading guide,
+40 issues with covers and working Marvel Unlimited links, and the MCP endpoint
+ready for a Claude connector.
+
+Two things worth knowing before you press it:
+
+- **`CROSSOVER_PUBLIC_URL` cannot be known until the app is named**, so the
+  template ships an obviously-wrong placeholder. Set it to
+  `https://<your-app-name>.herokuapp.com`. It is the OAuth issuer and is checked
+  by the MCP transport, so a Claude connector cannot attach while it is wrong —
+  and it is correctable after deploy.
+- **Links work, but a Marvel Unlimited subscription is what makes them useful.**
+  Signed out, a reader URL lands on the issue's marvel.com page instead of
+  opening the reader.
+
 ## Quick start
 
 ```bash
@@ -216,9 +236,27 @@ commit it, or the work is lost on the next deploy.
 
 ## Deploying
 
-Heroku eco dyno + Postgres. `Procfile` runs `alembic upgrade head` on release.
-Set `DATABASE_URL` (injected), `CROSSOVER_PUBLIC_URL`, `CROSSOVER_ADMIN_KEY`,
-`UI_COOKIE_SECURE=true`, and the two Marvel keys.
+Heroku eco dyno + Postgres, via the button above or by hand.
+
+`Procfile` runs `alembic upgrade head` on **every** release. `app.json`'s
+`postdeploy` runs `crossover bootstrap` **once**, on a button install only — it
+seeds the first reader and reports any config that will bite later. A `git push
+heroku main` deploy skips postdeploy, so seed manually:
+
+```bash
+heroku run python -m scripts.cli seed you@example.com
+heroku run python -m scripts.cli bootstrap   # config sanity check, idempotent
+```
+
+Config vars: `DATABASE_URL` is injected by the addon and normalized for asyncpg
+in `config/settings.py` (Heroku hands out `postgres://`, which the driver cannot
+use). Set `CROSSOVER_ADMIN_KEY` (`make admin-key`), `CROSSOVER_PUBLIC_URL` (the
+https origin — it is the OAuth issuer), and `UI_COOKIE_SECURE=true`. Leave
+`OTEL_ENABLED=false` unless a dyno can actually reach your collector.
+
+**The filesystem is ephemeral**, which is why curation YAML and the catalog
+snapshot are loaded from the repo on every boot, and why the curation admin
+view offers a YAML export rather than saving.
 
 ## Current state
 

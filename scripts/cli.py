@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import os
 import sys
 
 from config.settings import get_settings
@@ -130,6 +131,55 @@ async def _seed(email: str, name: str) -> int:
     return 0
 
 
+async def _bootstrap() -> int:
+    """First-run setup for a fresh deploy. Idempotent.
+
+    Run from `app.json`'s postdeploy hook, so a one-click deploy produces a
+    *usable* app rather than one with an empty reader allowlist and a login page
+    nobody can get past. Also surfaces the two config mistakes that are silent
+    until they bite: a weak admin key, and a public URL that doesn't match where
+    the app actually is (which breaks OAuth and the MCP transport, but only when
+    a connector tries to attach).
+    """
+    settings = get_settings()
+    problems: list[str] = []
+
+    if settings.admin_key_is_weak:
+        problems.append(
+            "CROSSOVER_ADMIN_KEY is an example value or under 16 characters — the "
+            "curation views and OAuth consent are effectively unprotected."
+        )
+    if "localhost" in settings.public_base_url or "127.0.0.1" in settings.public_base_url:
+        problems.append(
+            f"CROSSOVER_PUBLIC_URL is {settings.public_base_url!r}, which is not "
+            "reachable from anywhere. Set it to this app's https URL or the Claude "
+            "connector will not be able to attach."
+        )
+    elif not settings.public_base_url.startswith("https://"):
+        problems.append(
+            f"CROSSOVER_PUBLIC_URL is {settings.public_base_url!r} — OAuth requires https."
+        )
+
+    email = os.environ.get("CROSSOVER_OWNER_EMAIL", "").strip()
+    if email:
+        await _seed(email, "")
+    else:
+        problems.append(
+            "CROSSOVER_OWNER_EMAIL is not set, so no reader exists and nobody can "
+            "sign in. Create one with: heroku run python -m scripts.cli seed you@example.com"
+        )
+
+    if problems:
+        print("\nSetup warnings:")
+        for problem in problems:
+            print(f"  ! {problem}")
+        # Deliberately exit 0: these are misconfigurations to fix, not reasons to
+        # fail the release and roll back a deploy that is otherwise fine.
+    else:
+        print("bootstrap complete — sign in at /ui/login")
+    return 0
+
+
 async def _register_connector(name: str, email: str, redirect_uri: str) -> int:
     """Register an OAuth client for a Claude custom connector.
 
@@ -183,6 +233,7 @@ def main(argv: list[str] | None = None) -> int:
     p_sync.add_argument("slug")
 
     sub.add_parser("load-curation", help="load curation YAML into the database")
+    sub.add_parser("bootstrap", help="first-run setup for a fresh deploy (idempotent)")
 
     p_seed = sub.add_parser("seed", help="create a reader")
     p_seed.add_argument("email")
@@ -203,6 +254,8 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_sync_event(args.slug))
         case "load-curation":
             return asyncio.run(_load_curation())
+        case "bootstrap":
+            return asyncio.run(_bootstrap())
         case "seed":
             return asyncio.run(_seed(args.email, args.name))
         case "register-connector":

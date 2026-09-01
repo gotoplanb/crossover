@@ -2,6 +2,11 @@
 name = "crossover"
 version = "0.1.0"
 description = "Marvel event tie-in guide as an MCP service"
+# MIT-0, matching conduct. Covers this project's code only — not Marvel's data
+# or cover art, which remain theirs and carry their own attribution
+# requirement. See the note in LICENSE.
+license = "MIT-0"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
 authors = [{ name = "Dave Stanton" }]
 dependencies = [
