@@ -121,9 +121,13 @@ issues:
     franchise: symbiote
     provisional: true
 
-  - key: king-in-black-the-union-1
+  # Marvel's series is titled just "The Union", with no King in Black prefix,
+  # despite being branded as a tie-in on the covers. Named here as Marvel names
+  # it so it resolves against catalog data; the event membership is what makes
+  # it part of King in Black.
+  - key: the-union-1
     position: 7
-    series: "King in Black: The Union"
+    series: "The Union"
     number: 1
     published_on: 2021-01-06
     role: optional_tie_in
@@ -173,9 +177,9 @@ issues:
     franchise: symbiote
     provisional: true
 
-  - key: king-in-black-the-union-2
+  - key: the-union-2
     position: 12
-    series: "King in Black: The Union"
+    series: "The Union"
     number: 2
     published_on: 2021-02-03
     role: optional_tie_in
@@ -287,9 +291,9 @@ issues:
     franchise: symbiote
     provisional: true
 
-  - key: king-in-black-the-union-3
+  - key: the-union-3
     position: 23
-    series: "King in Black: The Union"
+    series: "The Union"
     number: 3
     published_on: 2021-03-03
     role: optional_tie_in
@@ -378,9 +382,9 @@ issues:
     franchise: mystic
     provisional: true
 
-  - key: king-in-black-the-union-4
+  - key: the-union-4
     position: 32
-    series: "King in Black: The Union"
+    series: "The Union"
     number: 4
     published_on: 2021-04-07
     role: optional_tie_in
@@ -449,9 +453,9 @@ issues:
     franchise: atlantean
     provisional: true
 
-  - key: king-in-black-the-union-5
+  - key: the-union-5
     position: 39
-    series: "King in Black: The Union"
+    series: "The Union"
     number: 5
     published_on: 2021-05-05
     role: optional_tie_in

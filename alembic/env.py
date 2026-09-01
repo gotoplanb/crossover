@@ -13,7 +13,13 @@ from db.base import Base
 
 config = context.config
 
-if config.config_file_name is not None:
+# Only configure logging when alembic owns the process (the `alembic` CLI).
+# `fileConfig` disables every existing logger and replaces the root handlers, so
+# doing it while embedded — the migration-drift test, or any scripted upgrade —
+# silently tears down the host application's logging. Alembic's own output still
+# goes to stderr either way.
+_embedded = config.attributes.get("connection") is not None
+if config.config_file_name is not None and not _embedded:
     fileConfig(config.config_file_name)
 
 config.set_main_option("sqlalchemy.url", get_settings().database_url)
@@ -50,6 +56,18 @@ async def run_async_migrations() -> None:
 
 
 def run_migrations_online() -> None:
+    """Run migrations, reusing an injected connection when one is supplied.
+
+    `config.attributes["connection"]` is alembic's documented hook for driving
+    migrations programmatically. Without honoring it, `command.upgrade()` called
+    from inside a running event loop hits `asyncio.run() cannot be called from a
+    running event loop` — which is what the migration-drift test does, and what
+    any future scripted migration would do too.
+    """
+    injected = config.attributes.get("connection")
+    if injected is not None:
+        do_run_migrations(injected)
+        return
     asyncio.run(run_async_migrations())
 
 

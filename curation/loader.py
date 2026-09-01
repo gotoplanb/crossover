@@ -20,7 +20,7 @@ import logging
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from curation.schema import CuratedEvent, CuratedIssue, load_all_events
@@ -48,13 +48,25 @@ class LoadReport:
     issues_updated: int = 0
     memberships: int = 0
     references: int = 0
+    #: Issue rows belonging to no event any more. Renaming an issue in the YAML
+    #: changes its key, and the old row stays behind — deliberately, because a
+    #: bookmark may still point at it and deleting would silently empty someone's
+    #: rack card. Reported so a curator knows the residue exists.
+    orphaned_issues: int = 0
 
     def summary(self) -> str:
-        return (
+        line = (
             f"loaded {self.events} event(s): {self.issues_created} new issues, "
             f"{self.issues_updated} updated, {self.memberships} memberships, "
             f"{self.references} reference edges"
         )
+        if self.orphaned_issues:
+            line += (
+                f"\n  note: {self.orphaned_issues} issue row(s) belong to no event — "
+                "usually left by a rename. Harmless, but a bookmark pointing at one "
+                "will show a card no reading order can place."
+            )
+        return line
 
 
 def _apply_curated(issue: Issue, curated: CuratedIssue) -> None:
@@ -179,10 +191,24 @@ async def load_event(
     return report
 
 
+async def count_orphaned_issues(session: AsyncSession) -> int:
+    """Issue rows with no event membership."""
+    return int(
+        await session.scalar(
+            select(func.count())
+            .select_from(Issue)
+            .outerjoin(EventIssue, EventIssue.issue_id == Issue.id)
+            .where(EventIssue.id.is_(None))
+        )
+        or 0
+    )
+
+
 async def load_all(
     session: AsyncSession, *, record_index: dict[str, ComicRecord] | None = None
 ) -> LoadReport:
     report = LoadReport()
     for curated in load_all_events():
         await load_event(session, curated, record_index=record_index, report=report)
+    report.orphaned_issues = await count_orphaned_issues(session)
     return report

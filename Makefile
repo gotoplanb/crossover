@@ -1,5 +1,5 @@
 .PHONY: help install up down migrate revision run seed load test lint format \
-        check-api-key sync-event list-events psql connector install-hooks \
+        check-api-key sync-event list-events psql connector install-hooks snapshot \
         admin-key secrets sonar-scan sonar-gate coverage
 
 help:
@@ -10,11 +10,14 @@ help:
 	@echo "  make seed email=you@example.com  — create a reader"
 	@echo "  make run           — serve on :8020 with reload (override: port=NNNN)"
 	@echo ""
-	@echo "Marvel data (needs MARVEL_PUBLIC_KEY / MARVEL_PRIVATE_KEY):"
+	@echo "Catalog data (Marvel's API is discontinued — see docs/gates.md):"
+	@echo "  make load                     — load curation YAML + apply vendored snapshots"
+	@echo "  make snapshot slug=king-in-black — rebuild a snapshot from the mirror"
+	@echo ""
+	@echo "Legacy Marvel API (kept for a future replacement API; the old one is dead):"
 	@echo "  make check-api-key            — verify credentials + digital-id coverage"
 	@echo "  make list-events q=\"King in\"  — find an event's numeric Marvel id"
 	@echo "  make sync-event slug=king-in-black — fetch the roster, confirm digital ids"
-	@echo "  make load                     — load curation YAML into the database"
 	@echo ""
 	@echo "Development:"
 	@echo "  make install-hooks — install the pre-commit / pre-push gates"
@@ -59,6 +62,12 @@ seed:
 
 load:
 	.venv/bin/python -m scripts.cli load-curation
+
+# Rebuild a vendored catalog snapshot. Marvel's API is gone (docs/gates.md), so
+# this pulls from a third-party mirror, slowly and once, and commits the result.
+snapshot:
+	@if [ -z "$(slug)" ]; then echo "Usage: make snapshot slug=king-in-black"; exit 1; fi
+	.venv/bin/python -m scripts.fetch_snapshot "$(slug)"
 
 # SPEC §0's precondition. Run this before curating anything else: it prints the
 # digital-id coverage number, which is the go/no-go on the whole linking premise.

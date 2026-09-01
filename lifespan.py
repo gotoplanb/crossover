@@ -61,20 +61,35 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     try:
         from curation.loader import load_all
         from db.session import SessionLocal
-        from observability.tracing import span
 
         # One span around the whole load. Without a parent, each of the ~80
         # statements the loader runs becomes its own root trace in Tempo — the
         # boot alone floods a search that is supposed to surface requests. As one
         # span it also answers "how long does the boot load take", which is the
         # question worth asking about it.
+        from marvel import snapshot as snapshots
+        from observability.tracing import span
+
         with span("curation.load_all") as loading:
             async with SessionLocal() as session:
-                report = await load_all(session)
+                report = await load_all(
+                    session, record_index=snapshots.combined_record_index() or None
+                )
+                # Vendored catalog data — ids, covers, dates. Applied on every
+                # boot for the same reason curation is: the filesystem is
+                # ephemeral, so the repo is the source and the database is
+                # rebuilt from it.
+                applied = await snapshots.apply_all(session)
             loading.set_attribute("curation.events", report.events)
             loading.set_attribute("curation.issues", report.issues_created + report.issues_updated)
             loading.set_attribute("curation.references", report.references)
+            loading.set_attribute("curation.snapshots", len(applied))
         log.warning("curation: %s", report.summary())
+        for one in applied:
+            log.warning(
+                "snapshot %s: %s issues matched, %s digital ids",
+                one.event_slug, one.issues_matched, one.digital_ids_confirmed,
+            )
     except Exception:  # noqa: BLE001 — a curation problem must not block boot
         # Serving a stale-but-working guide beats refusing to start. The
         # data-quality suite is the place this is supposed to be caught.

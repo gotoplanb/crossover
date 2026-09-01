@@ -119,16 +119,24 @@ def check_core_complete(event: CuratedEvent) -> list[Problem]:
 def check_digital_ids_traceable(
     event: CuratedEvent, record_index: dict[str, ComicRecord] | None
 ) -> list[Problem]:
-    """Every `digital_id` traces back to a cached Marvel record for that issue.
+    """Every `digital_id` traces back to a known record for that same issue.
 
-    Directly enforces Gate B. A curated `digital_id` is only ever legitimate as
-    a *copy* of something Marvel returned for this exact issue; anything else is
-    derived, inferred, or guessed, and Gate B proved a guess does not error — it
-    quietly opens a different comic.
+    Enforces Gate B. Its original wording required an id to come from "a Marvel
+    API response for that specific issue" — but Marvel discontinued that API
+    (docs/gates.md), so the rule is now:
 
-    With no cache available (`record_index is None`), any curated digital_id is
-    unverifiable and therefore rejected. Failing closed is the point: an
-    unverified id is exactly the state Gate B says is dangerous.
+        A digital_id must originate from a Marvel API response for that issue,
+        or from a Marvel-derived source whose id has been verified to resolve to
+        that same issue, with the source recorded.
+
+    What has not changed is the reason. A guessed id does not error; it quietly
+    opens a different comic. So the check is unchanged in substance — the id must
+    match a record that is demonstrably *this* issue, by series and number — only
+    the set of acceptable record sources widened. `issue.digital_id_source`
+    carries the recording half.
+
+    With no records available (`record_index is None`), any curated digital_id
+    is unverifiable and therefore rejected. Failing closed is the point.
     """
     claimed = [i for i in event.issues if i.digital_id]
     if not claimed:

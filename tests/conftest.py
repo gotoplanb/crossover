@@ -134,7 +134,13 @@ async def schema() -> AsyncIterator[bool]:
     from db.base import Base
     from db.session import engine
 
+    # Dropped and recreated, not just created. `create_all` adds missing tables
+    # but never missing *columns*, so a test database left over from an earlier
+    # revision silently drifts from the models and every query fails with
+    # "column does not exist" — which reads like a code bug and is not one.
+    # Safe because this is a dedicated `_test` database, never the developer's.
     async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
     yield True
     await engine.dispose()

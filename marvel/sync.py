@@ -31,6 +31,7 @@ API_OWNED_COLUMNS = frozenset(
         "published_on",
         "marvel_com_issue_id",
         "digital_id",
+        "digital_id_source",
         "source_id",
         "thumbnail_path",
         "thumbnail_extension",
@@ -46,8 +47,11 @@ CURATION_OWNED_COLUMNS = frozenset(
 )
 
 
-def apply_record(issue: Issue, record: ComicRecord) -> None:
+def apply_record(issue: Issue, record: ComicRecord, *, source: str = "marvel-api") -> None:
     """Copy the API-derived fields of `record` onto `issue`. Nothing else.
+
+    `source` is stamped onto `digital_id_source` so every id carries its
+    provenance. See the column comment in models/catalog.py.
 
     `availability` is deliberately *not* set here even though this is the only
     place that learns a digital_id exists — promoting an issue to LINKABLE is
@@ -61,6 +65,8 @@ def apply_record(issue: Issue, record: ComicRecord) -> None:
         "published_on": record.published_on,
         "marvel_com_issue_id": record.marvel_com_issue_id,
         "digital_id": record.digital_id,
+        # Only claim a provenance when there is actually an id to attribute.
+        "digital_id_source": source if record.digital_id else None,
         "source_id": record.source_id,
         "thumbnail_path": record.thumbnail_path,
         "thumbnail_extension": record.thumbnail_extension,

@@ -1,0 +1,2704 @@
+{
+  "_provenance": {
+    "event": "king-in-black",
+    "source": "https://marvel.emreparker.com/v1",
+    "source_name": "Marvel Metadata API (third-party mirror)",
+    "captured_at": "2026-09-01",
+    "why": "Marvel's developer API was discontinued and no longer serves digital ids. See docs/gates.md. Vendored rather than fetched at runtime because a single-operator mirror can disappear too.",
+    "shape": "Re-shaped into Marvel's comic-record envelope so one parser serves both sources. Field values are the mirror's, unmodified.",
+    "verification": "Sampled digital ids were loaded as read.marvel.com reader URLs in a browser and confirmed to resolve to the expected issue.",
+    "resolved": 40,
+    "unresolved": []
+  },
+  "attributionText": "Data provided by Marvel. \u00a9 2026 MARVEL",
+  "data": {
+    "count": 40,
+    "total": 40,
+    "results": [
+      {
+        "id": 77220,
+        "digitalId": 55572,
+        "title": "Web Of Venom: Empyre's End (2020) #1",
+        "issueNumber": "1",
+        "description": "SPINNING OUT OF EMPYRE, KNULL\u2019S DOMAIN BEGINS!  FOR WEEKS, chaos engulfed Earth and space alike. First, the corpse of serial killer Cletus Kasady was bonded to a remnant of a mysteriously powerful alien symbiote, resurrecting his psychotic alter ego, Carnage.  THEN, the generations-long Kree/Skrull conflict reached a brutal head on Earth, with shocking and unforeseen consequences.  MEANWHILE one ancient entity at the edge of the universe has awoken. Born of  hate and darkness, it\u2019s the entity that feeds on chaos and brutality\u2014and one group of unlucky fighters is about to face it head-on\u2026",
+        "pageCount": 40,
+        "modified": "2021-07-26T12:05:30+0000",
+        "series": {
+          "name": "Web Of Venom: Empyre's End (2020)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2020-11-04T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-02-08T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/77220/web_of_venom_empyres_end_2020_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/00/601af761a0fc9",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Frank D'ARMATA",
+              "role": "colorist"
+            },
+            {
+              "name": "Jay David Ramos",
+              "role": "colorist"
+            },
+            {
+              "name": "Guiu Vilanova",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Clayton Cowles",
+              "role": "letterer"
+            },
+            {
+              "name": "Philip Tan",
+              "role": "penciler"
+            },
+            {
+              "name": "Clay Chapman",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 85649,
+        "digitalId": 55807,
+        "title": "King in Black (2020) #1",
+        "issueNumber": "1",
+        "description": "DARKNESS REIGNS! After a campaign across the galaxy, Knull's death march arrives to Earth and, worse yet, he hasn't come alone! With an army of hundreds of thousands of symbiote dragons at his command, the King in Black is a force unlike any Earth's heroes have ever faced. EDDIE BROCK, A.K.A. VENOM has seen firsthand the chaos that even one of Knull's symbiotic monsters can wreak - will he survive an encounter with the God of the Abyss himself? From Donny Cates, Ryan Stegman, JP Mayer, Frank Martin and VC's Clayton Cowles comes the definitive chapter in their two-year-long VENOM saga that changed everything you thought you knew about symbiotes!",
+        "pageCount": 56,
+        "modified": "2024-12-05T16:27:09+0000",
+        "series": {
+          "name": "King in Black (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2020-12-02T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-03-08T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/85649/king_in_black_2020_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/c0/601afd588b59d",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Frank Martin",
+              "role": "colorist"
+            },
+            {
+              "name": "Jp Mayer",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Clayton Cowles",
+              "role": "letterer"
+            },
+            {
+              "name": "Ryan Stegman",
+              "role": "penciler"
+            },
+            {
+              "name": "Donny Cates",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91754,
+        "digitalId": 55810,
+        "title": "King In Black: Immortal Hulk (2020) #1",
+        "issueNumber": "1",
+        "description": "A PRESENT FOR THE HULK! The Hulk is in a bad place. Half of his alters are dead or missing \u2014 including Bruce Banner \u2014 and the Leader\u2019s got the rest of him on the ropes. But never let it be said that Joe Fixit doesn\u2019t know how to have a good time \u2014 and he\u2019s out to make sure this is the best holiday the Hulk\u2019s ever had. He just has to fight his way through a planet of symbiotes first.",
+        "pageCount": 40,
+        "modified": "2021-07-26T12:05:35+0000",
+        "series": {
+          "name": "King In Black: Immortal Hulk (2020)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2020-12-16T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-03-22T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91754/king_in_black_immortal_hulk_2020_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/d/30/5fcfb889bf551",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Frank Martin",
+              "role": "colorist"
+            },
+            {
+              "name": "Wilson Moss",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Cory Petit",
+              "role": "letterer"
+            },
+            {
+              "name": "Aaron Kuder",
+              "role": "penciler"
+            },
+            {
+              "name": "Al Ewing",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91747,
+        "digitalId": 55812,
+        "title": "King in Black: Namor (2020) #1",
+        "issueNumber": "1",
+        "description": "Spinning out of the KING IN BLACK epic comes a dark, chilling story of the birth of Atlantis\u2019s greatest villains. The players: Namor, Lady Dorma of Atlantis, the outsider Attuma \u2014 all still in their teen years \u2014 and The Swift Riders, the Atlantean Empire\u2019s greatest heroes. It begins with alliances and possibility, as Attuma\u2019s people may join the Empire\u2026but what lies ahead is tragedy, betrayal, and the unleashing of dangerous, deadly magics. A deep dive into Marvel history\u2026and the birth of a threat that will only grow in menace across time.",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:33+0000",
+        "series": {
+          "name": "King in Black: Namor (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2020-12-09T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-03-15T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91747/king_in_black_namor_2020_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/f/40/5fcfb8c3dd115",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Sunny Gho",
+              "role": "colorist"
+            },
+            {
+              "name": "Triona Farrell",
+              "role": "colorist"
+            },
+            {
+              "name": "Benjamin Dewey",
+              "role": "cover artist"
+            },
+            {
+              "name": "Jonas Scharf",
+              "role": "cover artist"
+            },
+            {
+              "name": "Tom Brevoort",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Caramagna",
+              "role": "letterer"
+            },
+            {
+              "name": "Leinil Francis Yu",
+              "role": "penciler"
+            },
+            {
+              "name": "Kurt Busiek",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 85648,
+        "digitalId": 55836,
+        "title": "Venom (2018) #31",
+        "issueNumber": "31",
+        "description": "KING IN BLACK ARRIVES! What happens to Eddie Brock when he finally comes face to face with the lord of the abyss, the KING IN BLACK: KNULL?",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:32+0000",
+        "series": {
+          "name": "Venom (2018 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2020-12-09T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-03-15T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/85648/venom_2018_31"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/4/f0/5fcaaf90a6cad",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Frank Martin",
+              "role": "colorist"
+            },
+            {
+              "name": "Jesus Aburtov",
+              "role": "colorist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Clayton Cowles",
+              "role": "letterer"
+            },
+            {
+              "name": "Iban Coello",
+              "role": "penciler"
+            },
+            {
+              "name": "Donny Cates",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 85650,
+        "digitalId": 55808,
+        "title": "King in Black (2020) #2",
+        "issueNumber": "2",
+        "description": "HAIL TO THE KING!",
+        "pageCount": 40,
+        "modified": "2021-07-26T12:05:35+0000",
+        "series": {
+          "name": "King in Black (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2020-12-23T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-03-29T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/85650/king_in_black_2020_2"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/2/70/5fda7deae30d9",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Frank Martin",
+              "role": "colorist"
+            },
+            {
+              "name": "Jp Mayer",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Clayton Cowles",
+              "role": "letterer"
+            },
+            {
+              "name": "Ryan Stegman",
+              "role": "penciler"
+            },
+            {
+              "name": "Donny Cates",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 82509,
+        "digitalId": 54937,
+        "title": "The Union (2020) #1",
+        "issueNumber": "1",
+        "description": "The grand unveiling of The Union! A team of super heroes gathered from all over the United Kingdom, featuring Union Jack, Snakes, Kelpie, Choir, and their fearless leader, Brittania! But when disaster strikes on their first public debut, in the form of the invasion of Empyre, the fledgling team is immediately pushed to their limits! Don't miss out on an exciting new chapter of Marvel from legendary creators, Paul Grist (JUDGE DREDD, JACK STAFF) and Andrea Di Vito!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:33+0000",
+        "series": {
+          "name": "The Union (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2020-12-02T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-03-08T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/82509/the_union_2020_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/1/20/601afd0b1cace",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "David Curiel",
+              "role": "colorist"
+            },
+            {
+              "name": "Nolan Woodard",
+              "role": "colorist"
+            },
+            {
+              "name": "Drew Geraci",
+              "role": "cover artist"
+            },
+            {
+              "name": "Lebeau Underwood",
+              "role": "cover artist"
+            },
+            {
+              "name": "Darren Shan",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Travis Lanham",
+              "role": "letterer"
+            },
+            {
+              "name": "Andrea DI Vito",
+              "role": "penciler"
+            },
+            {
+              "name": "R.B. Silva",
+              "role": "penciler"
+            },
+            {
+              "name": "Paul Grist",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91760,
+        "digitalId": 56030,
+        "title": "King in Black: Thunderbolts (2021) #1",
+        "issueNumber": "1",
+        "description": "KINGPIN\u2019S KILLERS VERSUS AN ARMY OF UNKILLABLE DRAGONS! An army of evil space dragons have come to attack Earth and are starting with New York. MAYOR FISK has a plan for that. Assembling a group of killers, mercenaries, and just generally pretty horrible people like TASKMASTER, RHINO, STAR, MR. FEAR, and BATROC THE LEAPER, Mayor Fisk tasks them with saving the city or die trying\u2026or die right then and there. The fate of the entire world may rest in the hands of the absolute worst people in the Marvel Universe. What could go wrong?",
+        "pageCount": 32,
+        "modified": "2025-05-01T21:11:20+0000",
+        "series": {
+          "name": "King in Black: Thunderbolts (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-01-13T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-04-19T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91760/king_in_black_thunderbolts_2021_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/80/5ff8d0c58700c",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Dan Brown",
+              "role": "colorist"
+            },
+            {
+              "name": "Juan Ferreyra",
+              "role": "colorist"
+            },
+            {
+              "name": "Jacob Thomas",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Sabino",
+              "role": "letterer"
+            },
+            {
+              "name": "Kyle Hotz",
+              "role": "penciler"
+            },
+            {
+              "name": "Matthew Rosenberg",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91748,
+        "digitalId": 55813,
+        "title": "King in Black: Namor (2020) #2",
+        "issueNumber": "2",
+        "description": "The Young Namor, Attuma and Dorma get to accompany the Swift Riders on a mission, see them in action and learn from them. But the mission involves Russian alchemists in 1930s Murmansk, a dangerous mystic relic, and a catastrophe that brings to life the most menacing threat that Atlantis has ever faced! Now all of undersea civilization is imperiled, and only three youngsters can save it!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:33+0000",
+        "series": {
+          "name": "King in Black: Namor (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2020-12-30T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-04-05T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91748/king_in_black_namor_2020_2"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/2/70/5fda7db6aed63",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Sunny Gho",
+              "role": "colorist"
+            },
+            {
+              "name": "Triona Farrell",
+              "role": "colorist"
+            },
+            {
+              "name": "Benjamin Dewey",
+              "role": "cover artist"
+            },
+            {
+              "name": "Tom Brevoort",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Caramagna",
+              "role": "letterer"
+            },
+            {
+              "name": "Leinil Francis Yu",
+              "role": "penciler"
+            },
+            {
+              "name": "Kurt Busiek",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 89764,
+        "digitalId": 56054,
+        "title": "Venom (2018) #32",
+        "issueNumber": "32",
+        "description": "KING IN BLACK ARRIVES! EDDIE BROCK is about to face the biggest challenge of his life\u2026but he's not alone.",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:36+0000",
+        "series": {
+          "name": "Venom (2018 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-01-06T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-04-12T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/89764/venom_2018_32"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/a/00/5ff32d39dc738",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Jesus Aburtov",
+              "role": "colorist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Clayton Cowles",
+              "role": "letterer"
+            },
+            {
+              "name": "Iban Coello",
+              "role": "penciler"
+            },
+            {
+              "name": "Donny Cates",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 85651,
+        "digitalId": 56025,
+        "title": "King in Black (2020) #3",
+        "issueNumber": "3",
+        "description": "After last issue's shocking finale, the heroes of the Marvel Universe are reeling. Outgunned and outmanned, but never outdone, they unite and face KNULL, God of the Abyss, as he ensnares the planet in the darkness of his reign! Superstars DONNY CATES and RYAN STEGMAN continue to raise the game - and the stakes for the Marvel Universe in this Earth-shattering epic!",
+        "pageCount": 40,
+        "modified": "2021-07-26T12:05:40+0000",
+        "series": {
+          "name": "King in Black (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-01-20T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-04-26T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/85651/king_in_black_2020_3"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/d/20/5ff8cf367e5d1",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Frank Martin",
+              "role": "colorist"
+            },
+            {
+              "name": "Jp Mayer",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Clayton Cowles",
+              "role": "letterer"
+            },
+            {
+              "name": "Ryan Stegman",
+              "role": "penciler"
+            },
+            {
+              "name": "Donny Cates",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 82510,
+        "digitalId": 55132,
+        "title": "The Union (2020) #2",
+        "issueNumber": "2",
+        "description": "The Union must battle for their lives (and each other) as the Empyre Invasion crescendos! Thrust unto the global stage, will they be able to prove themselves as a team or will they crumble as the world watches? Plus, a devastating blow to the fledgling team rocks them to their very core!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:39+0000",
+        "series": {
+          "name": "The Union (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-01-13T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-04-19T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/82510/the_union_2020_2"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/c/50/5ff8cf30a6b60",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "David Curiel",
+              "role": "colorist"
+            },
+            {
+              "name": "Nolan Woodard",
+              "role": "colorist"
+            },
+            {
+              "name": "Lebeau Underwood",
+              "role": "cover artist"
+            },
+            {
+              "name": "Darren Shan",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Travis Lanham",
+              "role": "letterer"
+            },
+            {
+              "name": "Andrea DI Vito",
+              "role": "penciler"
+            },
+            {
+              "name": "Paco Medina",
+              "role": "penciler"
+            },
+            {
+              "name": "Paul Grist",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91757,
+        "digitalId": 56029,
+        "title": "King in Black: Planet of the Symbiotes (2021) #1",
+        "issueNumber": "1",
+        "description": "DARKNESS REIGNS OVER THE MARVEL UNIVERSE!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:39+0000",
+        "series": {
+          "name": "King in Black: Planet of the Symbiotes (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-01-13T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-04-19T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91757/king_in_black_planet_of_the_symbiotes_2021_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/8/04/5ff8cf2f77dd7",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Dean White",
+              "role": "colorist"
+            },
+            {
+              "name": "Rachelle Rosenberg",
+              "role": "colorist"
+            },
+            {
+              "name": "Danilo S. Beyruth",
+              "role": "cover artist"
+            },
+            {
+              "name": "Guiu Vilanova",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Cory Petit",
+              "role": "letterer"
+            },
+            {
+              "name": "Tony Moore",
+              "role": "penciler"
+            },
+            {
+              "name": "Clay Chapman",
+              "role": "writer"
+            },
+            {
+              "name": "Frank Tieri",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91761,
+        "digitalId": 56161,
+        "title": "King in Black: Thunderbolts (2021) #2",
+        "issueNumber": "2",
+        "description": "THE THUNDERBOLTS GET COMMITTED! The secret to saving the world lies within the Ravencroft Institute, but can the Thunderbolts get it out? Not if a mob of Knullified inmates have anything to say about it! The Thunderbolts\u2019 plan to save the world is revealed, and it must be seen to be believed!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:39+0000",
+        "series": {
+          "name": "King in Black: Thunderbolts (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-10T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-17T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91761/king_in_black_thunderbolts_2021_2"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/c0/60196ff1282e7",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Dan Brown",
+              "role": "colorist"
+            },
+            {
+              "name": "Juan Ferreyra",
+              "role": "colorist"
+            },
+            {
+              "name": "Jacob Thomas",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Sabino",
+              "role": "letterer"
+            },
+            {
+              "name": "Kyle Hotz",
+              "role": "penciler"
+            },
+            {
+              "name": "Matthew Rosenberg",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91751,
+        "digitalId": 56027,
+        "title": "King in Black: Gwenom Vs. Carnage (2021) #1",
+        "issueNumber": "1",
+        "description": "GWEN STACY ENTERS THE FRAY AGAINST THE KING IN BLACK! Bonded to a synthetic symbiote from another reality, GHOST-SPIDER, aka Gwen Stacy of Earth-65, is unique among the webslingers of the multiverse! But when KNULL descends on her adopted home, his gravity well of dark psychic energy will reap unforeseen consequences not only on Gwen, but on her symbiotic suit as well!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:37+0000",
+        "series": {
+          "name": "King in Black: Gwenom Vs. Carnage (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-01-13T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-04-19T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91751/king_in_black_gwenom_vs_carnage_2021_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/6/e0/5ff32d805529f",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Juan Fernandez",
+              "role": "colorist"
+            },
+            {
+              "name": "Rico Renzi",
+              "role": "colorist"
+            },
+            {
+              "name": "F Flaviano",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Ariana Maher",
+              "role": "letterer"
+            },
+            {
+              "name": "Ken Lashley",
+              "role": "penciler"
+            },
+            {
+              "name": "Seanan Mcguire",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91765,
+        "digitalId": 56037,
+        "title": "King in Black: Return of the Valkyries (2021) #1",
+        "issueNumber": "1",
+        "description": "JANE FOSTER RETURNS! Once there was an entire army of Valkyries, but now Jane Foster is the only one. When the King in Black comes to Midgard, Jane must rebuild the Valkyries to help stop him -- starting with Hildegarde, a warrior from Asgard's own hallowed halls, and X-Man Dani Moonstar, a former Valkyrie herself. But what Jane doesn't know is that she never was the only Valkyrie after all. Who is the fourth warrior? Jason Aaron and Torunn Gr\u00f8nbekk team up with artist Nina Vakueva for a story that will rock the foundations of the Marvel Universe!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:37+0000",
+        "series": {
+          "name": "King in Black: Return of the Valkyries (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-01-06T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-04-12T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91765/king_in_black_return_of_the_valkyries_2021_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/c/d0/5ff34b666fb6b",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Tamra Bonvillain",
+              "role": "colorist"
+            },
+            {
+              "name": "Nina Vakueva",
+              "role": "cover artist"
+            },
+            {
+              "name": "Wilson Moss",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Sabino",
+              "role": "letterer"
+            },
+            {
+              "name": "Mattia De Iulis",
+              "role": "penciler"
+            },
+            {
+              "name": "Jason Aaron",
+              "role": "writer"
+            },
+            {
+              "name": "Torunn Gronbekk",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91744,
+        "digitalId": 56026,
+        "title": "King In Black: Black Knight (2021) #1",
+        "issueNumber": "1",
+        "description": "THE BLACK KNIGHT DUELS THE KING IN BLACK! KNULL\u2019s ferocious assault upon earth has begun and Dane Whitman \u2013 Avenger, hero, and wielder of the mighty Ebony Blade as the BLACK KNIGHT \u2013 takes up sword and shield to defend against the unstoppable onslaught. Though the blade grants Dane incredible power so too does it consume him with a lust for violence and destruction. As the endless horde of symbiote dragons darken the skies of Shanghai, will the Black Knight overcome the growing evil within himself and join AERO and SWORD MASTER in saving the city?! And what secrets will the battle against Knull reveal about Dane\u2019s past?",
+        "pageCount": 40,
+        "modified": "2021-07-26T12:05:40+0000",
+        "series": {
+          "name": "King In Black: Black Knight (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-03T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-10T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91744/king_in_black_black_knight_2021_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/30/6009e2022e7d8",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Jesus Saiz",
+              "role": "colorist"
+            },
+            {
+              "name": "Tamra Bonvillain",
+              "role": "colorist"
+            },
+            {
+              "name": "Daniel Mora",
+              "role": "cover artist"
+            },
+            {
+              "name": "Thomas Groneman",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Cory Petit",
+              "role": "letterer"
+            },
+            {
+              "name": "Si Spurrier",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91749,
+        "digitalId": 56028,
+        "title": "King in Black: Namor (2020) #3",
+        "issueNumber": "3",
+        "description": "THE BLACK TIDE lay waste to all that lies before them, cutting a swath of devastation and death across the ocean floor. The only chance to stop them may lie with ATTUMA\u2019s people \u2014 and if that fails, nothing stands between The Black Tide and Atlantis itself. A tragedy that will impact Atlantean history forever, and transform friendship into enmity. The secrets of THE KING IN BLACK are buried here.",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:34+0000",
+        "series": {
+          "name": "King in Black: Namor (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-01-27T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-03T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91749/king_in_black_namor_2020_3"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/5/d0/6009ea1aa3944",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Sunny Gho",
+              "role": "colorist"
+            },
+            {
+              "name": "Triona Farrell",
+              "role": "colorist"
+            },
+            {
+              "name": "Benjamin Dewey",
+              "role": "cover artist"
+            },
+            {
+              "name": "Tom Brevoort",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Caramagna",
+              "role": "letterer"
+            },
+            {
+              "name": "Jonas Scharf",
+              "role": "penciler"
+            },
+            {
+              "name": "Leinil Francis Yu",
+              "role": "penciler"
+            },
+            {
+              "name": "Kurt Busiek",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 90823,
+        "digitalId": 56462,
+        "title": "King In Black: Ghost Rider (2021) #1",
+        "issueNumber": "1",
+        "description": "THE WAR FOR HELL\u2019S THRONE MEETS THE KING IN BLACK! All Ghost Rider wants is to destroy Mephisto, round up an army of escaped demons, and secure his seat on the throne of hell. Is that so much to ask? But now a dark god from space has shown up to throw the world into chaos, and some of Johnny\u2019s old friends have come to ask for his help. It may take everything they\u2019ve got to stop this madness. Maybe even\u2026the devil himself?",
+        "pageCount": 40,
+        "modified": "2021-07-26T12:05:45+0000",
+        "series": {
+          "name": "King In Black: Ghost Rider (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-03-31T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-07-05T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/90823/king_in_black_ghost_rider_2021_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/6/70/605cee44b6338",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Chris Sotomayor",
+              "role": "colorist"
+            },
+            {
+              "name": "Jason Keith",
+              "role": "colorist"
+            },
+            {
+              "name": "Juan Frigeri",
+              "role": "cover artist"
+            },
+            {
+              "name": "Jacob Thomas",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Caramagna",
+              "role": "letterer"
+            },
+            {
+              "name": "Will Sliney",
+              "role": "penciler"
+            },
+            {
+              "name": "Clay Chapman",
+              "role": "writer"
+            },
+            {
+              "name": "Ed Brisson",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91755,
+        "digitalId": 55811,
+        "title": "King In Black: Iron Man/Doom (2020) #1",
+        "issueNumber": "1",
+        "description": "Iron Man has risked everything to save Eddie Brock, but now he\u2019s left with nothing but guilt. As longtime \u2018frenemy\u2019 Doctor Doom shows up with both counseling words and ulterior motives, they\u2019lll be forced to battle an all-too-familiar specter of the holiday season\u2014albeit one now twisted and controlled by the recent invasion of Earth by the symbiote homeworld. As Iron Man and Doom fight as temporary allies, their unexpected encounter both with each other and a horrifying inversion of yuletide joy may ultimately reveal to them the true meaning of Knull-mas.",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:36+0000",
+        "series": {
+          "name": "King In Black: Iron Man/Doom (2020)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2020-12-30T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-04-05T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91755/king_in_black_iron_mandoom_2020_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/c/90/5fda7db6809b2",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Guru Efx",
+              "role": "colorist"
+            },
+            {
+              "name": "Tom Brevoort",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Travis Lanham",
+              "role": "letterer"
+            },
+            {
+              "name": "Salvador Larroca",
+              "role": "penciler"
+            },
+            {
+              "name": "Christopher Cantwell",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 85652,
+        "digitalId": 56154,
+        "title": "King in Black (2020) #4",
+        "issueNumber": "4",
+        "description": "WHAT'S A GOD TO A KING?",
+        "pageCount": 40,
+        "modified": "2021-07-26T12:05:45+0000",
+        "series": {
+          "name": "King in Black (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-17T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-24T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/85652/king_in_black_2020_4"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/2/e0/6026d16e52b24",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Frank Martin",
+              "role": "colorist"
+            },
+            {
+              "name": "Jp Mayer",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Ariana Maher",
+              "role": "letterer"
+            },
+            {
+              "name": "Vc Clayton Cowles",
+              "role": "letterer"
+            },
+            {
+              "name": "Ryan Stegman",
+              "role": "penciler"
+            },
+            {
+              "name": "Donny Cates",
+              "role": "writer"
+            },
+            {
+              "name": "PEACH MOMOKO",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 89765,
+        "digitalId": 56184,
+        "title": "Venom (2018) #33",
+        "issueNumber": "33",
+        "description": "As the King in Black spreads his suffocating darkness across the Marvel Universe, Eddie Brock looks for a light, any light, that can pierce it - and comes up empty-handed\u2026",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:45+0000",
+        "series": {
+          "name": "Venom (2018 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-03T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-10T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/89765/venom_2018_33"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/6/a0/6009e1e73cf39",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Jesus Aburtov",
+              "role": "colorist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Clayton Cowles",
+              "role": "letterer"
+            },
+            {
+              "name": "Iban Coello",
+              "role": "penciler"
+            },
+            {
+              "name": "Donny Cates",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 82511,
+        "digitalId": 56181,
+        "title": "The Union (2020) #3",
+        "issueNumber": "3",
+        "description": "KELPIE GOES ROGUE! In the wake of the disastrous Knull invasion, Kelpie takes drastic action...but when her choices land her in hot water, only Union Jack will be able to save her!",
+        "pageCount": 32,
+        "modified": "2021-03-09T09:03:50+0000",
+        "series": {
+          "name": "The Union (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-24T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-31T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/82511/the_union_2020_3"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/d/30/6030360d95644",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "David Curiel",
+              "role": "colorist"
+            },
+            {
+              "name": "Nolan Woodard",
+              "role": "colorist"
+            },
+            {
+              "name": "Lebeau Underwood",
+              "role": "cover artist"
+            },
+            {
+              "name": "Darren Shan",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Travis Lanham",
+              "role": "letterer"
+            },
+            {
+              "name": "Andrea DI Vito",
+              "role": "penciler"
+            },
+            {
+              "name": "R.B. Silva",
+              "role": "penciler"
+            },
+            {
+              "name": "Paul Grist",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91758,
+        "digitalId": 56160,
+        "title": "King in Black: Planet of the Symbiotes (2021) #2",
+        "issueNumber": "2",
+        "description": "IN THIS CORNER: A DRAGON MADE OF PARASITIC SLIME, SENT FROM OUTER SPACE TO CONSUME ANY AND ALL LIFE ON EARTH WITH EXTREME PREJUDICE! IN THAT CORNER: A BOMBASTIC BEHEMOTH PACKING A HUNDRED THOUSAND TONS OF ALL-AMERICAN MUSCLE \u2014 YOU KNOW HIM, YOU LOVE HIM\u2026 AMERICAN KAIJU! YUUU! EESSS! AAAAAYY!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:40+0000",
+        "series": {
+          "name": "King in Black: Planet of the Symbiotes (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-17T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-24T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91758/king_in_black_planet_of_the_symbiotes_2021_2"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/d/90/6026d18806771",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Rachelle Rosenberg",
+              "role": "colorist"
+            },
+            {
+              "name": "Kyle Hotz",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Cory Petit",
+              "role": "letterer"
+            },
+            {
+              "name": "Jan Bazaldua",
+              "role": "penciler"
+            },
+            {
+              "name": "Tony Moore",
+              "role": "penciler"
+            },
+            {
+              "name": "Geoffrey Thorne",
+              "role": "writer"
+            },
+            {
+              "name": "Marc Bernadin",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91746,
+        "digitalId": 56156,
+        "title": "King in Black: Captain America (2021) #1",
+        "issueNumber": "1",
+        "description": "Captain America is in a brutal battle to win the streets of Manhattan back from Knull\u2019s forces, aided by the Winter Soldier and the Falcon\u2026but there\u2019s a darkness inside Steve that he\u2019s struggling to shake. Can his closest friends help him through, or will he succumb to the shadows? Danny Lore (IRONHEART 2020) and Mirko Colak (DEADPOOL, PUNISHER) join forces for a twisted and terrifying story at the heart of the war against Knull!",
+        "pageCount": 40,
+        "modified": "2021-07-26T12:05:44+0000",
+        "series": {
+          "name": "King in Black: Captain America (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-03-03T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-06-07T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91746/king_in_black_captain_america_2021_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/5/80/6030354da0da8",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Erick Arciniega",
+              "role": "colorist"
+            },
+            {
+              "name": "Guru Efx",
+              "role": "colorist"
+            },
+            {
+              "name": "Mirko Colak",
+              "role": "cover artist"
+            },
+            {
+              "name": "Nico Leon",
+              "role": "cover artist"
+            },
+            {
+              "name": "Alanna Smith",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Caramagna",
+              "role": "letterer"
+            },
+            {
+              "name": "Salvador Larroca",
+              "role": "penciler"
+            },
+            {
+              "name": "Danny Lore",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91762,
+        "digitalId": 56410,
+        "title": "King in Black: Thunderbolts (2021) #3",
+        "issueNumber": "3",
+        "description": "THE EXPLOSIVE FINALE! What are the Thunderbolts doing with the Sentry\u2019s body? Oh\u2026Oh, no. Really? That\u2019s the plan??? Well, as long as everything comes out all right in the end. Wait, THAT\u2019S how it ends??? YIKES.",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:39+0000",
+        "series": {
+          "name": "King in Black: Thunderbolts (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-03-03T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-06-07T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91762/king_in_black_thunderbolts_2021_3"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/60/6030353026108",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Dan Brown",
+              "role": "colorist"
+            },
+            {
+              "name": "Juan Ferreyra",
+              "role": "colorist"
+            },
+            {
+              "name": "Jacob Thomas",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Sabino",
+              "role": "letterer"
+            },
+            {
+              "name": "Kyle Hotz",
+              "role": "penciler"
+            },
+            {
+              "name": "Matthew Rosenberg",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91752,
+        "digitalId": 56157,
+        "title": "King in Black: Gwenom Vs. Carnage (2021) #2",
+        "issueNumber": "2",
+        "description": "GWEN STACY VS. MARY JANE WATSON! They\u2019ve been at each other\u2019s throats over the band for years, but not like this. THIS battle of the bands really shreds\u2026",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:37+0000",
+        "series": {
+          "name": "King in Black: Gwenom Vs. Carnage (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-03T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-10T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91752/king_in_black_gwenom_vs_carnage_2021_2"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/6/50/6009e1e633e4e",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Juan Fernandez",
+              "role": "colorist"
+            },
+            {
+              "name": "Rico Renzi",
+              "role": "colorist"
+            },
+            {
+              "name": "F Flaviano",
+              "role": "cover artist"
+            },
+            {
+              "name": "Ig Guara",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Ariana Maher",
+              "role": "letterer"
+            },
+            {
+              "name": "Ken Lashley",
+              "role": "penciler"
+            },
+            {
+              "name": "Seanan Mcguire",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91766,
+        "digitalId": 56038,
+        "title": "King in Black: Return of the Valkyries (2021) #2",
+        "issueNumber": "2",
+        "description": "SAVE THE SENTRY \u2013 SAVE THE VALKYRIES \u2013 SAVE THE EARTH! Knull and his symbiote horrors have come to Earth, and now all Jane Foster sees when she looks at that big blue globe\u2026is a vision of death. Most of Earth\u2019s heroes are locked in battle on the ground, and it\u2019s up to Jane and the Sentry to protect the rest! But Knull\u2019s power has spread over the galaxy and infected creatures even older than the gods\u2026and it may not matter how many Valkyries Jane can bring to their aid.",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:42+0000",
+        "series": {
+          "name": "King in Black: Return of the Valkyries (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-03T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-10T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91766/king_in_black_return_of_the_valkyries_2021_2"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/c/30/6009e1cf54dbe",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Tamra Bonvillain",
+              "role": "colorist"
+            },
+            {
+              "name": "Nina Vakueva",
+              "role": "cover artist"
+            },
+            {
+              "name": "Wilson Moss",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Sabino",
+              "role": "letterer"
+            },
+            {
+              "name": "Mattia De Iulis",
+              "role": "penciler"
+            },
+            {
+              "name": "Jason Aaron",
+              "role": "writer"
+            },
+            {
+              "name": "Torunn Gronbekk",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91756,
+        "digitalId": 56158,
+        "title": "King In Black: Marauders (2021) #1",
+        "issueNumber": "1",
+        "description": "THE QUEEN IN RED SAILS! Red Queen Kate Pryde and her crew of Marauders set sail against the forces of Knull! Captain Kate has pledged to fight for the needy, and a global disaster like this one gives plenty of folks in need.",
+        "pageCount": 40,
+        "modified": "2021-07-26T12:05:42+0000",
+        "series": {
+          "name": "King In Black: Marauders (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-03T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-10T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91756/king_in_black_marauders_2021_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/a0/6009e21eeee86",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Carlos Lopez",
+              "role": "colorist"
+            },
+            {
+              "name": "Matthew Wilson",
+              "role": "colorist"
+            },
+            {
+              "name": "Luke Ross",
+              "role": "cover artist"
+            },
+            {
+              "name": "Russell Dauterman",
+              "role": "cover artist"
+            },
+            {
+              "name": "Jordan D. White",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Cory Petit",
+              "role": "letterer"
+            },
+            {
+              "name": "Gerry Duggan",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91750,
+        "digitalId": 56159,
+        "title": "King in Black: Namor (2020) #4",
+        "issueNumber": "4",
+        "description": "The Black Tide\u2019s wave of devastation now threatens Atlantis itself. Namor, Dorma and Attuma may be the undersea world\u2019s only hope, but unless they can shake off their utter defeat from last issue, they don\u2019t even stand a chance. And worse, the one possible weapon they could wield against the Black Tide is in Murmansk, thousands of miles away. It\u2019s Atlantis\u2019s darkest hour\u2026",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:34+0000",
+        "series": {
+          "name": "King in Black: Namor (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-24T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-31T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91750/king_in_black_namor_2020_4"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/03/60303625e329f",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Sunny Gho",
+              "role": "colorist"
+            },
+            {
+              "name": "Triona Farrell",
+              "role": "colorist"
+            },
+            {
+              "name": "Benjamin Dewey",
+              "role": "cover artist"
+            },
+            {
+              "name": "Jonas Scharf",
+              "role": "cover artist"
+            },
+            {
+              "name": "Tom Brevoort",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Caramagna",
+              "role": "letterer"
+            },
+            {
+              "name": "Leinil Francis Yu",
+              "role": "penciler"
+            },
+            {
+              "name": "Kurt Busiek",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 92168,
+        "digitalId": 56411,
+        "title": "King in Black: Wiccan and Hulkling (2021) #1",
+        "issueNumber": "1",
+        "description": "NO TIME TO CELEBRATE! Wiccan and Hulkling are freshly off the marriage altar and overdue for a proper celebration. So when the Shi\u2019ar invite them for an all-expenses paid vacation at their glitziest beach resort, you know Wiccan\u2019s already got their bags packed. But they\u2019ll have to hold the champagne \u2014 because Knull and his symbiote army are expanding across the galaxy! Tini Howard and Luciano Vecchio give everyone\u2019s favorite Young Avengers a honeymoon to die for!",
+        "pageCount": 40,
+        "modified": "2021-10-29T23:51:46+0000",
+        "series": {
+          "name": "King in Black: Wiccan and Hulkling (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-03-03T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-06-07T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/92168/king_in_black_wiccan_and_hulkling_2021_1"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/30/6030352db978a",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Alejandro Sanchez",
+              "role": "colorist"
+            },
+            {
+              "name": "Espen Grundetjern",
+              "role": "colorist"
+            },
+            {
+              "name": "Luciano Vecchio",
+              "role": "cover artist"
+            },
+            {
+              "name": "Wilson Moss",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Ariana Maher",
+              "role": "letterer"
+            },
+            {
+              "name": "Jim Cheung",
+              "role": "penciler"
+            },
+            {
+              "name": "Tini Howard",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 82512,
+        "digitalId": 56467,
+        "title": "The Union (2020) #4",
+        "issueNumber": "4",
+        "description": "Caught in the cries of the Choir! With their sonic-powered teammate in trouble, Union Jack and the team must rescue the Choir before it's too late! But what the Union finds out about the Choir may be too much even for them! Plus, meet the team's newest recruit\u2026Bulldog!",
+        "pageCount": 32,
+        "modified": "2021-04-22T12:31:08+0000",
+        "series": {
+          "name": "The Union (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-03-31T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-07-05T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/82512/the_union_2020_4"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/a0/605cee2933367",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "David Curiel",
+              "role": "colorist"
+            },
+            {
+              "name": "Nolan Woodard",
+              "role": "colorist"
+            },
+            {
+              "name": "Lebeau Underwood",
+              "role": "cover artist"
+            },
+            {
+              "name": "Darren Shan",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Travis Lanham",
+              "role": "letterer"
+            },
+            {
+              "name": "Andrea DI Vito",
+              "role": "penciler"
+            },
+            {
+              "name": "R.B. Silva",
+              "role": "penciler"
+            },
+            {
+              "name": "Paul Grist",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91759,
+        "digitalId": 56407,
+        "title": "King in Black: Planet of the Symbiotes (2021) #3",
+        "issueNumber": "3",
+        "description": "A DARK SHADOW LOOMS OVER CLOAK AND DAGGER! PLUS: THE RETURN OF TOXIN!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:46+0000",
+        "series": {
+          "name": "King in Black: Planet of the Symbiotes (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-04-07T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-07-12T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91759/king_in_black_planet_of_the_symbiotes_2021_3"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/2/03/6066106767c0a",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Erick Arciniega",
+              "role": "colorist"
+            },
+            {
+              "name": "Jay David Ramos",
+              "role": "colorist"
+            },
+            {
+              "name": "Rachelle Rosenberg",
+              "role": "colorist"
+            },
+            {
+              "name": "Danilo S. Beyruth",
+              "role": "cover artist"
+            },
+            {
+              "name": "Victor Nava",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Cory Petit",
+              "role": "letterer"
+            },
+            {
+              "name": "Gerardo Sandoval",
+              "role": "penciler"
+            },
+            {
+              "name": "Philip Tan",
+              "role": "penciler"
+            },
+            {
+              "name": "Rodney Barnes",
+              "role": "writer"
+            },
+            {
+              "name": "Steve Orlando",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 85653,
+        "digitalId": 56405,
+        "title": "King in Black (2020) #5",
+        "issueNumber": "5",
+        "description": "WHAT'S A GOD TO A NONBELIEVER?",
+        "pageCount": 48,
+        "modified": "2021-07-26T12:05:48+0000",
+        "series": {
+          "name": "King in Black (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-04-07T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-07-12T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/85653/king_in_black_2020_5"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/e/d0/605cee09aacd2",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Frank Martin",
+              "role": "colorist"
+            },
+            {
+              "name": "Jason Keith",
+              "role": "colorist"
+            },
+            {
+              "name": "Jp Mayer",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Clayton Cowles",
+              "role": "letterer"
+            },
+            {
+              "name": "Ryan Stegman",
+              "role": "penciler"
+            },
+            {
+              "name": "Donny Cates",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 89766,
+        "digitalId": 56429,
+        "title": "Venom (2018) #34",
+        "issueNumber": "34",
+        "description": "THIS IS IT! After a pulse-pounding race to the finish, VENOM #34 stands as the series' final tie-in to the KING IN BLACK epic! But is this issue also the end of the Venom symbiote as we know it?! From maestros DONNY CATES, IBAN COELLO and JESUS ABURTOV, this one sets the stage for VENOM #200 - and EVERYTHING that follows!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:47+0000",
+        "series": {
+          "name": "Venom (2018 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-04-07T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-07-12T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/89766/venom_2018_34"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/00/6066107933daa",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Jesus Aburtov",
+              "role": "colorist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Clayton Cowles",
+              "role": "letterer"
+            },
+            {
+              "name": "Iban Coello",
+              "role": "penciler"
+            },
+            {
+              "name": "Donny Cates",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91753,
+        "digitalId": 56406,
+        "title": "King in Black: Gwenom Vs. Carnage (2021) #3",
+        "issueNumber": "3",
+        "description": "AMP VS. AMP, SYMBIOTE VS. SYMBIOTE, FRIEND VS. FRIEND! Unwittingly pulled into her bandmate Gwen Stacy\u2019s interdimensional adventures and the Marvel Universe, MARY JANE WATSON of Earth-65 has bonded to a symbiote and become a new and deadly iteration of CARNAGE! As dragons rain from the sky and New York finds itself on the precipice of the abyss, it\u2019s up to Gwen Stacy to rid MJ of the symbiotic spiders that have infected her and get them both home \u2014 while saving any civilians MJ endangers along the way!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:37+0000",
+        "series": {
+          "name": "King in Black: Gwenom Vs. Carnage (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-03-03T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-06-07T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91753/king_in_black_gwenom_vs_carnage_2021_3"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/2/c0/6030354cb624e",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Juan Fernandez",
+              "role": "colorist"
+            },
+            {
+              "name": "Rico Renzi",
+              "role": "colorist"
+            },
+            {
+              "name": "F Flaviano",
+              "role": "cover artist"
+            },
+            {
+              "name": "Edward Devin Lewis",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Ariana Maher",
+              "role": "letterer"
+            },
+            {
+              "name": "Ken Lashley",
+              "role": "penciler"
+            },
+            {
+              "name": "Seanan Mcguire",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91767,
+        "digitalId": 56171,
+        "title": "King in Black: Return of the Valkyries (2021) #3",
+        "issueNumber": "3",
+        "description": "THE NEW VALKYRIE FINDS HER WEAPON \u2014 WILL IT BE ENOUGH? Plus, a spotlight on Dani Moonstar as the X-Man fights to save both human and mutantkind! Jane Foster is going to need all the friends and power she can muster, but Knull and his symbiote army are slaughtering at a rate that even a hundred Valkyries couldn\u2019t match\u2026and now Knull has some of the world\u2019s greatest heroes on his side. Can four warriors hope to stem the tide?",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:43+0000",
+        "series": {
+          "name": "King in Black: Return of the Valkyries (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-02-24T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-05-31T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91767/king_in_black_return_of_the_valkyries_2021_3"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/5/f0/6033e50ea3f09",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Tamra Bonvillain",
+              "role": "colorist"
+            },
+            {
+              "name": "Nina Vakueva",
+              "role": "cover artist"
+            },
+            {
+              "name": "Wilson Moss",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Sabino",
+              "role": "letterer"
+            },
+            {
+              "name": "Mattia De Iulis",
+              "role": "penciler"
+            },
+            {
+              "name": "Jason Aaron",
+              "role": "writer"
+            },
+            {
+              "name": "Torunn Gronbekk",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 92259,
+        "digitalId": 56463,
+        "title": "King in Black: Namor (2020) #5",
+        "issueNumber": "5",
+        "description": "The grand finale! As the Dark Tide threatens Atlantis, Namor, Attuma and Dorma make a desperate, dangerous attempt to save the undersea world \u2014 but even if they can manage it, it\u2019ll come at a great cost. Learn the fate of Atlantis \u2014 of Attuma \u2014 of the Dark Tide \u2014 and the future of the Dark Tide as well. What will come out of THE KING IN BLACK for Namor and Atlantis? Watch it unfold here.",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:34+0000",
+        "series": {
+          "name": "King in Black: Namor (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-04-14T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-07-19T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/92259/king_in_black_namor_2020_5"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/c0/6066104982001",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Sunny Gho",
+              "role": "colorist"
+            },
+            {
+              "name": "Triona Farrell",
+              "role": "colorist"
+            },
+            {
+              "name": "Benjamin Dewey",
+              "role": "cover artist"
+            },
+            {
+              "name": "Jonas Scharf",
+              "role": "cover artist"
+            },
+            {
+              "name": "Leinil Francis Yu",
+              "role": "cover artist"
+            },
+            {
+              "name": "Tom Brevoort",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Caramagna",
+              "role": "letterer"
+            },
+            {
+              "name": "Kurt Busiek",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 82513,
+        "digitalId": 56831,
+        "title": "The Union (2020) #5",
+        "issueNumber": "5",
+        "description": "THE DRAMATIC FINALE! Doc Croc has defeated Union Jack and the team! But can this truly be the end of the line for our new heroes? Or can they receive one last push to pull it together?",
+        "pageCount": 32,
+        "modified": "2021-06-09T10:01:49+0000",
+        "series": {
+          "name": "The Union (2020 - 2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-05-05T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-08-09T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/82513/the_union_2020_5"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/5/03/608990b337a13",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Nolan Woodard",
+              "role": "colorist"
+            },
+            {
+              "name": "Lebeau Underwood",
+              "role": "cover artist"
+            },
+            {
+              "name": "Darren Shan",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Travis Lanham",
+              "role": "letterer"
+            },
+            {
+              "name": "Andrea DI Vito",
+              "role": "penciler"
+            },
+            {
+              "name": "Paul Grist",
+              "role": "writer"
+            }
+          ]
+        }
+      },
+      {
+        "id": 91768,
+        "digitalId": 56464,
+        "title": "King in Black: Return of the Valkyries (2021) #4",
+        "issueNumber": "4",
+        "description": "THE LAST RIDE OF THE VALKYRIES! Brunnhilde. Jane Foster. Dani Moonstar. Hildegarde. And the mysterious stranger who\u2019s worn the title longer than any of them. The Valkyries are united, and at last they have a plan \u2013 but so does the King in Black. Every soul in existence is at stake \u2013 including the Valkyries\u2019 own!",
+        "pageCount": 32,
+        "modified": "2021-07-26T12:05:43+0000",
+        "series": {
+          "name": "King in Black: Return of the Valkyries (2021)"
+        },
+        "dates": [
+          {
+            "type": "onsaleDate",
+            "date": "2021-03-31T00:00:00+0000"
+          },
+          {
+            "type": "unlimitedDate",
+            "date": "2021-07-05T00:00:00+0000"
+          }
+        ],
+        "urls": [
+          {
+            "type": "detail",
+            "url": "https://www.marvel.com/comics/issue/91768/king_in_black_return_of_the_valkyries_2021_4"
+          }
+        ],
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/7/10/605cee443979d",
+          "extension": "jpg"
+        },
+        "characters": {
+          "items": []
+        },
+        "creators": {
+          "items": [
+            {
+              "name": "Tamra Bonvillain",
+              "role": "colorist"
+            },
+            {
+              "name": "Nina Vakueva",
+              "role": "cover artist"
+            },
+            {
+              "name": "Wilson Moss",
+              "role": "editor"
+            },
+            {
+              "name": "Vc Joe Sabino",
+              "role": "letterer"
+            },
+            {
+              "name": "Mattia De Iulis",
+              "role": "penciler"
+            },
+            {
+              "name": "Jason Aaron",
+              "role": "writer"
+            },
+            {
+              "name": "Torunn Gronbekk",
+              "role": "writer"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

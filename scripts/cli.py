@@ -78,14 +78,35 @@ async def _sync_event(slug: str) -> int:
 
 
 async def _load_curation() -> int:
+    """Load curation YAML, then apply any vendored catalog snapshots.
+
+    Two steps in a fixed order, because they own different columns: the loader
+    writes curation's (order, roles, edges) and the snapshot writes the
+    API-derived ones (ids, covers, dates). Running curation first means a brand
+    new issue exists by the time the snapshot looks for it.
+    """
     from curation.loader import load_all
     from db.session import SessionLocal
-    from marvel.cache import cached_record_index
+    from marvel import snapshot as snapshots
 
     async with SessionLocal() as session:
-        index = await cached_record_index(session)
+        # Snapshots are the Gate B evidence: a curated digital_id must trace to
+        # one, so the index is built before the load rather than after.
+        index = snapshots.combined_record_index()
         report = await load_all(session, record_index=index or None)
-    print(report.summary())
+        print(report.summary())
+
+        for applied in await snapshots.apply_all(session):
+            print(
+                f"snapshot {applied.event_slug}: {applied.issues_matched} issues matched, "
+                f"{applied.digital_ids_confirmed} digital ids, "
+                f"{applied.newly_linkable} newly linkable"
+            )
+            if applied.issues_unmatched:
+                print(
+                    "  no snapshot record for: "
+                    + ", ".join(sorted(applied.issues_unmatched))
+                )
     return 0
 
 

@@ -63,34 +63,58 @@ hashed). Point a custom connector at `https://<host>/mcp`; discovery, authorize,
 and token endpoints are advertised at `/.well-known/oauth-authorization-server`.
 Approving the grant means being signed in with the admin key.
 
-## Getting real links
+## Where the catalog data comes from
 
-**Nothing links until a Marvel sync runs.** Out of the box every issue renders
-as `not on Marvel Unlimited`, which is honest rather than broken — see Gate B
-below.
+**Marvel discontinued their developer API.** `developer.marvel.com` redirects
+every path away, and `gateway.marvel.com` returns a 500 with an empty body on
+every endpoint — including with fabricated credentials, where the documented
+response is a 409. An API key would not help; there is nothing behind the
+gateway. Full evidence in `docs/gates.md`.
 
-```bash
-# 1. Free key from https://developer.marvel.com, then into .env
-make check-api-key                 # verifies auth AND prints digital-id coverage
-make list-events q="King in Black" # find the numeric event id
-#    put it in curation/events/king-in-black.yaml as marvel_event_id
-make sync-event slug=king-in-black # fetch the roster, confirm digital ids
+What replaced it is a **vendored snapshot**: catalog data captured once from a
+third-party mirror and committed to the repo.
+
+```
+curation/snapshots/king-in-black.json     # 40 issues, ids + covers + dates
+scripts/fetch_snapshot.py                 # rebuilds it
 ```
 
-`check-api-key` prints the coverage number deliberately. SPEC §0 makes it the
-go/no-go: *if digital IDs come back mostly null, the whole linking premise needs
-rethinking before anything else gets built.* Event tagging is good for modern
-events and poor for early-90s ones.
+Vendored rather than fetched at runtime for two reasons. A single-operator
+mirror can disappear exactly as Marvel's did, and a reading guide that stops
+linking because someone else's side project went down is a bad guide. And the
+data is not volatile — an issue's digital id does not change.
+
+It is written in **Marvel's own response envelope**, so `marvel/records.py`,
+the raw cache, and the Gate B traceability check all work on it unchanged. The
+only thing that differs is the source stamped on each id.
+
+`make load` applies it, and so does every boot. Marvel's image CDN
+(`i.annihil.us`) is still serving cover art, so covers needed no replacement at
+all.
+
+To rebuild or add an event:
+
+```bash
+python -m scripts.fetch_snapshot king-in-black
+make load
+```
 
 ## The two rules everything else hangs off
 
 **Gate B — a wrong id is worse than no id.** A fabricated `digitalId` doesn't
-error; Marvel serves a *different, unrelated comic*. So a `digital_id` only ever
-originates from a Marvel API response for that specific issue — never derived,
-inferred, incremented, or guessed. Enforced in three places: the curation loader
-refuses to load an id it can't trace to a cached response, the tests fail on one,
-and an entry without a confirmed id renders as `not on Marvel Unlimited`. There
-is no third state in tool output.
+error; Marvel serves a *different, unrelated comic*. So an id must trace to a
+record that is demonstrably *this* issue — never derived, inferred, incremented,
+or guessed. Enforced in three places: the curation loader refuses an id it can't
+trace, the tests fail on one, and an entry without a confirmed id renders as
+`not on Marvel Unlimited`. There is no third state in tool output.
+
+The rule was amended when Marvel's API went away, since "must come from a Marvel
+API response" became unsatisfiable. It now reads *"or from a Marvel-derived
+source whose id has been verified to resolve to that same issue, with the source
+recorded"* — `issue.digital_id_source` is the recording half. The reason is
+unchanged, and the identity check is unchanged; only the set of acceptable
+sources widened. Sampled ids were loaded in a browser and confirmed to open the
+expected issue; see `docs/gates.md`.
 
 **Gate A — links must be tappable.** Tools return markdown links
 (`[label](url)`). A URL in backticks renders as a non-tappable code span, which
@@ -200,15 +224,15 @@ Set `DATABASE_URL` (injected), `CROSSOVER_PUBLIC_URL`, `CROSSOVER_ADMIN_KEY`,
 
 Steps 1–10 of SPEC §9 are built. Known gaps, all recorded in `docs/gates.md`:
 
-- **No Marvel API key was available**, so `/events/{id}/comics` has never been
-  called for real. The client is complete and tested against fixtures; the
-  fixtures are hand-authored to the documented response shape rather than
-  recorded. The open question — whether King in Black has usable digital ids —
-  is still open, and `make check-api-key` is how you close it.
-- **King in Black's roster is seeded by hand** and marked `provisional`, because
-  marvel.com returns 403 to programmatic requests so neither the reading guide
-  nor the API could be consulted. The event is `best_effort` until reconciled;
-  promoting it to `curated` turns the strict gates on.
+- **Marvel's API is gone**, so the live client in `marvel/client.py` has no
+  server to talk to. It is kept, and still tested against fixtures, because the
+  snapshot path reuses its parsing and because a future replacement API would
+  slot into the same place.
+- **King in Black's roster is seeded by hand** and still marked `provisional`,
+  because marvel.com returns 403 to programmatic requests so the reading guide
+  could not be consulted. All 40 issues now resolve against catalog data and are
+  linkable; what remains is reconciling *order and roles* against Marvel's own
+  guide before promoting the event to `curated`.
 - **`omnibus_page` is null throughout.** Those numbers have to be read off the
   physical book, and inventing them would defeat the point of the whole graph.
 

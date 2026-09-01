@@ -102,6 +102,16 @@ class Issue(Base):
     # has somewhere to live.
     unison_drn: Mapped[str | None] = mapped_column(String(120), nullable=True)
 
+    # API — where `digital_id` came from, e.g. "marvel-api" or
+    # "snapshot:king-in-black". Gate B originally required every id to come from
+    # a Marvel API response; that API no longer exists (docs/gates.md), so the
+    # rule became "from a Marvel-derived source, verified, with the source
+    # recorded". This column is the recording half — without it, "verified"
+    # would be a claim in a commit message rather than a property of the row.
+    digital_id_source: Mapped[str] = mapped_column(
+        String(80), nullable=False, default="", server_default=""
+    )
+
     # API — cover art. Stored split exactly as Marvel returns it so the
     # variant suffix can be chosen at render time (SPEC §7).
     thumbnail_path: Mapped[str | None] = mapped_column(Text, nullable=True)

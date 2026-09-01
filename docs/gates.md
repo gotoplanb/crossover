@@ -103,11 +103,63 @@ The reader URL remains the durable baseline either way.
 
 ---
 
-## Precondition — Marvel developer API key — NOT VERIFIED
+## Marvel API discontinued — 2026-09-01
 
-`GET /v1/public/events/{id}/comics` has **not** been exercised against live
-Marvel servers: no key was available in this environment
-(https://developer.marvel.com issues them free).
+**There is no Marvel developer API any more.** `developer.marvel.com` 301-redirects
+every path to `www.marvel.com`, so no key can be registered, and
+`gateway.marvel.com` returns `500 InternalServerErrorException` with an empty body
+on every endpoint — including with fabricated credentials, where the documented
+response is `409 InvalidCredentials`. An existing key would not help; the backend
+is gone, not the auth.
+
+### What replaced it
+
+A vendored **catalog snapshot**, captured once from a third-party mirror and
+committed to the repo (`curation/snapshots/<slug>.json`, built by
+`scripts/fetch_snapshot.py`). Vendored rather than fetched at runtime because a
+single-operator mirror can disappear exactly as Marvel's did.
+
+Marvel's image CDN (`i.annihil.us`) **is** still serving cover art, in the same
+`portrait_incredible` / `portrait_uncanny` variants, so covers need no
+replacement at all.
+
+### Gate B, amended
+
+> A `digital_id` must originate from a Marvel API response for that specific
+> issue, **or from a Marvel-derived source whose id has been verified to resolve
+> to that same issue**, with the source recorded. Never derived, inferred,
+> incremented, or guessed.
+
+The reason is unchanged — a wrong id opens a different comic rather than
+failing. What changed is that "came from Marvel's API" is no longer available as
+the evidence, so the evidence is now:
+
+1. **Identity match.** The record must be *this* issue by series and number —
+   `check_digital_ids_traceable` still enforces this unchanged.
+2. **Recorded provenance.** `issue.digital_id_source` names the source of every
+   id, e.g. `snapshot:king-in-black`. An id with no recorded source is not a
+   verified id.
+3. **Sampled human verification.** Reader URLs were loaded in a browser and
+   confirmed to open the expected issue:
+
+   | digitalId | opened | marvel.com issue |
+   |---|---|---|
+   | 55807 | King In Black (2020) #1 | 85649 |
+   | 54937 | The Union (2020) #1 | 82509 |
+   | 56429 | Venom (2018) #34 | 89766 |
+   | 55812 | King In Black: Namor (2020) #1 | 91747 |
+
+   Each resolved to exactly the marvel.com issue id the snapshot predicted, so
+   the two identifiers cross-validate.
+4. **Independent corroboration.** A separately-assembled King in Black dataset
+   agrees on all 30 overlapping `digital_id`s, with zero disagreements.
+
+That is more evidence than a single live API call ever provided.
+
+### Historical note — the original precondition
+
+`GET /v1/public/events/{id}/comics` was never exercised against live Marvel
+servers: no key was available before the API was withdrawn.
 
 Consequences, and how they are contained:
 
