@@ -12,6 +12,7 @@ else would catch it.
 
 from __future__ import annotations
 
+import inspect
 import json
 from pathlib import Path
 
@@ -41,12 +42,41 @@ PROVIDED_BY_PLATFORM = {"DATABASE_URL", "PORT"}
 DELIBERATELY_OMITTED = {"MARVEL_PUBLIC_KEY", "MARVEL_PRIVATE_KEY"}
 
 
+#: Read at call time rather than declared as Settings fields, so they cannot be
+#: discovered from the model. Reader passwords especially: the set of readers is
+#: *data*, and adding one should be a config var and a seed, not a code change.
+DYNAMIC_ENV_VARS = {
+    "CROSSOVER_OWNER_EMAIL",     # consumed by `crossover bootstrap`
+    "CROSSOVER_OWNER_HANDLE",    # ditto
+    "CROSSOVER_PASSWORD_OWNER",  # Settings.reader_password("owner")
+}
+
+
 def test_every_declared_env_var_is_a_real_setting() -> None:
     """A typo in app.json sets a variable nothing reads, which looks like it
     worked and silently doesn't."""
-    known = set(_aliases()) | {"CROSSOVER_OWNER_EMAIL"}
+    known = set(_aliases()) | DYNAMIC_ENV_VARS
     unknown = set(APP_JSON["env"]) - known
     assert not unknown, f"app.json declares settings nothing reads: {sorted(unknown)}"
+
+
+def test_the_dynamic_vars_are_genuinely_read() -> None:
+    """The allowlist above is an escape hatch, so it has to be checked against
+    the code rather than trusted — otherwise it becomes a place typos hide."""
+    cli = (REPO / "scripts" / "cli.py").read_text()
+    assert "CROSSOVER_OWNER_EMAIL" in cli
+    assert "CROSSOVER_OWNER_HANDLE" in cli
+
+    from config.settings import Settings
+
+    assert "CROSSOVER_PASSWORD_" in inspect.getsource(Settings.reader_password)
+
+
+def test_the_first_reader_gets_a_generated_password() -> None:
+    """Otherwise a button deploy creates an admin who cannot sign in."""
+    entry = APP_JSON["env"]["CROSSOVER_PASSWORD_OWNER"]
+    assert entry.get("generator") == "secret"
+    assert "value" not in entry
 
 
 def test_every_setting_without_a_default_is_offered() -> None:

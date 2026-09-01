@@ -23,13 +23,23 @@ def admin_key() -> str:
     return get_settings().admin_key
 
 
+@pytest.fixture
+def reader_password(user, monkeypatch) -> str:
+    """Give the fixture reader a password, the way a deployment would."""
+    password = "fixture-reader-password"  # pragma: allowlist secret
+    monkeypatch.setenv(f"CROSSOVER_PASSWORD_{user.handle.upper()}", password)
+    get_settings.cache_clear()
+    yield password
+    get_settings.cache_clear()
+
+
 # --- login ---
 
 
 async def test_the_login_form_lists_active_readers(client, user) -> None:
     html = (await client.get("/ui/login")).text
-    assert user.email in html
-    assert "Admin key" in html
+    assert user.handle in html
+    assert "Password" in html
 
 
 async def test_the_login_form_explains_an_empty_allowlist(client, session) -> None:
@@ -47,10 +57,12 @@ async def test_the_login_form_explains_an_empty_allowlist(client, session) -> No
     assert "make seed" in html
 
 
-async def test_signing_in_sets_both_cookies_and_redirects(client, user, admin_key) -> None:
+async def test_signing_in_sets_both_cookies_and_redirects(
+    client, user, reader_password
+) -> None:
     response = await client.post(
         "/ui/login",
-        data={"admin_key": admin_key, "email": user.email},
+        data={"handle": user.handle, "password": reader_password},
         follow_redirects=False,
     )
     assert response.status_code == 303
@@ -62,47 +74,51 @@ async def test_signing_in_sets_both_cookies_and_redirects(client, user, admin_ke
     assert all("HttpOnly" in c for c in cookies if ADMIN_COOKIE in c)
 
 
-async def test_signing_in_honors_the_next_url(client, user, admin_key) -> None:
+async def test_signing_in_honors_the_next_url(client, user, reader_password) -> None:
     """So the OAuth consent bounce lands back where it started."""
     response = await client.post(
         "/ui/login",
-        data={"admin_key": admin_key, "email": user.email, "next": "/ui/events"},
+        data={"handle": user.handle, "password": reader_password, "next": "/ui/events"},
         follow_redirects=False,
     )
     assert response.headers["location"] == "/ui/events"
 
 
-async def test_a_wrong_admin_key_is_401_and_re_renders_the_form(
-    client, user
+async def test_a_wrong_password_is_401_and_re_renders_the_form(
+    client, user, reader_password
 ) -> None:
     response = await client.post(
-        "/ui/login", data={"admin_key": "wrong", "email": user.email}
+        "/ui/login", data={"handle": user.handle, "password": "wrong"}
     )
     assert response.status_code == 401
-    assert "Wrong key, or no such reader." in response.text
+    assert "Wrong password, or no such reader." in response.text
 
 
-async def test_an_unknown_email_is_401(client, admin_key) -> None:
-    """Deliberately the same message as a wrong key — distinguishing them would
-    turn the form into a reader-enumeration oracle."""
+async def test_an_unknown_handle_is_401(client) -> None:
+    """Deliberately the same message as a wrong password — distinguishing them
+    would turn the form into a reader-enumeration oracle."""
     response = await client.post(
-        "/ui/login", data={"admin_key": admin_key, "email": "nobody@example.com"}
+        "/ui/login", data={"handle": "nobody", "password": "whatever"}
     )
     assert response.status_code == 401
-    assert "Wrong key, or no such reader." in response.text
+    assert "Wrong password, or no such reader." in response.text
 
 
-async def test_a_deactivated_reader_cannot_sign_in(client, session, user, admin_key) -> None:
+async def test_a_deactivated_reader_cannot_sign_in(
+    client, session, user, reader_password
+) -> None:
     user.is_active = False
     await session.commit()
     response = await client.post(
-        "/ui/login", data={"admin_key": admin_key, "email": user.email}
+        "/ui/login", data={"handle": user.handle, "password": reader_password}
     )
     assert response.status_code == 401
 
 
-async def test_signing_out_clears_both_cookies(client, user, admin_key) -> None:
-    await client.post("/ui/login", data={"admin_key": admin_key, "email": user.email})
+async def test_signing_out_clears_both_cookies(client, user, reader_password) -> None:
+    await client.post(
+        "/ui/login", data={"handle": user.handle, "password": reader_password}
+    )
     response = await client.post("/ui/logout", follow_redirects=False)
     assert response.status_code == 303
     assert response.headers["location"] == "/ui/login"

@@ -111,23 +111,45 @@ async def _load_curation() -> int:
     return 0
 
 
-async def _seed(email: str, name: str) -> int:
-    """Create a reader. The allowlist is small by design (SPEC §4)."""
+async def _seed(email: str, name: str, handle: str = "", is_admin: bool = False) -> int:
+    """Create or update a reader. Idempotent. The allowlist is small by design.
+
+    A reader signs in with `CROSSOVER_PASSWORD_{HANDLE}`, so the handle is not
+    cosmetic — without a matching config var the reader exists but cannot log in,
+    which this reports rather than leaving to be discovered at the login form.
+    """
     from sqlalchemy import select
 
     from db.session import SessionLocal
-    from models.user import User
+    from models.user import User, valid_handle
+
+    handle = (handle or email.split("@")[0]).lower()
+    if not valid_handle(handle):
+        print(
+            f"invalid handle {handle!r}: must start with a letter and contain only "
+            "lowercase letters, digits and underscores, so it can name an "
+            "environment variable"
+        )
+        return 1
 
     async with SessionLocal() as session:
         user = await session.scalar(select(User).where(User.email == email))
         if user is None:
-            user = User(email=email, display_name=name or email.split("@")[0])
+            user = User(email=email)
             session.add(user)
-            await session.commit()
-            await session.refresh(user)
-            print(f"created reader {user.email} ({user.id})")
-        else:
-            print(f"reader already exists: {user.email} ({user.id})")
+        user.handle = handle
+        user.display_name = name or user.display_name or handle.title()
+        user.is_admin = is_admin or user.is_admin
+        await session.commit()
+        await session.refresh(user)
+
+    role = "admin" if user.is_admin else "reader"
+    print(f"{role}: {user.display_name} <{user.email}> handle={user.handle}")
+    if get_settings().reader_password(user.handle) is None:
+        print(
+            f"  ! CROSSOVER_PASSWORD_{user.handle.upper()} is not set — "
+            "this reader cannot sign in until it is."
+        )
     return 0
 
 
@@ -161,8 +183,9 @@ async def _bootstrap() -> int:
         )
 
     email = os.environ.get("CROSSOVER_OWNER_EMAIL", "").strip()
+    handle = os.environ.get("CROSSOVER_OWNER_HANDLE", "").strip().lower()
     if email:
-        await _seed(email, "")
+        await _seed(email, "", handle=handle, is_admin=True)
     else:
         problems.append(
             "CROSSOVER_OWNER_EMAIL is not set, so no reader exists and nobody can "
@@ -235,9 +258,15 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("load-curation", help="load curation YAML into the database")
     sub.add_parser("bootstrap", help="first-run setup for a fresh deploy (idempotent)")
 
-    p_seed = sub.add_parser("seed", help="create a reader")
+    p_seed = sub.add_parser("seed", help="create or update a reader")
     p_seed.add_argument("email")
     p_seed.add_argument("--name", default="")
+    p_seed.add_argument(
+        "--handle", default="", help="login handle; defaults to the email local part"
+    )
+    p_seed.add_argument(
+        "--admin", action="store_true", help="grant the curation views and OAuth consent"
+    )
 
     p_conn = sub.add_parser("register-connector", help="register an OAuth client")
     p_conn.add_argument("name")
@@ -257,7 +286,7 @@ def main(argv: list[str] | None = None) -> int:
         case "bootstrap":
             return asyncio.run(_bootstrap())
         case "seed":
-            return asyncio.run(_seed(args.email, args.name))
+            return asyncio.run(_seed(args.email, args.name, args.handle, args.admin))
         case "register-connector":
             return asyncio.run(
                 _register_connector(args.name, args.email, args.redirect_uri)

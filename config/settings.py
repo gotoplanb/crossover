@@ -1,7 +1,16 @@
+import os
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from models.user import valid_handle
+
+#: The repo root, so the .env fallback below resolves the same regardless of
+#: which directory a command was run from.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+ENV_FILE = REPO_ROOT / ".env"
 
 #: Values that must never guard a real deployment. This repo is public, so a
 #: defaulted or example admin key is a *published* credential — anyone reading
@@ -18,7 +27,15 @@ MIN_ADMIN_KEY_LENGTH = 16
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    # Absolute path, not the bare ".env" pydantic defaults to. That form is
+    # resolved against the *current working directory*, so `python -m
+    # scripts.cli ...` from anywhere but the repo root silently failed to find
+    # the file and then refused to build at all, because CROSSOVER_ADMIN_KEY has
+    # no default. Invisible on Heroku, where config vars are real environment
+    # variables, and confusing everywhere else.
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE, env_file_encoding="utf-8", extra="ignore"
+    )
 
     # Heroku hands us a postgres:// URL; SQLAlchemy's asyncpg driver needs
     # postgresql+asyncpg://. Normalized in `database_url` below rather than
@@ -78,6 +95,44 @@ class Settings(BaseSettings):
     @property
     def has_marvel_credentials(self) -> bool:
         return bool(self.marvel_public_key and self.marvel_private_key)
+
+    @staticmethod
+    def _env_file_values() -> dict[str, str]:
+        """Parse the .env file the same way pydantic-settings does.
+
+        Needed because reader passwords are looked up by *dynamic* key —
+        `CROSSOVER_PASSWORD_{HANDLE}` — so they cannot be declared as fields and
+        pydantic never loads them. Without this, a password in .env would work
+        in production (where config vars are real environment variables) and
+        silently fail locally, which is the worst possible split.
+        """
+        if not ENV_FILE.exists():
+            return {}
+        values: dict[str, str] = {}
+        for line in ENV_FILE.read_text().splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, _, value = line.partition("=")
+                values[key.strip()] = value.strip()
+        return values
+
+    def reader_password(self, handle: str) -> str | None:
+        """The password for one reader, from `CROSSOVER_PASSWORD_{HANDLE}`.
+
+        Read from the environment at call time rather than declared as fields,
+        because the set of readers is data — adding one should be a config var
+        and a seed, not a code change.
+
+        Stored as the plaintext the operator chose. For a two-person deployment
+        that is the same exposure as `CROSSOVER_ADMIN_KEY` already carries: both
+        are visible to anyone who can read the config, and neither is a hash. If
+        this ever grows past people who share a household, hash them.
+        """
+        if not valid_handle(handle):
+            return None
+        key = f"CROSSOVER_PASSWORD_{handle.upper()}"
+        # Real environment first, so a config var always beats a stale .env.
+        return os.environ.get(key) or self._env_file_values().get(key) or None
 
     @property
     def admin_key_is_weak(self) -> bool:

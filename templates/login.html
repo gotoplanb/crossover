@@ -4,7 +4,7 @@
 <div class="max-w-sm mx-auto">
   <h1 class="text-2xl font-semibold tracking-tight">Crossover</h1>
   <p class="text-sm text-zinc-400 mt-2">
-    Two people share this deployment, so pick who you are — the rack is per-person.
+    Pick who you are and use your own password — the rack is per-person.
   </p>
   {% if error %}
   <p class="mt-4 text-sm text-red-400">{{ error }}</p>
@@ -13,15 +13,15 @@
     <input type="hidden" name="next" value="{{ next }}">
     <label class="block">
       <span class="text-sm text-zinc-300">Reader</span>
-      <select name="email" class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm">
+      <select name="handle" class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm">
         {% for user in users %}
-        <option value="{{ user.email }}">{{ user.display_name or user.email }}</option>
+        <option value="{{ user.handle }}">{{ user.display_name or user.handle }}</option>
         {% endfor %}
       </select>
     </label>
     <label class="block">
-      <span class="text-sm text-zinc-300">Admin key</span>
-      <input type="password" name="admin_key" autocomplete="current-password"
+      <span class="text-sm text-zinc-300">Password</span>
+      <input type="password" name="password" autocomplete="current-password"
              class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm">
     </label>
     <button class="w-full bg-zinc-100 text-zinc-900 rounded px-3 py-2 text-sm font-medium">
@@ -30,7 +30,9 @@
   </form>
   {% if not users %}
   <p class="mt-6 text-sm text-amber-400">
-    No readers exist yet. Run <code class="text-zinc-300">make seed email=you@example.com</code>.
+    No readers exist yet. Run
+    <code class="text-zinc-300">make seed handle=you email=you@example.com</code>,
+    then set <code class="text-zinc-300">CROSSOVER_PASSWORD_YOU</code>.
   </p>
   {% endif %}
 </div>

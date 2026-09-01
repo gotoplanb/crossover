@@ -172,7 +172,15 @@ async def session(db_conn: AsyncConnection) -> AsyncIterator[AsyncSession]:
 async def user(session: AsyncSession):
     from models.user import User
 
-    row = User(email=f"reader-{uuid4().hex[:8]}@example.com", display_name="Reader")
+    # A unique handle per fixture: it is a unique column, and it names the
+    # reader's password variable, so two readers cannot share one.
+    suffix = uuid4().hex[:8]
+    row = User(
+        email=f"reader-{suffix}@example.com",
+        handle=f"reader{suffix}",
+        display_name="Reader",
+        is_admin=True,
+    )
     session.add(row)
     await session.commit()
     await session.refresh(row)
@@ -183,7 +191,12 @@ async def user(session: AsyncSession):
 async def other_user(session: AsyncSession):
     from models.user import User
 
-    row = User(email=f"other-{uuid4().hex[:8]}@example.com", display_name="Other")
+    suffix = uuid4().hex[:8]
+    row = User(
+        email=f"other-{suffix}@example.com",
+        handle=f"other{suffix}",
+        display_name="Other",
+    )
     session.add(row)
     await session.commit()
     await session.refresh(row)

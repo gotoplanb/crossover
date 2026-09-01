@@ -1,9 +1,15 @@
 {
   "name": "Crossover",
-  "description": "Marvel event tie-in guide as an MCP service — answers \"we just finished this issue, what's next and which tie-ins expand on it?\" from inside a conversation.",
+  "description": "Marvel event tie-in guide as an MCP service \u2014 answers \"we just finished this issue, what's next and which tie-ins expand on it?\" from inside a conversation.",
   "repository": "https://github.com/gotoplanb/crossover",
   "logo": "https://i.annihil.us/u/prod/marvel/i/mg/9/c0/601afd588b59d/portrait_incredible.jpg",
-  "keywords": ["mcp", "marvel", "comics", "fastapi", "claude"],
+  "keywords": [
+    "mcp",
+    "marvel",
+    "comics",
+    "fastapi",
+    "claude"
+  ],
   "website": "https://github.com/gotoplanb/crossover",
   "success_url": "/ui/login",
   "stack": "heroku-24",
@@ -19,20 +25,29 @@
       "generator": "secret"
     },
     "CROSSOVER_PUBLIC_URL": {
-      "description": "The https URL this app will be reachable at, e.g. https://your-app-name.herokuapp.com — use the app name you chose above. This is the OAuth issuer and is checked by the MCP transport, so a Claude connector cannot attach if it is wrong. It can be corrected after deploy.",
+      "description": "The https URL this app will be reachable at, e.g. https://your-app-name.herokuapp.com \u2014 use the app name you chose above. This is the OAuth issuer and is checked by the MCP transport, so a Claude connector cannot attach if it is wrong. It can be corrected after deploy.",
       "value": "https://CHANGE-ME.herokuapp.com",
       "required": true
     },
     "CROSSOVER_OWNER_EMAIL": {
-      "description": "Creates the first reader, so you can sign in immediately. The allowlist is deliberately small — reading lists are per-person.",
+      "description": "Creates the first reader, so you can sign in immediately. The allowlist is deliberately small \u2014 reading lists are per-person.",
       "required": true
+    },
+    "CROSSOVER_OWNER_HANDLE": {
+      "description": "Short lowercase login name for the first reader, e.g. \"dave\". It also names that reader's password variable, CROSSOVER_PASSWORD_<HANDLE>. Letters, digits and underscores only.",
+      "value": "owner",
+      "required": true
+    },
+    "CROSSOVER_PASSWORD_OWNER": {
+      "description": "Password for the first reader, if you keep the default handle \"owner\". Generated per-deploy; read it back from Settings -> Config Vars, or change it to something memorable. Each additional reader needs their own CROSSOVER_PASSWORD_<HANDLE>.",
+      "generator": "secret"
     },
     "UI_COOKIE_SECURE": {
       "description": "Adds the Secure flag to the session cookie. Leave as true; Heroku serves https.",
       "value": "true"
     },
     "OTEL_ENABLED": {
-      "description": "OpenTelemetry export. Off by default — the collector it targets is a local Grafana Alloy, which a dyno cannot reach. Set true only if you have a reachable OTLP endpoint.",
+      "description": "OpenTelemetry export. Off by default \u2014 the collector it targets is a local Grafana Alloy, which a dyno cannot reach. Set true only if you have a reachable OTLP endpoint.",
       "value": "false"
     }
   },
@@ -48,7 +63,9 @@
         "CROSSOVER_ADMIN_KEY": "ci-admin-key-0123456789",
         "OTEL_ENABLED": "false"
       },
-      "addons": ["heroku-postgresql:essential-0"]
+      "addons": [
+        "heroku-postgresql:essential-0"
+      ]
     }
   }
 }

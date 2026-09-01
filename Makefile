@@ -1,5 +1,6 @@
 .PHONY: help install up down migrate revision run seed load test lint format \
         check-api-key sync-event list-events psql connector install-hooks snapshot \
+        reader-password \
         admin-key secrets sonar-scan sonar-gate coverage
 
 help:
@@ -7,7 +8,8 @@ help:
 	@echo "  make install       — create the venv and sync deps"
 	@echo "  make up            — start the local Postgres"
 	@echo "  make migrate       — alembic upgrade head"
-	@echo "  make seed email=you@example.com  — create a reader"
+	@echo "  make seed email=you@example.com handle=you [admin=1]  — create a reader"
+	@echo "  make reader-password — generate a password for CROSSOVER_PASSWORD_<HANDLE>"
 	@echo "  make run           — serve on :8020 with reload (override: port=NNNN)"
 	@echo ""
 	@echo "Catalog data (Marvel's API is discontinued — see docs/gates.md):"
@@ -57,8 +59,14 @@ run:
 	.venv/bin/uvicorn main:app --reload --host 0.0.0.0 --port $(port)
 
 seed:
-	@if [ -z "$(email)" ]; then echo "Usage: make seed email=you@example.com [name=Dave]"; exit 1; fi
-	.venv/bin/python -m scripts.cli seed "$(email)" --name "$(name)"
+	@if [ -z "$(email)" ]; then \
+		echo 'Usage: make seed email=you@example.com [handle=you] [name=You] [admin=1]'; exit 1; fi
+	.venv/bin/python -m scripts.cli seed "$(email)" --name "$(name)" \
+		$(if $(handle),--handle "$(handle)") $(if $(admin),--admin)
+
+# Generate a reader password to paste into .env or `heroku config:set`.
+reader-password:
+	@.venv/bin/python -c "import secrets; print(secrets.token_urlsafe(18))"
 
 load:
 	.venv/bin/python -m scripts.cli load-curation

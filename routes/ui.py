@@ -22,7 +22,7 @@ from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth import ADMIN_COOKIE, admin_cookie_valid
+from auth import ADMIN_COOKIE, admin_cookie_valid, verify_reader_password
 from config.settings import get_settings
 from db.session import get_session
 from models.bookmark import Bookmark
@@ -80,23 +80,38 @@ async def login_form(
 async def login_submit(
     request: Request,
     session: Annotated[AsyncSession, Depends(get_session)],
-    admin_key: Annotated[str, Form()],
-    email: Annotated[str, Form()],
+    # Both default to empty so a blank or omitted field is rejected by the
+    # check below with the same 401 as a wrong password, rather than by
+    # FastAPI's validation with a 422 — which would tell an attacker that the
+    # submission shape, not the credential, was the problem.
+    handle: Annotated[str, Form()] = "",
+    password: Annotated[str, Form()] = "",
     next: Annotated[str, Form()] = RACK_URL,
 ) -> HTMLResponse | RedirectResponse:
-    user = await session.scalar(select(User).where(User.email == email))
-    if not admin_cookie_valid(admin_key) or user is None or not user.is_active:
+    user = await session.scalar(select(User).where(User.handle == handle))
+    # One message for every failure — a wrong password, an unknown handle and a
+    # deactivated reader are indistinguishable, so the form cannot be used to
+    # enumerate who exists.
+    if user is None or not user.is_active or not verify_reader_password(handle, password):
         users = (await session.scalars(select(User).where(User.is_active.is_(True)))).all()
         return templates.TemplateResponse(
             request,
             "login.html",
-            {"next": next, "users": users, "error": "Wrong key, or no such reader."},
+            {"next": next, "users": users, "error": "Wrong password, or no such reader."},
             status_code=status.HTTP_401_UNAUTHORIZED,
         )
+
     response = RedirectResponse(next or RACK_URL, status_code=status.HTTP_303_SEE_OTHER)
     secure = get_settings().ui_cookie_secure
-    response.set_cookie(ADMIN_COOKIE, admin_key, httponly=True, secure=secure, samesite="lax")
     response.set_cookie(USER_COOKIE, str(user.id), httponly=True, secure=secure, samesite="lax")
+    # Admins get the curation cookie on the same sign-in, so they never type a
+    # second credential. Everyone else simply never receives it, which is what
+    # keeps one reader out of the other's curation surface.
+    if user.is_admin:
+        response.set_cookie(
+            ADMIN_COOKIE, get_settings().admin_key, httponly=True, secure=secure,
+            samesite="lax",
+        )
     return response
 
 
