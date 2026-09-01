@@ -58,15 +58,17 @@ RULES: list[tuple[str, re.Pattern[str], str]] = [
         "a Marvel API key literal — keep it in .env",
     ),
     (
-        "admin-key-assignment",
-        re.compile(r"CROSSOVER_ADMIN_KEY\s*[:=]\s*[\"']?([^\s\"'#]{8,})"),
-        "an admin key literal — keep it in .env",
+        "reader-password-assignment",
+        re.compile(r"CROSSOVER_PASSWORD_[A-Z0-9_]+\s*[:=]\s*[\"']?([^\s\"'#]{4,})"),
+        "a reader's password literal — keep it in .env or a config var",
     ),
     (
         "oauth-secret",
         # The prefixes this project mints: xos_ client secrets, xo_at_/xo_rt_ tokens.
-        re.compile(r"\b(?:xos_|xo_at_|xo_rt_)[A-Za-z0-9_-]{20,}"),
-        "a Crossover OAuth secret or token",
+        # xo_sess_ is a web session cookie; the rest are OAuth. All are
+        # replayable verbatim, which is what makes them worth matching.
+        re.compile(r"\b(?:xos_|xo_at_|xo_rt_|xo_sess_)[A-Za-z0-9_-]{20,}"),
+        "a Crossover session, OAuth secret or token",
     ),
     (
         "sonar-token",

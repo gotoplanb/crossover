@@ -1,7 +1,7 @@
 .PHONY: help install up down migrate revision run seed load test lint format \
         check-api-key sync-event list-events psql connector install-hooks snapshot \
-        reader-password \
-        admin-key secrets sonar-scan sonar-gate coverage
+        reader-password revoke-sessions \
+        secrets sonar-scan sonar-gate coverage
 
 help:
 	@echo "Getting started:"
@@ -10,6 +10,7 @@ help:
 	@echo "  make migrate       — alembic upgrade head"
 	@echo "  make seed email=you@example.com handle=you [admin=1]  — create a reader"
 	@echo "  make reader-password — generate a password for CROSSOVER_PASSWORD_<HANDLE>"
+	@echo "  make revoke-sessions handle=dave — sign a reader out everywhere"
 	@echo "  make run           — serve on :8020 with reload (override: port=NNNN)"
 	@echo ""
 	@echo "Catalog data (Marvel's API is discontinued — see docs/gates.md):"
@@ -28,7 +29,6 @@ help:
 	@echo "  make lint / format — ruff"
 	@echo "  make secrets       — scan the tree for committed credentials"
 	@echo "  make sonar-scan    — scan + quality gate against local Watchtower"
-	@echo "  make admin-key     — generate a CROSSOVER_ADMIN_KEY"
 	@echo "  make connector name=... email=... redirect=...  — register an OAuth client"
 
 install:
@@ -63,6 +63,11 @@ seed:
 		echo 'Usage: make seed email=you@example.com [handle=you] [name=You] [admin=1]'; exit 1; fi
 	.venv/bin/python -m scripts.cli seed "$(email)" --name "$(name)" \
 		$(if $(handle),--handle "$(handle)") $(if $(admin),--admin)
+
+# Sign a reader out everywhere — the remedy the sessions table exists for.
+revoke-sessions:
+	@if [ -z "$(handle)" ]; then echo "Usage: make revoke-sessions handle=dave"; exit 1; fi
+	.venv/bin/python -m scripts.cli revoke-sessions "$(handle)"
 
 # Generate a reader password to paste into .env or `heroku config:set`.
 reader-password:
@@ -141,8 +146,3 @@ sonar-scan: coverage
 
 sonar-gate:
 	.venv/bin/python scripts/sonar_gate.py
-
-# The admin key has no default on purpose — a default in a public repo is a
-# published credential. This generates one to paste into .env.
-admin-key:
-	@.venv/bin/python -c "import secrets; print(secrets.token_urlsafe(32))"

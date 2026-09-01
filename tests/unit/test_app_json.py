@@ -94,12 +94,15 @@ def test_every_setting_without_a_default_is_offered() -> None:
     )
 
 
-def test_the_admin_key_is_generated_not_prompted_or_defaulted() -> None:
-    """It must differ per install, and must never appear as a literal in a file
-    anyone can read — this repo is public."""
-    entry = APP_JSON["env"]["CROSSOVER_ADMIN_KEY"]
-    assert entry.get("generator") == "secret"
-    assert "value" not in entry, "a literal admin key in a public template is a published key"
+def test_there_is_no_master_admin_key() -> None:
+    """Admin is a per-reader flag, so each admin has their own credential.
+
+    A shared master key would undo that: anyone holding it would be an admin
+    regardless of which reader they signed in as, and revoking a session would
+    not revoke curation access.
+    """
+    assert "CROSSOVER_ADMIN_KEY" not in APP_JSON["env"]
+    assert "CROSSOVER_ADMIN_KEY" not in json.dumps(APP_JSON)
 
 
 def test_no_secret_is_hardcoded_in_the_template() -> None:

@@ -22,7 +22,14 @@ from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth import ADMIN_COOKIE, admin_cookie_valid, verify_reader_password
+from auth import (
+    SESSION_COOKIE,
+    SESSION_TTL,
+    create_session,
+    resolve_session,
+    revoke_session,
+    verify_reader_password,
+)
 from config.settings import get_settings
 from db.session import get_session
 from models.bookmark import Bookmark
@@ -34,8 +41,6 @@ from service import shelf as shelf_service
 from service.sequencing import build_clusters
 from templates_env import templates
 
-USER_COOKIE = "crossover_user"
-
 RACK_URL = "/ui/rack"
 _UNKNOWN_EVENT = "Unknown event"
 
@@ -46,19 +51,24 @@ def _login_redirect(next_url: str = RACK_URL) -> RedirectResponse:
     return RedirectResponse(f"/ui/login?next={next_url}", status_code=status.HTTP_303_SEE_OTHER)
 
 
-async def _current_user(session: AsyncSession, user_cookie: str | None) -> User | None:
-    """The signed-in reader.
+async def _current_user(session: AsyncSession, token: str | None) -> User | None:
+    """The signed-in reader, resolved from a revocable session token.
 
     Same identity as the MCP principal (SPEC §7), so a bookmark made by voice
     mid-chapter shows up here with no sync step.
     """
-    if not user_cookie:
-        return None
-    try:
-        user = await session.get(User, UUID(user_cookie))
-    except ValueError:
-        return None
-    return user if user and user.is_active else None
+    return await resolve_session(session, token)
+
+
+async def _current_admin(session: AsyncSession, token: str | None) -> User | None:
+    """The signed-in reader, if they are an admin.
+
+    Admin is a property of the reader rather than a second cookie, so there is
+    one credential to steal instead of two, and revoking a session revokes
+    curation access with it.
+    """
+    user = await _current_user(session, token)
+    return user if user is not None and user.is_admin else None
 
 
 # --- session ---
@@ -101,25 +111,36 @@ async def login_submit(
             status_code=status.HTTP_401_UNAUTHORIZED,
         )
 
+    # A fresh session per sign-in, so signing in again anywhere does not extend
+    # the life of a cookie captured earlier.
+    token = await create_session(
+        session, user, user_agent=request.headers.get("user-agent", "")
+    )
     response = RedirectResponse(next or RACK_URL, status_code=status.HTTP_303_SEE_OTHER)
-    secure = get_settings().ui_cookie_secure
-    response.set_cookie(USER_COOKIE, str(user.id), httponly=True, secure=secure, samesite="lax")
-    # Admins get the curation cookie on the same sign-in, so they never type a
-    # second credential. Everyone else simply never receives it, which is what
-    # keeps one reader out of the other's curation surface.
-    if user.is_admin:
-        response.set_cookie(
-            ADMIN_COOKIE, get_settings().admin_key, httponly=True, secure=secure,
-            samesite="lax",
-        )
+    response.set_cookie(
+        SESSION_COOKIE,
+        token,
+        httponly=True,
+        secure=get_settings().ui_cookie_secure,
+        samesite="lax",
+        max_age=int(SESSION_TTL.total_seconds()),
+    )
     return response
 
 
 @router.post("/logout", response_model=None)
-async def logout() -> RedirectResponse:
+async def logout(
+    session: Annotated[AsyncSession, Depends(get_session)],
+    crossover_session: Annotated[str | None, Cookie()] = None,
+) -> RedirectResponse:
+    """Sign out, and *revoke* the session rather than only dropping the cookie.
+
+    Clearing the cookie alone would leave a token that still authenticates if it
+    was captured — which is precisely the weakness this replaced.
+    """
+    await revoke_session(session, crossover_session)
     response = RedirectResponse("/ui/login", status_code=status.HTTP_303_SEE_OTHER)
-    response.delete_cookie(ADMIN_COOKIE)
-    response.delete_cookie(USER_COOKIE)
+    response.delete_cookie(SESSION_COOKIE)
     return response
 
 
@@ -130,9 +151,9 @@ async def logout() -> RedirectResponse:
 async def rack(
     request: Request,
     session: Annotated[AsyncSession, Depends(get_session)],
-    crossover_user: Annotated[str | None, Cookie()] = None,
+    crossover_session: Annotated[str | None, Cookie()] = None,
 ) -> HTMLResponse | RedirectResponse:
-    user = await _current_user(session, crossover_user)
+    user = await _current_user(session, crossover_session)
     if user is None:
         return _login_redirect()
     items = await bookmark_service.seq_items(session, user.id)
@@ -155,9 +176,9 @@ async def toggle_read(
     request: Request,
     bookmark_id: UUID,
     session: Annotated[AsyncSession, Depends(get_session)],
-    crossover_user: Annotated[str | None, Cookie()] = None,
+    crossover_session: Annotated[str | None, Cookie()] = None,
 ) -> HTMLResponse | RedirectResponse:
-    user = await _current_user(session, crossover_user)
+    user = await _current_user(session, crossover_session)
     if user is None:
         return _login_redirect()
     existing = await session.get(Bookmark, bookmark_id)
@@ -177,14 +198,14 @@ async def confirm_pending(
     session: Annotated[AsyncSession, Depends(get_session)],
     candidate_id: Annotated[str, Form()],
     chosen_key: Annotated[str, Form()],
-    crossover_user: Annotated[str | None, Cookie()] = None,
+    crossover_session: Annotated[str | None, Cookie()] = None,
 ) -> RedirectResponse:
     """Confirm a shelf candidate nobody answered about in conversation.
 
     The fallback path (SPEC §6): confirmation is supposed to happen out loud in
     the shop; this is for when it didn't.
     """
-    user = await _current_user(session, crossover_user)
+    user = await _current_user(session, crossover_session)
     if user is None:
         return _login_redirect()
     # A stale or already-confirmed candidate is not an error worth a page for:
@@ -231,9 +252,9 @@ async def curate(
     request: Request,
     slug: str,
     session: Annotated[AsyncSession, Depends(get_session)],
-    crossover_admin: Annotated[str | None, Cookie()] = None,
+    crossover_session: Annotated[str | None, Cookie()] = None,
 ) -> HTMLResponse | RedirectResponse:
-    if not admin_cookie_valid(crossover_admin):
+    if await _current_admin(session, crossover_session) is None:
         return _login_redirect(f"/ui/curate/{slug}")
     try:
         event, entries = await guide_service.event_entries(session, slug)
@@ -265,14 +286,14 @@ async def curate_move(
     session: Annotated[AsyncSession, Depends(get_session)],
     issue_key: Annotated[str, Form()],
     direction: Annotated[str, Form()],
-    crossover_admin: Annotated[str | None, Cookie()] = None,
+    crossover_session: Annotated[str | None, Cookie()] = None,
 ) -> RedirectResponse:
     """Swap one issue with its neighbour.
 
     A swap, not a re-index, so positions stay dense and the contiguity gate
     (SPEC §8) can never be broken by fiddling in the UI.
     """
-    if not admin_cookie_valid(crossover_admin):
+    if await _current_admin(session, crossover_session) is None:
         return _login_redirect(f"/ui/curate/{slug}")
     event = await session.scalar(select(Event).where(Event.slug == slug))
     issue = await session.scalar(select(Issue).where(Issue.key == issue_key))
@@ -309,10 +330,10 @@ async def curate_add_reference(
     relation_type: Annotated[str, Form()],
     note: Annotated[str, Form()] = "",
     omnibus_page: Annotated[str, Form()] = "",
-    crossover_admin: Annotated[str | None, Cookie()] = None,
+    crossover_session: Annotated[str | None, Cookie()] = None,
 ) -> RedirectResponse:
     """Add a reference edge by hand — the omnibus-footnote layer."""
-    if not admin_cookie_valid(crossover_admin):
+    if await _current_admin(session, crossover_session) is None:
         return _login_redirect(f"/ui/curate/{slug}")
     source = await session.scalar(select(Issue).where(Issue.key == from_key))
     target = await session.scalar(select(Issue).where(Issue.key == to_key))
@@ -334,7 +355,7 @@ async def curate_add_reference(
 async def curate_export(
     slug: str,
     session: Annotated[AsyncSession, Depends(get_session)],
-    crossover_admin: Annotated[str | None, Cookie()] = None,
+    crossover_session: Annotated[str | None, Cookie()] = None,
 ) -> PlainTextResponse | RedirectResponse:
     """Export the current DB state back to curation YAML.
 
@@ -343,7 +364,7 @@ async def curate_export(
     git-tracked YAML is the source of truth. Export, commit, deploy. Anything
     not exported is lost, and that is the honest cost of ephemeral storage.
     """
-    if not admin_cookie_valid(crossover_admin):
+    if await _current_admin(session, crossover_session) is None:
         return _login_redirect(f"/ui/curate/{slug}")
     from curation.export import export_event_yaml
 

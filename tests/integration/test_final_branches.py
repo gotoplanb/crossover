@@ -14,8 +14,6 @@ from dataclasses import replace
 import pytest
 from sqlalchemy import select
 
-from auth import ADMIN_COOKIE
-from config.settings import get_settings
 from curation.export import export_event_yaml
 from curation.loader import load_event
 from curation.schema import load_all_events
@@ -88,7 +86,6 @@ async def test_an_unsupported_response_type_redirects_with_an_error(
     session.add(connector)
     await session.commit()
 
-    client.cookies.set(ADMIN_COOKIE, get_settings().admin_key)
     response = await client.get(
         "/oauth/authorize",
         params={
@@ -118,9 +115,8 @@ async def test_approving_without_an_admin_session_is_refused(client) -> None:
     assert "Admin session required" in response.text
 
 
-async def test_approving_for_an_unknown_client_is_refused(client) -> None:
-    client.cookies.set(ADMIN_COOKIE, get_settings().admin_key)
-    response = await client.post(
+async def test_approving_for_an_unknown_client_is_refused(signed_in) -> None:
+    response = await signed_in.post(
         "/oauth/authorize",
         data={
             "client_id": "xoc_nope",
@@ -146,7 +142,7 @@ async def test_a_malformed_basic_auth_header_is_rejected_not_crashed(client) -> 
     assert response.json()["error"] == "invalid_client"
 
 
-async def test_the_refresh_grant_over_http(client, session, user) -> None:
+async def test_the_refresh_grant_over_http(signed_in, session, user) -> None:
     """The branch the happy-path test skips — `grant_type=refresh_token`."""
     import hashlib
     import re
@@ -173,8 +169,7 @@ async def test_the_refresh_grant_over_http(client, session, user) -> None:
         .rstrip(b"=")
         .decode()
     )
-    client.cookies.set(ADMIN_COOKIE, get_settings().admin_key)
-    approved = await client.post(
+    approved = await signed_in.post(
         "/oauth/authorize",
         data={
             "client_id": connector.client_id,
@@ -186,7 +181,7 @@ async def test_the_refresh_grant_over_http(client, session, user) -> None:
     )
     code = re.search(r"code=([^&]+)", approved.headers["location"]).group(1)
     first = (
-        await client.post(
+        await signed_in.post(
             "/oauth/token",
             data={
                 "grant_type": "authorization_code",
@@ -199,7 +194,7 @@ async def test_the_refresh_grant_over_http(client, session, user) -> None:
         )
     ).json()
 
-    refreshed = await client.post(
+    refreshed = await signed_in.post(
         "/oauth/token",
         data={
             "grant_type": "refresh_token",

@@ -7,22 +7,10 @@ card. Those are the tests worth having.
 
 from __future__ import annotations
 
-import pytest
-
-from auth import ADMIN_COOKIE
-from config.settings import get_settings
 from curation.resolve import candidates_from_guide, resolve
 from marvel.sync import apply_record, promote_availability
-from routes.ui import USER_COOKIE
 from service import bookmarks as bookmark_service
 from service import guide as guide_service
-
-
-@pytest.fixture
-def signed_in(client, user):
-    client.cookies.set(USER_COOKIE, str(user.id))
-    client.cookies.set(ADMIN_COOKIE, get_settings().admin_key)
-    return client
 
 
 async def _save(session, user, ref: str):

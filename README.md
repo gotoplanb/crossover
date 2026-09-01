@@ -31,8 +31,8 @@ mid-chapter shows up on the rack with no sync step.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/gotoplanb/crossover)
 
-Provisions a dyno and Postgres, generates its own admin key, and seeds the
-reader you name. **What you get immediately:** the King in Black reading guide,
+Provisions a dyno and Postgres, generates a password for the reader you name,
+and seeds them as an admin. **What you get immediately:** the King in Black reading guide,
 40 issues with covers and working Marvel Unlimited links, and the MCP endpoint
 ready for a Claude connector.
 
@@ -53,16 +53,25 @@ Two things worth knowing before you press it:
 make install                       # venv + deps
 make up                            # local Postgres on :5433 (loopback, trust auth)
 cp .env.example .env
-make admin-key                     # generate CROSSOVER_ADMIN_KEY, paste into .env
 make migrate
-make seed email=you@example.com    # create a reader
+make seed email=you@example.com handle=you admin=1   # create a reader
+make reader-password               # generate CROSSOVER_PASSWORD_YOU, paste into .env
 make install-hooks                 # pre-commit / pre-push quality gates
 make run                           # http://localhost:8020
 ```
 
-**`CROSSOVER_ADMIN_KEY` has no default and the app will not start without it.**
-That is deliberate: this repo is public, so a default would be a published
-credential for the curation views and the OAuth consent screen.
+## Who can sign in
+
+Each reader has their own password, supplied as `CROSSOVER_PASSWORD_{HANDLE}`.
+That is what separates one person's rack from another's — a shared key could not.
+Admins additionally reach the curation views and can approve an OAuth grant;
+`is_admin` is a flag on the reader, so there is **no master admin key** to leak
+or share.
+
+Signing in mints a **revocable, expiring session token**. The cookie carries a
+random token, never the reader's database id — see `models/session.py` for why
+that distinction matters, and `make revoke-sessions handle=dave` for the remedy
+it buys.
 
 `make test` runs the suite: 448 tests, 100% statement coverage. **The unit tests
 need no database** — the curation gates, link rules, record parsing and
@@ -81,7 +90,7 @@ make connector name="Claude iOS" email=you@example.com \
 Prints a `client_id` / `client_secret` pair (the secret once — it's stored
 hashed). Point a custom connector at `https://<host>/mcp`; discovery, authorize,
 and token endpoints are advertised at `/.well-known/oauth-authorization-server`.
-Approving the grant means being signed in with the admin key.
+Approving the grant means being signed in as an admin reader.
 
 ## Where the catalog data comes from
 
@@ -165,8 +174,8 @@ Run the pieces individually with `make secrets`, `make coverage`, `make lint`,
 ### Secrets
 
 `scripts/check_secrets.py` is a small, dependency-free scanner tuned to the
-credentials this project actually handles — Marvel keys, the admin key, OAuth
-tokens, connection strings with embedded passwords, AWS keys, private key
+credentials this project actually handles — Marvel keys, reader passwords,
+session and OAuth tokens, connection strings with embedded passwords, AWS keys, private key
 blocks. It is deliberately biased toward false positives, since the cost of one
 is a comment and the cost of a miss on a public repo is rotating a credential
 and rewriting history.
@@ -193,7 +202,7 @@ fraction of a curated event roster with a confirmed Marvel Unlimited id. At 0,
 nothing is tappable.
 
 Turn it all off with `OTEL_ENABLED=false`. No span attribute ever carries a
-token, an admin key, or the Marvel private key.
+token, a reader password, or the Marvel private key.
 
 ## Layout
 
@@ -250,8 +259,8 @@ heroku run python -m scripts.cli bootstrap   # config sanity check, idempotent
 
 Config vars: `DATABASE_URL` is injected by the addon and normalized for asyncpg
 in `config/settings.py` (Heroku hands out `postgres://`, which the driver cannot
-use). Set `CROSSOVER_ADMIN_KEY` (`make admin-key`), `CROSSOVER_PUBLIC_URL` (the
-https origin — it is the OAuth issuer), and `UI_COOKIE_SECURE=true`. Leave
+use). Set `CROSSOVER_PUBLIC_URL` (the https origin — it is the OAuth issuer),
+one `CROSSOVER_PASSWORD_{HANDLE}` per reader, and `UI_COOKIE_SECURE=true`. Leave
 `OTEL_ENABLED=false` unless a dyno can actually reach your collector.
 
 **The filesystem is ephemeral**, which is why curation YAML and the catalog
@@ -279,9 +288,10 @@ their terms.
 
 ## Notes for a public repo
 
-- No credential of any kind is committed. `CROSSOVER_ADMIN_KEY` has no default;
-  the local Postgres uses trust auth bound to `127.0.0.1` so there is no password
-  to commit; `.env` and every `.env.*` except the template are gitignored.
-- `/healthz` reports `admin_key_weak`, and the app logs an error on boot if the
-  configured key is an example value or shorter than 16 characters. A weak key is
-  otherwise invisible until it is exploited.
+- No credential of any kind is committed. There is no master admin key at all;
+  reader passwords live in config vars; the local Postgres uses trust auth bound
+  to `127.0.0.1` so there is no password to commit; `.env` and every `.env.*`
+  except the template are gitignored.
+- Session cookies hold a random token, stored only as a SHA-256 hash, so a
+  database dump contains nothing replayable. Sessions expire after 30 days and
+  can be revoked per-reader without deleting anything they own.

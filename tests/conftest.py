@@ -236,6 +236,34 @@ async def app(db_conn: AsyncConnection):
 
 
 @pytest_asyncio.fixture
+async def reader_password(user, monkeypatch) -> str:
+    """Give the fixture reader a password, the way a deployment would."""
+    password = "fixture-reader-password"  # pragma: allowlist secret
+    monkeypatch.setenv(f"CROSSOVER_PASSWORD_{user.handle.upper()}", password)
+    from config.settings import get_settings
+
+    get_settings.cache_clear()
+    yield password
+    get_settings.cache_clear()
+
+
+@pytest_asyncio.fixture
+async def signed_in(client, session, user) -> AsyncIterator:
+    """A client holding a real session cookie for `user` (an admin).
+
+    Mints a session through `auth.create_session` rather than poking a cookie
+    in, so tests exercise the same path a sign-in takes. Replaced ~15 call sites
+    that set the old admin-key cookie directly — which stopped being how auth
+    works when sessions landed.
+    """
+    from auth import SESSION_COOKIE, create_session
+
+    token = await create_session(session, user)
+    client.cookies.set(SESSION_COOKIE, token)
+    yield client
+
+
+@pytest_asyncio.fixture
 async def client(app) -> AsyncIterator:
     from httpx import ASGITransport, AsyncClient
 

@@ -13,8 +13,6 @@ from base64 import b64encode, urlsafe_b64encode
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from auth import ADMIN_COOKIE
-from config.settings import get_settings
 from models.oauth import OAuthClient
 from oauth_provider import hash_secret, new_client_id, new_client_secret
 
@@ -54,9 +52,13 @@ def _authorize_params(client) -> dict:
 
 
 @pytest.fixture
-def admin(client):
-    client.cookies.set(ADMIN_COOKIE, get_settings().admin_key)
-    return client
+def admin(signed_in):
+    """A client signed in as an admin.
+
+    Approving a connector is an admin act, and admin is now a property of the
+    signed-in reader rather than a separate cookie.
+    """
+    return signed_in
 
 
 async def test_authorize_bounces_to_login_without_an_admin_session(

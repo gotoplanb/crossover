@@ -46,14 +46,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
         SQLAlchemyInstrumentor().instrument(engine=engine.sync_engine)
 
-    # A weak admin key is invisible until it is exploited, and this repo is
-    # public — so say so loudly on every boot rather than only in /healthz.
-    if settings.admin_key_is_weak:
-        log.error(
-            "CROSSOVER_ADMIN_KEY is an example value or shorter than the minimum — "
-            "the curation views and OAuth consent are effectively unprotected. "
-            "Generate one with `make admin-key`."
-        )
 
     # Curation YAML is the source of truth and the filesystem is ephemeral, so
     # the load runs on every boot: "edit the YAML, deploy, done" is the whole

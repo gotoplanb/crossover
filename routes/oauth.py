@@ -15,7 +15,7 @@ from fastapi import APIRouter, Cookie, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth import admin_cookie_valid
+from auth import resolve_session
 from db.session import get_session
 from models.user import User
 from oauth_provider import (
@@ -33,6 +33,11 @@ from oauth_provider import (
 from templates_env import templates
 
 router = APIRouter(tags=["oauth"], include_in_schema=False)
+
+
+async def _is_admin(session: AsyncSession, token: str | None) -> bool:
+    user = await resolve_session(session, token)
+    return user is not None and user.is_admin
 
 
 @router.get("/.well-known/oauth-authorization-server")
@@ -77,7 +82,7 @@ async def authorize_form(
     code_challenge_method: str = "S256",
     scope: str = "",
     state: str = "",
-    crossover_admin: Annotated[str | None, Cookie()] = None,
+    crossover_session: Annotated[str | None, Cookie()] = None,
 ) -> HTMLResponse | RedirectResponse:
     client = await get_active_client(session, client_id)
     # If the client or redirect can't be trusted, never redirect — show an error.
@@ -88,7 +93,9 @@ async def authorize_form(
     if code_challenge_method != "S256" or not code_challenge:
         return _redirect_error(redirect_uri, "invalid_request", state, "PKCE S256 required")
 
-    if not admin_cookie_valid(crossover_admin):
+    # Approving a connector is an admin act, and admin is now a property of the
+    # signed-in reader rather than a separate cookie.
+    if not await _is_admin(session, crossover_session):
         next_url = f"{request.url.path}?{request.url.query}"
         return RedirectResponse(
             f"/ui/login?next={quote(next_url, safe='')}", status_code=status.HTTP_303_SEE_OTHER
@@ -126,9 +133,9 @@ async def authorize_submit(
     code_challenge_method: Annotated[str, Form()] = "S256",
     scope: Annotated[str, Form()] = "",
     state: Annotated[str, Form()] = "",
-    crossover_admin: Annotated[str | None, Cookie()] = None,
+    crossover_session: Annotated[str | None, Cookie()] = None,
 ) -> HTMLResponse | RedirectResponse:
-    if not admin_cookie_valid(crossover_admin):
+    if not await _is_admin(session, crossover_session):
         return _error_page(request, "Admin session required to approve.")
     client = await get_active_client(session, client_id)
     if client is None or not redirect_uri_allowed(client, redirect_uri):

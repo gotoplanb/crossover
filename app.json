@@ -20,10 +20,6 @@
     }
   ],
   "env": {
-    "CROSSOVER_ADMIN_KEY": {
-      "description": "Gates the curation views and the OAuth consent screen. Generated per-deploy so no two installs share one, and so nothing has to be pasted from a public README.",
-      "generator": "secret"
-    },
     "CROSSOVER_PUBLIC_URL": {
       "description": "The https URL this app will be reachable at, e.g. https://your-app-name.herokuapp.com \u2014 use the app name you chose above. This is the OAuth issuer and is checked by the MCP transport, so a Claude connector cannot attach if it is wrong. It can be corrected after deploy.",
       "value": "https://CHANGE-ME.herokuapp.com",
@@ -60,7 +56,6 @@
         "test": "pytest -q"
       },
       "env": {
-        "CROSSOVER_ADMIN_KEY": "ci-admin-key-0123456789",
         "OTEL_ENABLED": "false"
       },
       "addons": [

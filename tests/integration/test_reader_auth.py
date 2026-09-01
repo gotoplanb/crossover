@@ -10,10 +10,9 @@ from __future__ import annotations
 
 import pytest
 
-from auth import ADMIN_COOKIE, verify_reader_password
+from auth import SESSION_COOKIE, verify_reader_password
 from config.settings import get_settings
 from models.user import User, valid_handle
-from routes.ui import USER_COOKIE
 
 DAVE_PASSWORD = "dave-local-password-1"  # pragma: allowlist secret
 TABITHA_PASSWORD = "tabitha-local-password-2"  # pragma: allowlist secret
@@ -105,7 +104,10 @@ async def test_each_reader_signs_in_with_their_own_password(
         )
         assert response.status_code == 303, handle
         cookies = response.headers.get_list("set-cookie")
-        assert any(f"{USER_COOKIE}={user.id}" in c for c in cookies), handle
+        assert any(SESSION_COOKIE in c for c in cookies), handle
+        # A random token, never the reader's database id (#17).
+        assert str(user.id) not in "".join(cookies), handle
+        assert any("xo_sess_" in c for c in cookies), handle
 
 
 async def test_a_reader_cannot_sign_in_as_the_other(client, readers, passwords) -> None:
@@ -148,24 +150,18 @@ async def test_a_deactivated_reader_cannot_sign_in(
 # --- admin separation ---
 
 
-async def test_an_admin_receives_the_curation_cookie(client, readers, passwords) -> None:
-    """So an admin never has to type a second credential."""
-    response = await client.post(
-        "/ui/login", data={"handle": "dave", "password": DAVE_PASSWORD},
-        follow_redirects=False,
-    )
-    cookies = response.headers.get_list("set-cookie")
-    assert any(ADMIN_COOKIE in c for c in cookies)
-
-
-async def test_a_non_admin_does_not(client, readers, passwords) -> None:
-    """This is what keeps one reader out of the other's curation surface."""
-    response = await client.post(
-        "/ui/login", data={"handle": "tabitha", "password": TABITHA_PASSWORD},
-        follow_redirects=False,
-    )
-    cookies = response.headers.get_list("set-cookie")
-    assert not any(ADMIN_COOKIE in c for c in cookies)
+async def test_signing_in_sets_exactly_one_cookie(client, readers, passwords) -> None:
+    """Admin is a property of the reader the session resolves to, not a second
+    cookie — so there is one credential to steal instead of two, and revoking a
+    session revokes curation access with it."""
+    for handle, password in (("dave", DAVE_PASSWORD), ("tabitha", TABITHA_PASSWORD)):
+        response = await client.post(
+            "/ui/login", data={"handle": handle, "password": password},
+            follow_redirects=False,
+        )
+        cookies = [c for c in response.headers.get_list("set-cookie") if "crossover" in c]
+        assert len(cookies) == 1, handle
+        assert SESSION_COOKIE in cookies[0], handle
 
 
 async def test_a_non_admin_is_bounced_from_the_curation_views(

@@ -166,11 +166,6 @@ async def _bootstrap() -> int:
     settings = get_settings()
     problems: list[str] = []
 
-    if settings.admin_key_is_weak:
-        problems.append(
-            "CROSSOVER_ADMIN_KEY is an example value or under 16 characters — the "
-            "curation views and OAuth consent are effectively unprotected."
-        )
     if "localhost" in settings.public_base_url or "127.0.0.1" in settings.public_base_url:
         problems.append(
             f"CROSSOVER_PUBLIC_URL is {settings.public_base_url!r}, which is not "
@@ -200,6 +195,38 @@ async def _bootstrap() -> int:
         # fail the release and roll back a deploy that is otherwise fine.
     else:
         print("bootstrap complete — sign in at /ui/login")
+    return 0
+
+
+async def _revoke_sessions(handle: str) -> int:
+    """Sign a reader out everywhere.
+
+    The remedy the sessions table exists for: before it, invalidating a leaked
+    cookie meant deleting the reader, which cascaded away their bookmarks.
+    """
+    from sqlalchemy import select
+
+    from auth import revoke_all_for_user
+    from db.session import SessionLocal
+    from models.user import User
+
+    async with SessionLocal() as session:
+        user = await session.scalar(select(User).where(User.handle == handle))
+        if user is None:
+            print(f"no reader with handle {handle!r}")
+            return 1
+        count = await revoke_all_for_user(session, user.id)
+    print(f"revoked {count} session(s) for {handle} — they will need to sign in again")
+    return 0
+
+
+async def _purge_sessions(keep_days: int) -> int:
+    from auth import purge_expired_sessions
+    from db.session import SessionLocal
+
+    async with SessionLocal() as session:
+        removed = await purge_expired_sessions(session, keep_days=keep_days)
+    print(f"deleted {removed} session row(s) expired more than {keep_days} days ago")
     return 0
 
 
@@ -258,6 +285,14 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("load-curation", help="load curation YAML into the database")
     sub.add_parser("bootstrap", help="first-run setup for a fresh deploy (idempotent)")
 
+    p_revoke = sub.add_parser(
+        "revoke-sessions", help="sign a reader out on every device"
+    )
+    p_revoke.add_argument("handle")
+
+    p_purge = sub.add_parser("purge-sessions", help="delete long-expired session rows")
+    p_purge.add_argument("--keep-days", type=int, default=90)
+
     p_seed = sub.add_parser("seed", help="create or update a reader")
     p_seed.add_argument("email")
     p_seed.add_argument("--name", default="")
@@ -285,6 +320,10 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_load_curation())
         case "bootstrap":
             return asyncio.run(_bootstrap())
+        case "revoke-sessions":
+            return asyncio.run(_revoke_sessions(args.handle))
+        case "purge-sessions":
+            return asyncio.run(_purge_sessions(args.keep_days))
         case "seed":
             return asyncio.run(_seed(args.email, args.name, args.handle, args.admin))
         case "register-connector":

@@ -12,18 +12,6 @@ from models.user import valid_handle
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ENV_FILE = REPO_ROOT / ".env"
 
-#: Values that must never guard a real deployment. This repo is public, so a
-#: defaulted or example admin key is a *published* credential — anyone reading
-#: the source would hold the key to the curation views and OAuth consent.
-#: `admin_key` therefore has no default at all (missing it fails at startup);
-#: this list catches the next-worst case, where someone copies .env.example
-#: verbatim and ships it.
-WEAK_ADMIN_KEYS = frozenset(
-    {"change-me", "changeme", "dev-admin-key", "admin", "password", "secret", "test"}
-)
-
-#: Shorter than this is not worth calling a key.
-MIN_ADMIN_KEY_LENGTH = 16
 
 
 class Settings(BaseSettings):
@@ -58,12 +46,6 @@ class Settings(BaseSettings):
     # Public HTTPS origin. The OAuth issuer, and the base for the authorize /
     # token URLs that go into a Claude custom connector.
     public_base_url: str = Field(default="http://localhost:8000", alias="CROSSOVER_PUBLIC_URL")
-
-    # Admin session key for the curation views + OAuth consent approval.
-    # **No default on purpose.** A default in a public repo is a published
-    # credential; the app failing to boot is the correct outcome of forgetting
-    # to set this. Generate one with `make admin-key`.
-    admin_key: str = Field(alias="CROSSOVER_ADMIN_KEY")
 
     # Set true when served over HTTPS so the admin cookie carries Secure.
     ui_cookie_secure: bool = Field(default=False, alias="UI_COOKIE_SECURE")
@@ -134,19 +116,6 @@ class Settings(BaseSettings):
         # Real environment first, so a config var always beats a stale .env.
         return os.environ.get(key) or self._env_file_values().get(key) or None
 
-    @property
-    def admin_key_is_weak(self) -> bool:
-        """True if the admin key is an example value or too short to matter.
-
-        Not a hard failure: blocking boot would make local development
-        needlessly painful, and the key being weak is only dangerous once the
-        thing is reachable. The lifespan logs it loudly and `/healthz` reports
-        it, so it cannot be missed on a real deploy.
-        """
-        return (
-            self.admin_key.lower() in WEAK_ADMIN_KEYS
-            or len(self.admin_key) < MIN_ADMIN_KEY_LENGTH
-        )
 
 
 @lru_cache

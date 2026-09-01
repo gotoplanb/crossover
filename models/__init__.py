@@ -2,6 +2,7 @@ from models.bookmark import Bookmark, ShelfCandidate
 from models.cache import MarvelResponseCache
 from models.catalog import Event, EventIssue, Issue, IssueReference
 from models.oauth import OAuthAuthorizationCode, OAuthClient, OAuthToken
+from models.session import UserSession
 from models.types import (
     Availability,
     BookmarkOrigin,
@@ -37,5 +38,6 @@ __all__ = [
     "ShelfCandidate",
     "ShelfSource",
     "User",
+    "UserSession",
     "origin_for_shelf_source",
 ]

@@ -31,13 +31,22 @@ def _findings(text: str) -> list[str]:
             "marvel-key-assignment",
         ),
         # pragma: allowlist secret
-        ("CROSSOVER_ADMIN_KEY=s3cret-admin-value", "admin-key-assignment"),
+        (
+            # pragma: allowlist secret
+            "CROSSOVER_PASSWORD_DAVE=s3cret-reader-value",
+            "reader-password-assignment",
+        ),
         (
             'secret = "xos_AbCdEfGhIjKlMnOpQrStUvWxYz0123456789"',  # pragma: allowlist secret
             "oauth-secret",
         ),
         (
             'token = "xo_at_AbCdEfGhIjKlMnOpQrStUvWxYz0123456789"',  # pragma: allowlist secret
+            "oauth-secret",
+        ),
+        (
+            # A session cookie is replayable verbatim, so it is worth matching.
+            'cookie = "xo_sess_AbCdEfGhIjKlMnOpQrStUvWxYz0123456"',  # pragma: allowlist secret
             "oauth-secret",
         ),
         (
@@ -71,9 +80,9 @@ def test_each_credential_shape_is_caught(line: str, rule: str) -> None:
         # Empty assignments — what .env.example contains.
         "MARVEL_PUBLIC_KEY=",
         "MARVEL_PRIVATE_KEY=",
-        "CROSSOVER_ADMIN_KEY=",
+        "CROSSOVER_PASSWORD_DAVE=",
         # Obvious placeholders.
-        "CROSSOVER_ADMIN_KEY=change-me",
+        "CROSSOVER_PASSWORD_DAVE=change-me",
         'K = "your-key-here"',
         'K = "<your-token>"',
         'K = "${MARVEL_PRIVATE_KEY}"',
