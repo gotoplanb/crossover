@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Events — Crossover{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-semibold tracking-tight">Events</h1>
+<p class="text-sm text-zinc-400 mt-1 max-w-2xl">
+  Deeply curated for a small number of events, best-effort for everything else.
+  Completeness across the Marvel catalog is an explicit non-goal.
+</p>
+
+<div class="mt-8 space-y-4">
+  {% for event in events %}
+  <a href="/ui/events/{{ event.slug }}"
+     class="block border border-zinc-800 rounded-lg p-5 hover:border-zinc-600 transition">
+    <div class="flex items-baseline justify-between gap-4 flex-wrap">
+      <h2 class="text-lg font-medium">{{ event.display_name }}</h2>
+      <span class="text-xs px-2 py-0.5 rounded-full border
+                   {% if event.curation_status == 'curated' %}
+                     border-emerald-700 text-emerald-400
+                   {% else %}border-amber-700 text-amber-400{% endif %}">
+        {{ event.curation_status.replace('_', ' ') }}
+      </span>
+    </div>
+    {% if event.summary %}
+    <p class="text-sm text-zinc-400 mt-2 max-w-2xl">{{ event.summary }}</p>
+    {% endif %}
+    <p class="text-xs text-zinc-500 mt-3">
+      {{ event.issue_count }} issues · {{ event.core_count }} core ·
+      {{ event.linkable_count }} linkable on Marvel Unlimited
+      {% if event.started_on %} · {{ event.started_on }}{% if event.ended_on %} to {{ event.ended_on }}{% endif %}{% endif %}
+    </p>
+  </a>
+  {% else %}
+  <p class="text-zinc-400">No events loaded. Check the curation YAML in <code>curation/events/</code>.</p>
+  {% endfor %}
+</div>
+{% endblock %}

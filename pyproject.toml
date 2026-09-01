@@ -1,0 +1,91 @@
+[project]
+name = "crossover"
+version = "0.1.0"
+description = "Marvel event tie-in guide as an MCP service"
+requires-python = ">=3.12"
+authors = [{ name = "Dave Stanton" }]
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "sqlalchemy[asyncio]>=2.0.36",
+    "asyncpg>=0.30",
+    "alembic>=1.14",
+    "greenlet>=3.1",
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "jinja2>=3.1",
+    "python-multipart>=0.0.20",
+    "mcp>=2.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["scripts"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
+    "respx>=0.21",
+    "ruff>=0.7",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+# Alembic autogenerates these; reformatting them makes the diff against what
+# the tool actually produced unreadable.
+extend-exclude = ["alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = [
+    "fastapi.Depends", "fastapi.Query", "fastapi.Path", "fastapi.Body",
+    "fastapi.Header", "fastapi.Cookie", "fastapi.Form", "fastapi.File",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+testpaths = ["tests"]
+markers = [
+    "db: requires a live Postgres (skipped when DATABASE_URL is unreachable)",
+]
+
+[tool.coverage.report]
+# Statement coverage is at 100%; the shortfall to 100 overall is a handful of
+# partial branches (mostly loop exits that cannot be reached separately). The
+# floor is set just below the current number so a real regression fails the
+# pre-push hook while normal churn does not.
+fail_under = 98
+# `pragma: no cover` is used sparingly and always with a comment saying *why* a
+# line cannot be reached — a foreign key that makes a guard unreachable, an
+# exporter whose constructor does not fail. Grep for it to audit the claims.
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.coverage.run]
+source = ["."]
+# SQLAlchemy's asyncio layer runs statements inside greenlets. Without
+# declaring greenlet concurrency, coverage silently loses tracing after the
+# first `await session.execute(...)` in a function and reports the rest of that
+# function as unexecuted — which made every POST handler here look untested
+# while the endpoints demonstrably ran. "thread" is kept for the threadpool
+# Starlette uses for sync work.
+concurrency = ["thread", "greenlet"]
+omit = [".venv/*", "tests/*", "alembic/*", "scripts/*", "main.py", "lifespan.py"]
+branch = true
+relative_files = true

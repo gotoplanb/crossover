@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ event.display_name }} — Crossover{% endblock %}
+{% block content %}
+
+<header class="flex items-start justify-between gap-4 flex-wrap">
+  <div>
+    <h1 class="text-2xl font-semibold tracking-tight">{{ event.display_name }}</h1>
+    <p class="text-sm text-zinc-400 mt-1 max-w-2xl">{{ event.summary }}</p>
+  </div>
+  <a href="/ui/curate/{{ event.slug }}" class="text-xs text-zinc-500 hover:text-zinc-300 underline">
+    Curate
+  </a>
+</header>
+
+{% if event.curation_status != 'curated' %}
+<p class="mt-4 text-sm text-amber-300/90 border border-amber-800/60 bg-amber-950/20 rounded p-3">
+  Best-effort: this roster and its ordering are a starting point, not a verified one.
+  Issues without a confirmed Marvel Unlimited id show as “{{ NOT_ON_MU }}” — that means
+  unverified, not necessarily absent. A guessed id opens a different comic rather than
+  failing, so nothing here is guessed.
+</p>
+{% endif %}
+
+<div class="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
+  {% for entry in entries %}
+  {% set link = build_link(entry, entry.display) %}
+  <article class="flex flex-col gap-2">
+    {% if link.available %}
+    <a href="{{ link.url }}" target="_blank" rel="noopener">
+      {% with item = entry, label = entry.display %}{% include "partials/cover.html" %}{% endwith %}
+    </a>
+    {% else %}
+    {% with item = entry, label = entry.display %}{% include "partials/cover.html" %}{% endwith %}
+    {% endif %}
+
+    <div class="flex items-baseline gap-2">
+      <span class="text-xs text-zinc-600 tabular-nums">{{ entry.position }}</span>
+      <h3 class="text-sm font-medium leading-snug">{{ entry.display }}</h3>
+    </div>
+
+    <span class="text-xs px-1.5 py-0.5 rounded self-start border
+                 {% if entry.role == 'core' %}border-zinc-300 text-zinc-100
+                 {% elif entry.role == 'essential_tie_in' %}border-zinc-600 text-zinc-300
+                 {% else %}border-zinc-800 text-zinc-500{% endif %}">
+      {{ entry.role.replace('_', ' ') }}
+    </span>
+
+    {% if entry.note %}
+    <p class="text-xs text-zinc-400 leading-snug">{{ entry.note }}</p>
+    {% endif %}
+
+    <div class="mt-auto pt-1 text-xs text-zinc-500">
+      {% if entry.published_on %}<p>{{ entry.published_on }}</p>{% endif %}
+      {% if not link.available %}
+      <p>{{ NOT_ON_MU }}{% if entry.unavailable_note %} — {{ entry.unavailable_note }}{% endif %}</p>
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}
