@@ -59,8 +59,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # the load runs on every boot: "edit the YAML, deploy, done" is the whole
     # curation workflow. Idempotent, and it never touches API-owned columns.
     try:
-        from curation.loader import load_all
-        from db.session import SessionLocal
+        from curation.loader import load_all, load_lock
+        from db.session import SessionLocal, engine
 
         # One span around the whole load. Without a parent, each of the ~80
         # statements the loader runs becomes its own root trace in Tempo — the
@@ -70,8 +70,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         from marvel import snapshot as snapshots
         from observability.tracing import span
 
+        # `load_lock` serialises across processes: Heroku overlaps the old and
+        # new dyno on a deploy, so two lifespans can reach the load at once.
         with span("curation.load_all") as loading:
-            async with SessionLocal() as session:
+            async with load_lock(engine), SessionLocal() as session:
                 report = await load_all(
                     session, record_index=snapshots.combined_record_index() or None
                 )

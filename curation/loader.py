@@ -17,10 +17,12 @@ honest cost of ephemeral storage, and the export is the answer to it.
 from __future__ import annotations
 
 import logging
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from curation.schema import CuratedEvent, CuratedIssue, load_all_events
@@ -30,6 +32,38 @@ from models.catalog import Event, EventIssue, Issue, IssueReference
 from models.types import Availability
 
 log = logging.getLogger(__name__)
+
+#: Arbitrary but stable key for the Postgres advisory lock guarding the load.
+#: Any process doing a load takes it, so concurrent boots serialise instead of
+#: racing. Observed for real on the first Heroku deploy: two lifespans started
+#: ~30ms apart and collided inserting the same event row, one dying with
+#: "duplicate key value violates unique constraint" while the other succeeded.
+#: The load is idempotent but was not *concurrent*-safe, which is a different
+#: property and the one a platform that overlaps old and new dynos needs.
+CURATION_LOAD_LOCK_KEY = 0x43524F53  # "CROS"
+
+
+@asynccontextmanager
+async def load_lock(engine) -> AsyncIterator[None]:
+    """Serialise curation loads across processes.
+
+    Takes its own connection rather than using the load's session: a session-
+    scoped advisory lock lives on one connection, and the loader commits several
+    times, each of which can return the session's connection to the pool and
+    silently drop the lock.
+    """
+    async with engine.connect() as connection:
+        await connection.execute(
+            text("SELECT pg_advisory_lock(:key)"), {"key": CURATION_LOAD_LOCK_KEY}
+        )
+        await connection.commit()
+        try:
+            yield
+        finally:
+            await connection.execute(
+                text("SELECT pg_advisory_unlock(:key)"), {"key": CURATION_LOAD_LOCK_KEY}
+            )
+            await connection.commit()
 
 
 class UntraceableDigitalId(RuntimeError):

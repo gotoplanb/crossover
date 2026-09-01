@@ -152,3 +152,52 @@ async def test_reloading_after_a_sync_keeps_the_synced_data(session, record_inde
     after = await session.scalar(select(Issue).where(Issue.key == "king-in-black-1"))
     assert after.thumbnail_path == record_index["king-in-black-1"].thumbnail_path
     assert after.characters == ["Venom", "Knull"]
+
+
+async def test_concurrent_loads_do_not_collide(schema, curated_events) -> None:
+    """Two boots at once must not race.
+
+    Observed for real on the first Heroku deploy: two lifespans started ~30ms
+    apart and collided inserting the same event row, one dying with "duplicate
+    key value violates unique constraint" while the other succeeded. The load
+    was idempotent but not *concurrent*-safe — a different property, and the one
+    a platform that overlaps old and new dynos actually needs.
+
+    Runs against real connections rather than the shared test transaction,
+    because the advisory lock is what is under test and a single transaction
+    cannot demonstrate it.
+    """
+    import asyncio
+
+    from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+
+    from curation.loader import load_all, load_lock
+    from db.session import engine
+
+    maker = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+
+    async def boot() -> None:
+        async with load_lock(engine), maker() as session:
+            await load_all(session)
+
+    try:
+        # Without the lock this raises IntegrityError from whichever loses.
+        await asyncio.gather(boot(), boot(), boot())
+
+        from sqlalchemy import func, select
+
+        from models.catalog import Event
+
+        async with maker() as session:
+            events = await session.scalar(select(func.count()).select_from(Event))
+        assert events == len(curated_events), "a concurrent load duplicated an event"
+    finally:
+        # These committed outside the test transaction, so clean up explicitly.
+        from sqlalchemy import delete
+
+        from models.catalog import Event, Issue
+
+        async with maker() as session:
+            await session.execute(delete(Event))
+            await session.execute(delete(Issue))
+            await session.commit()
