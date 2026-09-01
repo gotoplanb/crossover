@@ -1,0 +1,13 @@
+{# Cover art is how anyone actually recognizes an issue (SPEC §7). Marvel's
+   own placeholder is filtered out upstream so we can draw our own. #}
+{% set url = cover_url(item.thumbnail_path if item.thumbnail_path is defined else None,
+                       item.thumbnail_extension if item.thumbnail_extension is defined else None) %}
+{% if url %}
+<img src="{{ url }}" alt="Cover of {{ label }}" loading="lazy"
+     class="w-full aspect-[2/3] object-cover rounded bg-zinc-800">
+{% else %}
+<div class="w-full aspect-[2/3] rounded bg-zinc-800 border border-zinc-700 flex items-center
+            justify-center p-3 text-center">
+  <span class="text-xs text-zinc-500 leading-snug">{{ label }}</span>
+</div>
+{% endif %}

@@ -1,0 +1,25 @@
+# Link templates. Deliberately config, not code: Branch link configurations
+# change without notice, and `fiir7ec77` is Marvel's config key, not ours.
+# See docs/gates.md for the Gate C probe that produced the one_tap template.
+
+# Gate A baseline. The only link emitted by default, and the durable one.
+reader:
+  template: "https://read.marvel.com/#/book/{digital_id}"
+  requires: digital_id
+
+# Gate C. Resolves from the marvel.com issue id alone — the `drn` parameter in
+# Marvel's own links is decorative. Ships disabled: the probe confirmed the *web
+# fallback* redirect from a desktop client, which is not proof that the native
+# iOS app opens the correct issue. Given Gate B, a link that silently opens the
+# wrong book is the one failure mode worth being paranoid about.
+#
+# To enable: tap one on an iPhone with Marvel Unlimited installed, confirm the
+# right book opens, then set enabled: true and note the date in docs/gates.md.
+one_tap:
+  enabled: false
+  template: "https://marvel.smart.link/fiir7ec77?type=issue&sourceId={source_id}"
+  requires: source_id
+  verified_on_device: null
+
+# Marvel's terms require attribution wherever their data or art is displayed.
+attribution: "Data provided by Marvel. © 2026 MARVEL"

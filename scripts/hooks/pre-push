@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Crossover pre-push gate: the full bar before anything leaves the machine.
+#
+#   1. ruff over the whole tree
+#   2. the full test suite with coverage, enforcing the fail_under floor
+#   3. SonarQube scan + quality gate against the local Watchtower instance
+#
+# Sonar is skipped (with a warning, not a failure) when Watchtower is not
+# running or SONAR_TOKEN is unset — the gate should not block a push just
+# because the local observability stack is down. Everything else is mandatory.
+#
+# Installed by `make install-hooks`. Skip once with `git push --no-verify`.
+set -uo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+PY=.venv/bin/python
+[ -x "$PY" ] || PY=python3
+SONAR_HOST=${SONAR_HOST_URL:-http://localhost:9000}
+FAILED=0
+
+step() { printf '\n\033[1m▸ %s\033[0m\n' "$1"; }
+fail() { printf '\033[31m✗ %s\033[0m\n' "$1"; FAILED=1; }
+warn() { printf '\033[33m! %s\033[0m\n' "$1"; }
+ok()   { printf '\033[32m✓ %s\033[0m\n' "$1"; }
+
+step "ruff"
+if ! .venv/bin/ruff check .; then fail "lint"; else ok "lint clean"; fi
+
+step "secrets (full tree)"
+if ! "$PY" scripts/check_secrets.py; then fail "possible secret committed"; else ok "no secrets detected"; fi
+
+step "tests + coverage"
+if ! "$PY" -m pytest -q --cov --cov-report=xml --cov-report=term --no-header; then
+    fail "tests or the coverage floor"
+else
+    ok "tests pass and coverage floor met"
+fi
+
+step "sonarqube"
+# Load SONAR_TOKEN from .env if it is not already exported.
+if [ -z "${SONAR_TOKEN:-}" ] && [ -f .env ]; then
+    set -a; . ./.env; set +a
+fi
+if [ -z "${SONAR_TOKEN:-}" ]; then
+    warn "SONAR_TOKEN unset — skipping the scan. Add it to .env to enable this gate."
+elif ! curl -sf -o /dev/null --max-time 3 "$SONAR_HOST/api/system/status"; then
+    warn "SonarQube unreachable at $SONAR_HOST — skipping. Start Watchtower to enable."
+else
+    if ! docker run --rm \
+        -e SONAR_HOST_URL=http://host.docker.internal:9000 \
+        -e SONAR_TOKEN="$SONAR_TOKEN" \
+        -v "$(pwd):/usr/src" \
+        sonarsource/sonar-scanner-cli:latest > /tmp/crossover-sonar.log 2>&1; then
+        tail -25 /tmp/crossover-sonar.log
+        fail "sonar scan (full log: /tmp/crossover-sonar.log)"
+    else
+        ok "scan uploaded"
+        # The gate is computed asynchronously after upload.
+        "$PY" scripts/sonar_gate.py || fail "sonar quality gate"
+    fi
+fi
+
+if [ "$FAILED" -ne 0 ]; then
+    printf '\n\033[31mpre-push failed.\033[0m Fix the above, or bypass with --no-verify.\n'
+    exit 1
+fi
+printf '\n\033[32mpre-push passed — pushing.\033[0m\n'

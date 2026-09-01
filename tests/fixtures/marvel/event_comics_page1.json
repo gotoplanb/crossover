@@ -1,0 +1,68 @@
+{
+  "code": 200,
+  "status": "Ok",
+  "copyright": "© 2026 MARVEL",
+  "attributionText": "Data provided by Marvel. © 2026 MARVEL",
+  "etag": "fixture-etag-1",
+  "data": {
+    "offset": 0,
+    "limit": 100,
+    "total": 3,
+    "count": 3,
+    "results": [
+      {
+        "id": 86133,
+        "digitalId": 55901,
+        "title": "King in Black (2020) #1",
+        "issueNumber": 1,
+        "series": { "resourceURI": "http://gateway.marvel.com/v1/public/series/29142",
+                    "name": "King in Black (2020 - 2021)" },
+        "dates": [
+          { "type": "onsaleDate", "date": "2020-12-02T00:00:00-0500" },
+          { "type": "focDate", "date": "2020-11-09T00:00:00-0500" }
+        ],
+        "urls": [
+          { "type": "detail",
+            "url": "http://marvel.com/comics/issue/86133/king_in_black_2020_1?utm_campaign=apiRef" }
+        ],
+        "thumbnail": { "path": "http://i.annihil.us/u/prod/marvel/i/mg/6/03/5fb0f1e2b0b1a",
+                       "extension": "jpg" },
+        "characters": { "available": 2, "items": [ { "name": "Venom" }, { "name": "Knull" } ] },
+        "creators": { "available": 2, "items": [ { "name": "Donny Cates", "role": "writer" },
+                                                 { "name": "Ryan Stegman", "role": "penciller" } ] }
+      },
+      {
+        "id": 86134,
+        "digitalId": 0,
+        "title": "King in Black (2020) #2",
+        "issueNumber": 2,
+        "series": { "name": "King in Black (2020 - 2021)" },
+        "dates": [ { "type": "onsaleDate", "date": "2020-12-30T00:00:00-0500" } ],
+        "urls": [
+          { "type": "detail",
+            "url": "http://marvel.com/comics/issue/86134/king_in_black_2020_2" }
+        ],
+        "thumbnail": { "path": "http://i.annihil.us/u/prod/marvel/i/mg/image_not_available",
+                       "extension": "jpg" },
+        "characters": { "available": 0, "items": [] },
+        "creators": { "available": 0, "items": [] }
+      },
+      {
+        "id": 87001,
+        "digitalId": 56110,
+        "title": "King in Black: Namor (2020) #1",
+        "issueNumber": 1,
+        "series": { "name": "King in Black: Namor (2020 - 2021)" },
+        "dates": [ { "type": "onsaleDate", "date": "2020-12-16T00:00:00-0500" } ],
+        "urls": [
+          { "type": "detail",
+            "url": "http://marvel.com/comics/issue/87001/king_in_black_namor_2020_1" }
+        ],
+        "thumbnail": { "path": "http://i.annihil.us/u/prod/marvel/i/mg/7/40/5fc0aabbccdde",
+                       "extension": "jpg" },
+        "characters": { "available": 1, "items": [ { "name": "Namor" } ] },
+        "creators": { "available": 1, "items": [ { "name": "Kurt Busiek", "role": "writer" } ] }
+      }
+    ]
+  }
+}

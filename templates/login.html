@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Sign in — Crossover{% endblock %}
+{% block content %}
+<div class="max-w-sm mx-auto">
+  <h1 class="text-2xl font-semibold tracking-tight">Crossover</h1>
+  <p class="text-sm text-zinc-400 mt-2">
+    Two people share this deployment, so pick who you are — the rack is per-person.
+  </p>
+  {% if error %}
+  <p class="mt-4 text-sm text-red-400">{{ error }}</p>
+  {% endif %}
+  <form method="post" action="/ui/login" class="mt-6 space-y-4">
+    <input type="hidden" name="next" value="{{ next }}">
+    <label class="block">
+      <span class="text-sm text-zinc-300">Reader</span>
+      <select name="email" class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm">
+        {% for user in users %}
+        <option value="{{ user.email }}">{{ user.display_name or user.email }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="block">
+      <span class="text-sm text-zinc-300">Admin key</span>
+      <input type="password" name="admin_key" autocomplete="current-password"
+             class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm">
+    </label>
+    <button class="w-full bg-zinc-100 text-zinc-900 rounded px-3 py-2 text-sm font-medium">
+      Sign in
+    </button>
+  </form>
+  {% if not users %}
+  <p class="mt-6 text-sm text-amber-400">
+    No readers exist yet. Run <code class="text-zinc-300">make seed email=you@example.com</code>.
+  </p>
+  {% endif %}
+</div>
+{% endblock %}

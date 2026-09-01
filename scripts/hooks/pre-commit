@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Crossover pre-commit gate. Fast checks only — anything slower belongs in
+# pre-push, because a commit hook that takes 30 seconds gets bypassed with
+# --no-verify and then protects nothing.
+#
+# Installed by `make install-hooks`. Skip once with `git commit --no-verify`.
+set -uo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+PY=.venv/bin/python
+[ -x "$PY" ] || PY=python3
+FAILED=0
+
+step() { printf '\n\033[1m▸ %s\033[0m\n' "$1"; }
+fail() { printf '\033[31m✗ %s\033[0m\n' "$1"; FAILED=1; }
+ok()   { printf '\033[32m✓ %s\033[0m\n' "$1"; }
+
+# Only the files actually being committed, so the hook stays fast on a big tree.
+STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+STAGED_PY=$(printf '%s\n' "$STAGED" | grep -E '\.py$' || true)
+
+# Feed a file list to a command NUL-separated. An unquoted "$list" relies on
+# word splitting, which behaves differently across shells and breaks outright on
+# a path containing a space — and macOS ships bash 3.2, so `mapfile` is not
+# available to do this properly with an array.
+run_on_files() {
+    printf '%s\n' "$STAGED_PY" | tr '\n' '\0' | xargs -0 "$@"
+}
+
+step "secrets"
+if ! "$PY" scripts/check_secrets.py --staged; then
+    fail "possible secret in staged changes"
+else
+    ok "no secrets detected"
+fi
+
+step "gitignore"
+# A public repo must never be one `git add -A` away from committing .env.
+for forbidden in .env .env.local; do
+    if echo "$STAGED" | grep -qx "$forbidden"; then
+        fail "$forbidden is staged — it must stay untracked"
+    fi
+done
+[ "$FAILED" -eq 0 ] && ok ".env is not staged"
+
+if [ -n "$STAGED_PY" ]; then
+    step "ruff"
+    # --force-exclude matters here: ruff applies `extend-exclude` only to paths
+    # it discovers itself, so explicitly-passed files (like the generated
+    # alembic migrations) would otherwise be linted and fail the hook even
+    # though `ruff check .` is clean.
+    if ! run_on_files .venv/bin/ruff check --force-exclude; then
+        fail "ruff found problems (try: make format)"
+    else
+        ok "lint clean"
+    fi
+
+    step "unit tests"
+    # The unit suite needs no database and runs in well under a second, which is
+    # what makes it acceptable in a commit hook. The integration suite is the
+    # pre-push gate's job.
+    if ! "$PY" -m pytest tests/unit -q -x --no-header -p no:cacheprovider; then
+        fail "unit tests failed"
+    else
+        ok "unit tests pass"
+    fi
+else
+    printf '  (no Python staged — skipping lint and tests)\n'
+fi
+
+if [ "$FAILED" -ne 0 ]; then
+    printf '\n\033[31mpre-commit failed.\033[0m Fix the above, or bypass with --no-verify.\n'
+    exit 1
+fi
+printf '\n\033[32mpre-commit passed.\033[0m\n'

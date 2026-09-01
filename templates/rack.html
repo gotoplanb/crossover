@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}The rack — Crossover{% endblock %}
+{% block content %}
+
+<header class="flex items-end justify-between flex-wrap gap-4">
+  <div>
+    <h1 class="text-2xl font-semibold tracking-tight">The rack</h1>
+    <p class="text-sm text-zinc-400 mt-1">
+      {{ total }} saved {{ "issue" if total == 1 else "issues" }}, grouped the way
+      they read — not sorted.
+    </p>
+  </div>
+  <p class="text-xs text-zinc-500 max-w-sm">
+    Signed in as {{ user.display_name or user.email }}. Bookmarks made in conversation
+    show up here with no sync step.
+  </p>
+</header>
+
+{% if pending %}
+{# The fallback path: confirmation was supposed to happen out loud in the shop.
+   Per Gate B these are never linked until someone says yes. #}
+<section class="mt-8 border border-amber-800/60 bg-amber-950/20 rounded-lg p-4">
+  <h2 class="text-sm font-semibold text-amber-300">Needs confirming</h2>
+  <p class="text-xs text-amber-200/70 mt-1">
+    Read off a shelf or said aloud, never confirmed. These are guesses, so they stay
+    unlinked — an unconfirmed match opens the wrong comic rather than failing.
+  </p>
+  <div class="mt-4 space-y-4">
+    {% for candidate in pending %}
+    <div class="border-t border-amber-900/50 pt-3">
+      <p class="text-sm text-zinc-200">
+        “{{ candidate.raw_text }}”
+        <span class="text-xs text-zinc-500">({{ candidate.source }})</span>
+      </p>
+      {% if candidate.matches %}
+      <div class="mt-2 flex flex-wrap gap-2">
+        {% for match in candidate.matches %}
+        <form method="post" action="/ui/rack/confirm">
+          <input type="hidden" name="candidate_id" value="{{ candidate.candidate_id }}">
+          <input type="hidden" name="chosen_key" value="{{ match.key }}">
+          <button class="text-xs px-2 py-1 rounded border border-amber-700 text-amber-200
+                         hover:bg-amber-900/40">
+            {{ match.issue }}{% if match.cover_date %} · {{ match.cover_date }}{% endif %}
+          </button>
+        </form>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="mt-2 text-xs text-zinc-500">
+        Nothing matched. Marvel's catalog search needs an API key, or the text was too
+        far off to resolve.
+      </p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if not clusters %}
+<div class="mt-10 border border-zinc-800 rounded-lg p-8 text-center">
+  <p class="text-zinc-300">Nothing saved yet.</p>
+  <p class="text-sm text-zinc-500 mt-2">
+    Say “bookmark the Namor one” mid-chapter and it lands here.
+  </p>
+  <a href="/ui/events" class="inline-block mt-4 text-sm text-zinc-300 underline">
+    Browse the event guides
+  </a>
+</div>
+{% endif %}
+
+{% for cluster in clusters %}
+<section class="mt-10">
+  <div class="flex items-baseline justify-between gap-4 border-b border-zinc-800 pb-2">
+    <h2 class="text-lg font-medium tracking-tight">{{ cluster.header }}</h2>
+    <span class="text-xs text-zinc-500 shrink-0">{{ cluster.items|length }}</span>
+  </div>
+  {# Group headers carry their reason: a batch you don't understand is just a
+     shorter list. #}
+  <p class="text-sm text-zinc-400 mt-2">{{ cluster.reason }}</p>
+
+  <div class="mt-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
+    {% for item in cluster.items %}
+    {% set bookmark = bookmarks.get(item.bookmark_id) %}
+    <article class="flex flex-col gap-2">
+      {% if bookmark %}
+        {% set link = build_link(bookmark, item.display) %}
+      {% endif %}
+      {% if bookmark and link.available %}
+      <a href="{{ link.url }}" target="_blank" rel="noopener">
+        {% with item = bookmark, label = item.display %}{% include "partials/cover.html" %}{% endwith %}
+      </a>
+      {% else %}
+      {% with item = bookmark, label = item.display %}{% include "partials/cover.html" %}{% endwith %}
+      {% endif %}
+
+      <h3 class="text-sm font-medium leading-snug">{{ item.display }}</h3>
+
+      {% if item.provenance %}
+      {# Why is this here? A bookmark with no remembered reason is noise a week
+         later, and this is where the reference graph pays off visibly. #}
+      <p class="text-xs text-zinc-400 leading-snug">{{ item.provenance }}</p>
+      {% elif item.note %}
+      <p class="text-xs text-zinc-400 leading-snug italic">“{{ item.note }}”</p>
+      {% endif %}
+
+      <div class="text-xs text-zinc-500 space-y-0.5">
+        {% if item.anchor %}<p>{{ item.anchor }}</p>{% endif %}
+        {% if item.published_on %}<p>{{ item.published_on }}</p>{% endif %}
+      </div>
+
+      <div class="mt-auto pt-1 flex items-center gap-2 flex-wrap">
+        {% if bookmark %}{% include "partials/read_toggle.html" %}{% endif %}
+        {% if not (bookmark and link.available) %}
+        <span class="text-xs text-zinc-500">{{ NOT_ON_MU }}</span>
+        {% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,562 @@
+# King in Black (2020-2021) — curated reading order and reference graph.
+#
+# THIS FILE IS THE SOURCE OF TRUTH for order, roles, clustering, and the
+# reference edges. A Marvel refetch can never overwrite it (see marvel/sync.py);
+# it only ever fills in API-derived fields on the issue records.
+#
+# ── Provenance and confidence ────────────────────────────────────────────────
+# Seeded by hand. SPEC §5 wants Marvel's own reading guide as the seed, but
+# marvel.com returns 403 to programmatic requests (docs/gates.md), and no
+# Marvel API key was available, so neither source could be consulted. Every
+# entry is therefore `provisional: true` and the event is `best_effort`:
+#
+#   * The roster and the ordering are a defensible starting point, not a
+#     verified one. Publication dates especially are approximate.
+#   * NO issue carries a digital_id. Per Gate B a guessed id does not error —
+#     it silently opens a different comic — so every issue renders as
+#     "not on Marvel Unlimited" until a real sync confirms one.
+#
+# To promote this file to `curated`:
+#   1. make check-api-key                     (confirm credentials work at all)
+#   2. make sync-event slug=king-in-black     (fills digital ids from the API)
+#   3. reconcile the roster against marvel.com/comics/guides/2075/king-in-black
+#   4. drop `provisional: true`, set curation_status: curated
+#   5. make test  — the §8 gates get strict at that point and will say what is
+#      still missing
+#
+# ── The part that is genuinely ours ──────────────────────────────────────────
+# `references:` at the bottom is the omnibus-footnote citation graph. It cannot
+# come from any API; it is the reason this project exists. The notes are written
+# to be read aloud as provenance on the rack ("this scene is expanded in X").
+# `omnibus_page` is left null throughout — those numbers have to be read off the
+# physical book, and inventing them would defeat the purpose.
+
+slug: king-in-black
+display_name: King in Black
+curation_status: best_effort
+
+# The numeric id for gateway.marvel.com/v1/public/events/{id}/comics. Unset
+# because it was never confirmed against a live API response, and a wrong event
+# id would sync an entirely wrong roster. Fill it from `make list-events`.
+marvel_event_id: null
+
+started_on: 2020-12-02
+ended_on: 2021-05-12
+
+summary: >
+  Knull, the god of the symbiotes, arrives at Earth with a living army and puts
+  the planet under a darkness. The core line is five issues; almost everything
+  worth reading around it is a tie-in, which is the problem this guide exists
+  to solve.
+
+# The spine of the event. Declared explicitly so the "every core issue is
+# present and ordered" gate is a real check rather than a tautology over
+# whatever happens to be in the file below.
+core:
+  series: King in Black
+  count: 5
+
+issues:
+  - key: web-of-venom-empyre-s-end-1
+    position: 1
+    series: "Web of Venom: Empyre's End"
+    number: 1
+    published_on: 2020-09-16
+    role: optional_tie_in
+    narrative_role: prelude
+    franchise: symbiote
+    provisional: true
+    note: "Placed first despite publishing months early: it is the on-ramp to Knull's arrival and reads as chapter zero."
+
+  - key: king-in-black-1
+    position: 2
+    series: "King in Black"
+    number: 1
+    published_on: 2020-12-02
+    role: core
+    narrative_role: core_line
+    franchise: symbiote
+    provisional: true
+
+  - key: king-in-black-immortal-hulk-1
+    position: 3
+    series: "King in Black: Immortal Hulk"
+    number: 1
+    published_on: 2020-12-16
+    role: essential_tie_in
+    narrative_role: parallel
+    franchise: avengers
+    provisional: true
+    note: "Runs during the blackout in KiB #1. Read straight after the core issue, not later."
+
+  - key: king-in-black-namor-1
+    position: 4
+    series: "King in Black: Namor"
+    number: 1
+    published_on: 2020-12-16
+    role: essential_tie_in
+    narrative_role: flashback
+    franchise: atlantean
+    provisional: true
+    note: "Hand-moved forward: this is the thousand-years-ago flashback that explains why Namor recognises Knull. Reads better before KiB #2 lands the reveal than after it."
+
+  - key: venom-31
+    position: 5
+    series: "Venom"
+    number: 31
+    published_on: 2020-12-30
+    role: essential_tie_in
+    narrative_role: parallel
+    franchise: symbiote
+    provisional: true
+    note: "Eddie and Dylan's thread, running alongside the core book."
+
+  - key: king-in-black-2
+    position: 6
+    series: "King in Black"
+    number: 2
+    published_on: 2020-12-30
+    role: core
+    narrative_role: core_line
+    franchise: symbiote
+    provisional: true
+
+  - key: king-in-black-the-union-1
+    position: 7
+    series: "King in Black: The Union"
+    number: 1
+    published_on: 2021-01-06
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: other
+    provisional: true
+    note: "The UK front. Self-contained; skippable without losing the main thread."
+
+  - key: king-in-black-thunderbolts-1
+    position: 8
+    series: "King in Black: Thunderbolts"
+    number: 1
+    published_on: 2021-01-13
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: street
+    provisional: true
+    note: "Kingpin's disposable squad, street level, under the darkness."
+
+  - key: king-in-black-namor-2
+    position: 9
+    series: "King in Black: Namor"
+    number: 2
+    published_on: 2021-01-20
+    role: essential_tie_in
+    narrative_role: flashback
+    franchise: atlantean
+    provisional: true
+
+  - key: venom-32
+    position: 10
+    series: "Venom"
+    number: 32
+    published_on: 2021-01-27
+    role: essential_tie_in
+    narrative_role: parallel
+    franchise: symbiote
+    provisional: true
+
+  - key: king-in-black-3
+    position: 11
+    series: "King in Black"
+    number: 3
+    published_on: 2021-01-27
+    role: core
+    narrative_role: core_line
+    franchise: symbiote
+    provisional: true
+
+  - key: king-in-black-the-union-2
+    position: 12
+    series: "King in Black: The Union"
+    number: 2
+    published_on: 2021-02-03
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: other
+    provisional: true
+
+  - key: king-in-black-planet-of-the-symbiotes-1
+    position: 13
+    series: "King in Black: Planet of the Symbiotes"
+    number: 1
+    published_on: 2021-02-03
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: symbiote
+    provisional: true
+    note: "Anthology. Expands the scale of the invasion beyond New York."
+
+  - key: king-in-black-thunderbolts-2
+    position: 14
+    series: "King in Black: Thunderbolts"
+    number: 2
+    published_on: 2021-02-10
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: street
+    provisional: true
+
+  - key: king-in-black-gwenom-vs-carnage-1
+    position: 15
+    series: "King in Black: Gwenom vs. Carnage"
+    number: 1
+    published_on: 2021-02-10
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: spider
+    provisional: true
+    note: "Gwen's corner of the event; connects to the Spider-books more than to the core line."
+
+  - key: king-in-black-return-of-the-valkyries-1
+    position: 16
+    series: "King in Black: Return of the Valkyries"
+    number: 1
+    published_on: 2021-02-10
+    role: essential_tie_in
+    narrative_role: parallel
+    franchise: mystic
+    provisional: true
+    note: "Jane Foster assembling the Valkyries. Pays off directly in the core finale."
+
+  - key: king-in-black-black-knight-1
+    position: 17
+    series: "King in Black: Black Knight"
+    number: 1
+    published_on: 2021-02-17
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: mystic
+    provisional: true
+
+  - key: king-in-black-namor-3
+    position: 18
+    series: "King in Black: Namor"
+    number: 3
+    published_on: 2021-02-17
+    role: essential_tie_in
+    narrative_role: flashback
+    franchise: atlantean
+    provisional: true
+
+  - key: king-in-black-ghost-rider-1
+    position: 19
+    series: "King in Black: Ghost Rider"
+    number: 1
+    published_on: 2021-02-24
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: mystic
+    provisional: true
+
+  - key: king-in-black-iron-man-doom-1
+    position: 20
+    series: "King in Black: Iron Man/Doom"
+    number: 1
+    published_on: 2021-02-24
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: avengers
+    provisional: true
+    note: "Doom and Stark chasing a technological answer to the darkness."
+
+  - key: king-in-black-4
+    position: 21
+    series: "King in Black"
+    number: 4
+    published_on: 2021-02-24
+    role: core
+    narrative_role: core_line
+    franchise: symbiote
+    provisional: true
+
+  - key: venom-33
+    position: 22
+    series: "Venom"
+    number: 33
+    published_on: 2021-03-03
+    role: essential_tie_in
+    narrative_role: parallel
+    franchise: symbiote
+    provisional: true
+
+  - key: king-in-black-the-union-3
+    position: 23
+    series: "King in Black: The Union"
+    number: 3
+    published_on: 2021-03-03
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: other
+    provisional: true
+
+  - key: king-in-black-planet-of-the-symbiotes-2
+    position: 24
+    series: "King in Black: Planet of the Symbiotes"
+    number: 2
+    published_on: 2021-03-03
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: symbiote
+    provisional: true
+
+  - key: king-in-black-captain-america-1
+    position: 25
+    series: "King in Black: Captain America"
+    number: 1
+    published_on: 2021-03-03
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: avengers
+    provisional: true
+
+  - key: king-in-black-thunderbolts-3
+    position: 26
+    series: "King in Black: Thunderbolts"
+    number: 3
+    published_on: 2021-03-10
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: street
+    provisional: true
+
+  - key: king-in-black-gwenom-vs-carnage-2
+    position: 27
+    series: "King in Black: Gwenom vs. Carnage"
+    number: 2
+    published_on: 2021-03-10
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: spider
+    provisional: true
+
+  - key: king-in-black-return-of-the-valkyries-2
+    position: 28
+    series: "King in Black: Return of the Valkyries"
+    number: 2
+    published_on: 2021-03-10
+    role: essential_tie_in
+    narrative_role: parallel
+    franchise: mystic
+    provisional: true
+
+  - key: king-in-black-marauders-1
+    position: 29
+    series: "King in Black: Marauders"
+    number: 1
+    published_on: 2021-03-10
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: x_men
+    provisional: true
+    note: "The only X-books entry. Reads as a batch with nothing else here, which is exactly the kind of cluster sequence_bookmarks should surface."
+
+  - key: king-in-black-namor-4
+    position: 30
+    series: "King in Black: Namor"
+    number: 4
+    published_on: 2021-03-17
+    role: essential_tie_in
+    narrative_role: flashback
+    franchise: atlantean
+    provisional: true
+
+  - key: king-in-black-wiccan-and-hulkling-1
+    position: 31
+    series: "King in Black: Wiccan and Hulkling"
+    number: 1
+    published_on: 2021-03-17
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: mystic
+    provisional: true
+
+  - key: king-in-black-the-union-4
+    position: 32
+    series: "King in Black: The Union"
+    number: 4
+    published_on: 2021-04-07
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: other
+    provisional: true
+
+  - key: king-in-black-planet-of-the-symbiotes-3
+    position: 33
+    series: "King in Black: Planet of the Symbiotes"
+    number: 3
+    published_on: 2021-04-07
+    role: optional_tie_in
+    narrative_role: parallel
+    franchise: symbiote
+    provisional: true
+
+  - key: king-in-black-5
+    position: 34
+    series: "King in Black"
+    number: 5
+    published_on: 2021-04-07
+    role: core
+    narrative_role: core_line
+    franchise: symbiote
+    provisional: true
+
+  - key: venom-34
+    position: 35
+    series: "Venom"
+    number: 34
+    published_on: 2021-04-14
+    role: essential_tie_in
+    narrative_role: epilogue
+    franchise: symbiote
+    provisional: true
+    note: "Where the core finale actually lands for Eddie. Reads as the emotional last chapter."
+
+  - key: king-in-black-gwenom-vs-carnage-3
+    position: 36
+    series: "King in Black: Gwenom vs. Carnage"
+    number: 3
+    published_on: 2021-04-14
+    role: optional_tie_in
+    narrative_role: epilogue
+    franchise: spider
+    provisional: true
+
+  - key: king-in-black-return-of-the-valkyries-3
+    position: 37
+    series: "King in Black: Return of the Valkyries"
+    number: 3
+    published_on: 2021-04-14
+    role: essential_tie_in
+    narrative_role: epilogue
+    franchise: mystic
+    provisional: true
+
+  - key: king-in-black-namor-5
+    position: 38
+    series: "King in Black: Namor"
+    number: 5
+    published_on: 2021-04-21
+    role: essential_tie_in
+    narrative_role: epilogue
+    franchise: atlantean
+    provisional: true
+
+  - key: king-in-black-the-union-5
+    position: 39
+    series: "King in Black: The Union"
+    number: 5
+    published_on: 2021-05-05
+    role: optional_tie_in
+    narrative_role: epilogue
+    franchise: other
+    provisional: true
+
+  - key: king-in-black-return-of-the-valkyries-4
+    position: 40
+    series: "King in Black: Return of the Valkyries"
+    number: 4
+    published_on: 2021-05-12
+    role: essential_tie_in
+    narrative_role: epilogue
+    franchise: mystic
+    provisional: true
+
+# The omnibus-footnote layer. Direction is always "from the issue you just
+# finished, to the issue that expands on it" — which is exactly the question
+# whats_next() answers.
+references:
+  - from: web-of-venom-empyre-s-end-1
+    to: king-in-black-1
+    type: prelude_to
+    note: "Knull's approach is set up here; KiB #1 opens with him already arriving."
+    omnibus_page: null
+
+  - from: king-in-black-1
+    to: king-in-black-immortal-hulk-1
+    type: expanded_in
+    note: "The Hulk is off-panel for the blackout in the core issue; this one-shot is where that fight actually happens."
+    omnibus_page: null
+
+  - from: king-in-black-1
+    to: venom-31
+    type: continues_in
+    note: "Eddie and Dylan's side of the invasion picks up directly out of the core issue."
+    omnibus_page: null
+
+  - from: king-in-black-2
+    to: king-in-black-namor-1
+    type: flashback_in
+    note: "Namor recognises the god. The thousand-years-ago encounter he is remembering is the whole Namor miniseries."
+    omnibus_page: null
+
+  - from: king-in-black-2
+    to: king-in-black-thunderbolts-1
+    type: parallel_to
+    note: "Street level in the same city, same nights."
+    omnibus_page: null
+
+  - from: king-in-black-3
+    to: king-in-black-planet-of-the-symbiotes-1
+    type: expanded_in
+    note: "The invasion is global in one line of dialogue here; the anthology is what that line looks like."
+    omnibus_page: null
+
+  - from: king-in-black-3
+    to: king-in-black-gwenom-vs-carnage-1
+    type: parallel_to
+    note: "Gwen's thread, referenced but not shown."
+    omnibus_page: null
+
+  - from: king-in-black-3
+    to: king-in-black-return-of-the-valkyries-1
+    type: expanded_in
+    note: "Jane Foster's search for the Valkyries, which the core book skips to the result of."
+    omnibus_page: null
+
+  - from: king-in-black-4
+    to: king-in-black-iron-man-doom-1
+    type: expanded_in
+    note: "The tech solution arrives fully formed in the core issue. This is where it gets built."
+    omnibus_page: null
+
+  - from: king-in-black-4
+    to: king-in-black-black-knight-1
+    type: parallel_to
+    omnibus_page: null
+
+  - from: king-in-black-4
+    to: king-in-black-marauders-1
+    type: parallel_to
+    note: "The mutant response, which the core line never touches."
+    omnibus_page: null
+
+  - from: king-in-black-5
+    to: venom-34
+    type: epilogue_in
+    note: "The core finale resolves the fight; this resolves Eddie."
+    omnibus_page: null
+
+  - from: king-in-black-5
+    to: king-in-black-return-of-the-valkyries-4
+    type: epilogue_in
+    omnibus_page: null
+
+  - from: king-in-black-5
+    to: king-in-black-namor-5
+    type: epilogue_in
+    note: "Namor's account closes out after the core book ends."
+    omnibus_page: null
+
+  - from: king-in-black-5
+    to: king-in-black-ghost-rider-1
+    type: references
+    omnibus_page: null
+

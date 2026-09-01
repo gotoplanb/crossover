@@ -1,0 +1,44 @@
+# --- secrets: this repo is public ---
+# .env holds the admin key and Marvel credentials. Only the .example template
+# is tracked, and it must never contain a real value.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+credentials.json
+secrets.yaml
+secrets.yml
+.secrets
+
+# --- python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# --- test + analysis artifacts ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+# sonar-scanner working directory; can contain the scan token in its report task file
+.scannerwork/
+
+# --- editors / OS ---
+.DS_Store
+.idea/
+.vscode/
+
+# --- Claude Code per-machine state (allowlists, local settings) ---
+.claude/settings.local.json
+.claude/scheduled_tasks.lock

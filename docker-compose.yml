@@ -1,0 +1,28 @@
+# Local Postgres only. The app runs on the host (`make run`); Heroku provides
+# Postgres in production. Port 5433 to stay out of the way of a system Postgres.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: crossover
+      POSTGRES_DB: crossover
+      # Trust auth, and the port is bound to loopback only (below). This repo is
+      # public: shipping a password here would put a real-looking credential in
+      # a public file, and every developer would then have the same one. Nothing
+      # off-host can reach this port, so there is nothing for a password to
+      # protect. Production is Heroku Postgres, which injects its own DATABASE_URL.
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      # 127.0.0.1 explicitly — the default "5433:5432" binds 0.0.0.0 and would
+      # expose a trust-auth database to the local network.
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crossover"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgdata:

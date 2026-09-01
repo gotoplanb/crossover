@@ -1,0 +1,8 @@
+{# HTMX swap target: just the read/unread control for one card. #}
+<button hx-post="/ui/rack/{{ bookmark.id }}/read"
+        hx-swap="outerHTML"
+        class="text-xs px-2 py-1 rounded border
+               {% if bookmark.read_at %}border-emerald-700 text-emerald-400
+               {% else %}border-zinc-700 text-zinc-400 hover:text-zinc-100{% endif %}">
+  {% if bookmark.read_at %}Read{% else %}Mark read{% endif %}
+</button>
