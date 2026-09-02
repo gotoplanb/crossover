@@ -29,6 +29,7 @@ API_OWNED_COLUMNS = frozenset(
         "series_slug",
         "title",
         "published_on",
+        "unlimited_on",
         "marvel_com_issue_id",
         "digital_id",
         "digital_id_source",
@@ -63,6 +64,7 @@ def apply_record(issue: Issue, record: ComicRecord, *, source: str = "marvel-api
         "series_slug": record.series_slug,
         "title": record.title,
         "published_on": record.published_on,
+        "unlimited_on": record.unlimited_on,
         "marvel_com_issue_id": record.marvel_com_issue_id,
         "digital_id": record.digital_id,
         # Only claim a provenance when there is actually an id to attribute.

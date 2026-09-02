@@ -72,8 +72,7 @@ def test_apply_record_leaves_curated_columns_alone() -> None:
 def test_a_sparse_record_does_not_erase_known_values() -> None:
     """A thin record from a search endpoint must not blank out what a richer
     event fetch already established."""
-    issue = Issue(key="k", series_name="King in Black", series_slug="king-in-black",
-                  issue_number=3)
+    issue = Issue(key="k", series_name="King in Black", series_slug="king-in-black", issue_number=3)
     apply_record(issue, _record())
     apply_record(issue, _record(digital_id=None, thumbnail_path=None, thumbnail_extension=None))
     assert issue.digital_id == 55903
@@ -81,8 +80,13 @@ def test_a_sparse_record_does_not_erase_known_values() -> None:
 
 
 def test_promote_availability_only_moves_on_a_real_id() -> None:
-    issue = Issue(key="k", series_name="s", series_slug="s", issue_number=1,
-                  availability=Availability.UNCONFIRMED.value)
+    issue = Issue(
+        key="k",
+        series_name="s",
+        series_slug="s",
+        issue_number=1,
+        availability=Availability.UNCONFIRMED.value,
+    )
     assert promote_availability(issue) is False
     assert issue.availability == Availability.UNCONFIRMED.value
 
@@ -92,10 +96,16 @@ def test_promote_availability_only_moves_on_a_real_id() -> None:
 
 
 def test_a_sync_never_overrides_a_curated_unavailable() -> None:
-    """"this genuinely isn't on Marvel Unlimited" is a statement of fact a
+    """ "this genuinely isn't on Marvel Unlimited" is a statement of fact a
     curator made; a sync has no standing to argue with it."""
-    issue = Issue(key="k", series_name="s", series_slug="s", issue_number=1,
-                  availability=Availability.UNAVAILABLE.value, digital_id=99)
+    issue = Issue(
+        key="k",
+        series_name="s",
+        series_slug="s",
+        issue_number=1,
+        availability=Availability.UNAVAILABLE.value,
+        digital_id=99,
+    )
     assert promote_availability(issue) is False
     assert issue.availability == Availability.UNAVAILABLE.value
 
@@ -103,7 +113,21 @@ def test_a_sync_never_overrides_a_curated_unavailable() -> None:
 def test_linkable_falls_back_when_an_id_disappears() -> None:
     """If Marvel drops a digital edition, the issue has to stop claiming a link
     rather than keep a dangling one."""
-    issue = Issue(key="k", series_name="s", series_slug="s", issue_number=1,
-                  availability=Availability.LINKABLE.value, digital_id=None)
+    issue = Issue(
+        key="k",
+        series_name="s",
+        series_slug="s",
+        issue_number=1,
+        availability=Availability.LINKABLE.value,
+        digital_id=None,
+    )
     assert promote_availability(issue) is True
     assert issue.availability == Availability.UNCONFIRMED.value
+
+
+def test_the_unlimited_date_is_api_owned() -> None:
+    """Refetchable Marvel data, not a curation judgement — so a sync may write
+    it and curation may not (SPEC §3)."""
+    from marvel.sync import API_OWNED_COLUMNS
+
+    assert "unlimited_on" in API_OWNED_COLUMNS

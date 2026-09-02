@@ -68,6 +68,9 @@ class GuideEntry:
     provisional: bool
     digital_id: int | None
     source_id: int | None
+    #: When Marvel Unlimited releases it, when that is known and still ahead.
+    #: `build_link` reads this to refuse a link that would not open yet.
+    unlimited_on: date | None = None
     issue_id: UUID | None = None
     thumbnail_path: str | None = None
     thumbnail_extension: str | None = None
@@ -106,6 +109,12 @@ class GuideEntry:
             "franchise": self.franchise,
             "link": self.link_markdown(),
         }
+        # Only when it is still ahead: a release date that has passed explains
+        # nothing, and the link speaks for itself. Present, the caller can say
+        # "on Marvel Unlimited from 12 March" instead of just "not available" —
+        # which is the whole reason the date is stored.
+        if self.unlimited_on and self.unlimited_on > date.today():
+            payload["on_marvel_unlimited_from"] = self.unlimited_on.isoformat()
         if self.note:
             payload["note"] = self.note
         if self.unavailable_note:
@@ -160,6 +169,7 @@ def _entry_from_rows(issue: Issue, membership: EventIssue) -> GuideEntry:
         provisional=issue.provisional,
         digital_id=issue.digital_id,
         source_id=issue.source_id,
+        unlimited_on=issue.unlimited_on,
         issue_id=issue.id,
         thumbnail_path=issue.thumbnail_path,
         thumbnail_extension=issue.thumbnail_extension,

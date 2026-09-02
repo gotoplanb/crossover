@@ -19,6 +19,7 @@ configs change without notice (docs/gates.md, Gate C).
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Protocol
@@ -86,6 +87,10 @@ class IssueLink:
     url: str | None
     fallback_url: str | None
     available: bool
+    #: When Marvel Unlimited will make it readable, when that is still ahead.
+    #: Carried so a caller can *explain* an unavailable issue without a third
+    #: link state existing — see `build_link`.
+    unlimited_on: date | None = None
 
     @property
     def markdown(self) -> str:
@@ -104,6 +109,27 @@ def build_link(issue: LinkableIssue, label: str) -> IssueLink:
     labelled fallback, per SPEC §0 Gate C. With it disabled — the default —
     only the reader URL is emitted.
     """
+    # An issue can have a confirmed digital id and still not be readable:
+    # Marvel Unlimited trails print by around three months, which is exactly
+    # the case a reader following a current event hits. Handing over a link that
+    # does not open yet is the same broken promise as handing over a wrong one,
+    # so no link is emitted — and SPEC §6's "no third state" holds, because the
+    # rendering is still exactly NOT_ON_MU.
+    #
+    # The date rides along on the returned IssueLink instead, so a caller can
+    # say *when* rather than just "no". That keeps the explanation out of the
+    # link string, where a third variant would start eroding the one rule the
+    # reader's trust actually rests on.
+    unlimited_on = getattr(issue, "unlimited_on", None)
+    if unlimited_on and unlimited_on > date.today():
+        return IssueLink(
+            label=label,
+            url=None,
+            fallback_url=None,
+            available=False,
+            unlimited_on=unlimited_on,
+        )
+
     reader = reader_url(getattr(issue, "digital_id", None))
     one_tap = one_tap_url(getattr(issue, "source_id", None))
     # A one-tap link is never emitted alone: without a confirmed digital_id we

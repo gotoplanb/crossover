@@ -93,6 +93,10 @@ class Bookmark(Base):
     # Copied so a link survives even if the issue row is later re-synced.
     digital_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     source_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    # Denormalized for the same reason as the two ids above: `build_link` reads
+    # it, and without it the rack would offer a tappable link for an issue
+    # Marvel Unlimited has not released yet.
+    unlimited_on: Mapped[date | None] = mapped_column(Date, nullable=True)
     availability: Mapped[str] = mapped_column(String(20), nullable=False, default="unconfirmed")
 
     # --- provenance: why is this here? (SPEC §7) ---

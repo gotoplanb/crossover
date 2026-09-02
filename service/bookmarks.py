@@ -104,6 +104,7 @@ async def create_bookmark(
         characters=entry.characters or None,
         digital_id=entry.digital_id,
         source_id=entry.source_id,
+        unlimited_on=getattr(entry, "unlimited_on", None),
         availability=entry.availability,
     )
     session.add(bookmark)

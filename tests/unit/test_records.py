@@ -15,7 +15,7 @@ from marvel.records import (
 
 
 def test_series_slug_drops_the_year_range() -> None:
-    """"King in Black (2020 - 2021)" and "King In Black" have to agree, because
+    """ "King in Black (2020 - 2021)" and "King In Black" have to agree, because
     curation YAML is written by a human and the API is not."""
     assert series_slug("King in Black (2020 - 2021)") == "king-in-black"
     assert series_slug("King In Black") == "king-in-black"
@@ -210,3 +210,46 @@ def test_a_dates_entry_of_another_type_is_skipped() -> None:
         }
     )
     assert record.published_on == date(2020, 12, 2)
+
+
+def test_the_unlimited_date_is_parsed_separately_from_on_sale() -> None:
+    """Two different questions. `onsaleDate` answers "does this exist";
+    `unlimitedDate` answers "can I read it yet", and for a reader following an
+    event as it comes out only the second one decides whether a link works."""
+    from marvel.records import parse_comic
+
+    record = parse_comic(
+        {
+            "id": 85649,
+            "digitalId": 55807,
+            "title": "King in Black (2020) #1",
+            "issueNumber": 1,
+            "series": {"name": "King in Black (2020 - 2021)"},
+            "dates": [
+                {"type": "onsaleDate", "date": "2020-12-02T00:00:00-0500"},
+                {"type": "unlimitedDate", "date": "2021-03-01T00:00:00-0500"},
+            ],
+            "urls": [],
+            "thumbnail": {},
+        }
+    )
+    assert record.published_on.isoformat() == "2020-12-02"
+    assert record.unlimited_on.isoformat() == "2021-03-01"
+
+
+def test_a_record_with_no_unlimited_date_is_unknown_not_never() -> None:
+    from marvel.records import parse_comic
+
+    record = parse_comic(
+        {
+            "id": 1,
+            "digitalId": 2,
+            "title": "X (1990) #1",
+            "issueNumber": 1,
+            "series": {"name": "X (1990)"},
+            "dates": [{"type": "onsaleDate", "date": "1990-01-01T00:00:00-0500"}],
+            "urls": [],
+            "thumbnail": {},
+        }
+    )
+    assert record.unlimited_on is None

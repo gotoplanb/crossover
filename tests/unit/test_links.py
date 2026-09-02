@@ -106,3 +106,53 @@ def test_assert_tappable_rejects_html_anchors() -> None:
 def test_attribution_is_present() -> None:
     """Marvel's terms require it wherever their data or art is displayed."""
     assert "Marvel" in links.attribution()
+
+
+# --- issues Marvel Unlimited has not released yet ----------------------------
+
+
+def test_a_future_release_date_suppresses_the_link() -> None:
+    """Marvel Unlimited trails print by around three months, so an issue can
+    have a confirmed digital id and still not open. Handing over a link that
+    does not work yet is the same broken promise as handing over a wrong one."""
+    from datetime import date, timedelta
+
+    from marvel.links import NOT_ON_MU, build_link
+
+    class _Issue:
+        digital_id = 56025
+        source_id = None
+        unlimited_on = date.today() + timedelta(days=30)
+
+    link = build_link(_Issue(), "King in Black #3")
+    assert not link.available
+    assert link.markdown == NOT_ON_MU, "SPEC §6 allows no third link state"
+    assert link.unlimited_on == _Issue.unlimited_on, "the date rides along to explain it"
+
+
+def test_a_release_date_that_has_passed_still_links() -> None:
+    from datetime import date, timedelta
+
+    from marvel.links import build_link
+
+    class _Issue:
+        digital_id = 56025
+        source_id = None
+        unlimited_on = date.today() - timedelta(days=1)
+
+    link = build_link(_Issue(), "King in Black #3")
+    assert link.available
+    assert link.markdown.startswith("[King in Black #3](")
+
+
+def test_an_unknown_release_date_is_not_treated_as_unreleased() -> None:
+    """None means "we were not told", not "never" — most of the catalog
+    predates Marvel publishing the field at all."""
+    from marvel.links import build_link
+
+    class _Issue:
+        digital_id = 56025
+        source_id = None
+        unlimited_on = None
+
+    assert build_link(_Issue(), "x").available

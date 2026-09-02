@@ -112,6 +112,14 @@ class Issue(Base):
         String(80), nullable=False, default="", server_default=""
     )
 
+    # API — when Marvel Unlimited actually makes it readable, which lags print
+    # by roughly three months. A different question from `availability`: that
+    # says whether we have evidence of a digital id at all, while this says
+    # whether the id works *yet*. An issue can be LINKABLE and still not
+    # readable, which is exactly the case a reader following a current event
+    # hits, and the case a bare link would lie about.
+    unlimited_on: Mapped[date | None] = mapped_column(Date, nullable=True)
+
     # API — cover art. Stored split exactly as Marvel returns it so the
     # variant suffix can be chosen at render time (SPEC §7).
     thumbnail_path: Mapped[str | None] = mapped_column(Text, nullable=True)

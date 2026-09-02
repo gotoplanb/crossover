@@ -83,6 +83,7 @@ def _record_to_match(record: ComicRecord, source: str = "marvel_api") -> dict[st
         "thumbnail_extension": record.thumbnail_extension,
         "characters": list(record.characters),
         "creators": list(record.creators),
+        "unlimited_on": record.unlimited_on.isoformat() if record.unlimited_on else None,
         # Gate B's recording half: an id is only linkable if the row can say
         # where it came from. Carried on the match so `confirm` can stamp it
         # onto the issue it creates.
@@ -183,6 +184,9 @@ def record_from_match(match: dict[str, Any]) -> ComicRecord | None:
         thumbnail_extension=match.get("thumbnail_extension"),
         characters=list(match.get("characters") or []),
         creators=list(match.get("creators") or []),
+        unlimited_on=(
+            date.fromisoformat(match["unlimited_on"]) if match.get("unlimited_on") else None
+        ),
     )
 
 
@@ -388,6 +392,7 @@ async def confirm(
         provisional=issue.provisional,
         digital_id=issue.digital_id,
         source_id=issue.source_id,
+        unlimited_on=issue.unlimited_on,
         issue_id=issue.id,
         thumbnail_path=issue.thumbnail_path,
         thumbnail_extension=issue.thumbnail_extension,

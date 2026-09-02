@@ -28,9 +28,7 @@ _ISSUE_URL_RE = re.compile(r"/comics/issue/(\d+)")
 #: input is stripped first and `$` anchors the end — so it runs in linear time.
 #: An earlier version used `\s*...\s*$` around an optional group, which is the
 #: polynomial-backtracking shape SonarQube's S5852 flags.
-_YEAR_SUFFIX_RE = re.compile(
-    r"\((\d{4})(?: ?- ?(?:\d{4}|present))?\)$", re.IGNORECASE
-)
+_YEAR_SUFFIX_RE = re.compile(r"\((\d{4})(?: ?- ?(?:\d{4}|present))?\)$", re.IGNORECASE)
 _SLUG_STRIP_RE = re.compile(r"[^a-z0-9]+")
 
 
@@ -77,9 +75,9 @@ def _marvel_com_issue_id(urls: list[dict] | None) -> int | None:
     return None
 
 
-def _on_sale_date(dates: list[dict] | None) -> date | None:
+def _dated(dates: list[dict] | None, kind: str) -> date | None:
     for entry in dates or []:
-        if entry.get("type") != "onsaleDate":
+        if entry.get("type") != kind:
             continue
         raw = entry.get("date") or ""
         try:
@@ -88,6 +86,20 @@ def _on_sale_date(dates: list[dict] | None) -> date | None:
         except ValueError:
             return None
     return None
+
+
+def _on_sale_date(dates: list[dict] | None) -> date | None:
+    return _dated(dates, "onsaleDate")
+
+
+def _unlimited_date(dates: list[dict] | None) -> date | None:
+    """When Marvel Unlimited makes it readable, which trails print by months.
+
+    Answers "can I read this yet", where `onsaleDate` only answers "does it
+    exist". For a reader following an event as it comes out those are different
+    questions, and the second one is the one that decides whether a link works.
+    """
+    return _dated(dates, "unlimitedDate")
 
 
 def _names(container: dict | None) -> list[str]:
@@ -117,6 +129,10 @@ class ComicRecord:
     thumbnail_extension: str | None
     characters: list[str] = field(default_factory=list)
     creators: list[str] = field(default_factory=list)
+    #: When Marvel Unlimited releases it. Defaulted because it is usually
+    #: unknown: None means "we have not been told", not "never", and most of the
+    #: catalog predates Marvel publishing the field at all.
+    unlimited_on: date | None = None
 
     @property
     def key(self) -> str:
@@ -144,6 +160,7 @@ def parse_comic(raw: dict) -> ComicRecord:
         issue_number=int(raw.get("issueNumber") or 0),
         title=raw.get("title") or "",
         published_on=_on_sale_date(raw.get("dates")),
+        unlimited_on=_unlimited_date(raw.get("dates")),
         digital_id=_digital_id(raw.get("digitalId")),
         marvel_com_issue_id=_marvel_com_issue_id(raw.get("urls")),
         thumbnail_path=thumbnail.get("path"),

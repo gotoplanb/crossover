@@ -7,6 +7,7 @@ client app.
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import date
 
 from sqlalchemy import select
@@ -59,7 +60,7 @@ async def test_a_bookmark_denormalizes_everything_sequencing_needs(
 
 
 async def test_provenance_comes_from_the_reference_graph(session, user, loaded_event) -> None:
-    """"Why is this here?" answered automatically, without asking someone
+    """ "Why is this here?" answered automatically, without asking someone
     holding a book an extra question."""
     bookmark = await _save(session, user, "King in Black: Planet of the Symbiotes #1")
     assert bookmark.source_reference_id is not None
@@ -112,17 +113,13 @@ async def test_bookmarks_are_isolated_per_user(session, user, other_user, loaded
     assert total.user_id == user.id
 
 
-async def test_marking_read_is_scoped_to_the_owner(
-    session, user, other_user, loaded_event
-) -> None:
+async def test_marking_read_is_scoped_to_the_owner(session, user, other_user, loaded_event) -> None:
     bookmark = await _save(session, user, "King in Black: Namor #1")
     assert await bookmark_service.mark_read(session, other_user.id, bookmark.id) is None
     assert await bookmark_service.mark_read(session, user.id, bookmark.id) is not None
 
 
-async def test_sequence_bookmarks_clusters_rather_than_sorts(
-    session, user, loaded_event
-) -> None:
+async def test_sequence_bookmarks_clusters_rather_than_sorts(session, user, loaded_event) -> None:
     for ref in [
         "King in Black: Namor #1",
         "Web of Venom: Empyre's End #1",
@@ -144,28 +141,22 @@ async def test_sequence_bookmarks_clusters_rather_than_sorts(
 async def test_the_in_universe_anchor_is_computed_at_write_time(
     session, user, loaded_event
 ) -> None:
-    """"this happens around King in Black #3" — derived from curated order, not
+    """ "this happens around King in Black #3" — derived from curated order, not
     from a date, and stored so sequencing needs no extra query."""
     await _save(session, user, "King in Black: Planet of the Symbiotes #1")
     items = await bookmark_service.seq_items(session, user.id)
     assert items[0].anchor == "around King in Black #3"
 
 
-async def test_chronological_is_available_but_not_the_default(
-    session, user, loaded_event
-) -> None:
+async def test_chronological_is_available_but_not_the_default(session, user, loaded_event) -> None:
     await _save(session, user, "Venom #34")
     await _save(session, user, "Web of Venom: Empyre's End #1")
 
     clustered = await bookmark_service.sequence_bookmarks(session, user.id)
-    chrono = await bookmark_service.sequence_bookmarks(
-        session, user.id, ordering="chronological"
-    )
+    chrono = await bookmark_service.sequence_bookmarks(session, user.id, ordering="chronological")
     assert clustered["ordering"] == "clustered"
     assert chrono["ordering"] == "chronological"
-    assert [i["issue"] for i in chrono["issues"]] == [
-        "Web of Venom: Empyre's End #1", "Venom #34"
-    ]
+    assert [i["issue"] for i in chrono["issues"]] == ["Web of Venom: Empyre's End #1", "Venom #34"]
 
 
 async def test_an_empty_rack_says_what_to_do(session, user, loaded_event) -> None:
@@ -174,9 +165,7 @@ async def test_an_empty_rack_says_what_to_do(session, user, loaded_event) -> Non
     assert "bookmark_issue" in payload["note"]
 
 
-async def test_every_bookmark_link_obeys_the_gate_a_rules(
-    session, user, loaded_event
-) -> None:
+async def test_every_bookmark_link_obeys_the_gate_a_rules(session, user, loaded_event) -> None:
     await _save(session, user, "King in Black: Namor #1")
     payload = await bookmark_service.sequence_bookmarks(session, user.id)
     for group in payload["groups"]:
@@ -198,3 +187,23 @@ async def test_a_pending_entry_is_never_linkable(session, user, loaded_event) ->
     await session.commit()
     assert "http" not in bookmark_service.bookmark_link(bookmark)
     assert bookmark_service.bookmark_link(bookmark) == "unconfirmed — not linked"
+
+
+async def test_a_bookmark_carries_the_release_date(session, user, loaded_event) -> None:
+    """Denormalized like the two ids, and for the same reason: `build_link`
+    reads it, so without it the rack would offer a tappable link for an issue
+    Marvel Unlimited has not released."""
+    from datetime import date, timedelta
+
+    from marvel.links import NOT_ON_MU, build_link
+    from service import bookmarks as bookmark_service
+    from service import guide as guide_service
+
+    entries = await guide_service.all_entries(session)
+    entry = next(e for e in entries if e.key == "king-in-black-1")
+    future = date.today() + timedelta(days=30)
+    entry = replace(entry, digital_id=55807, unlimited_on=future)
+
+    bookmark = await bookmark_service.create_bookmark(session, user_id=user.id, entry=entry)
+    assert bookmark.unlimited_on == future
+    assert build_link(bookmark, "King in Black #1").markdown == NOT_ON_MU

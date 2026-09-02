@@ -80,9 +80,7 @@ async def test_a_synced_issue_becomes_a_tappable_markdown_link(
 
     guide = await guide_service.get_event_guide(session, "king-in-black")
     entry = _find(guide["reading_order"], "King in Black #1")
-    assert entry["link"] == (
-        "[King in Black #1](https://read.marvel.com/#/book/55901)"
-    )
+    assert entry["link"] == ("[King in Black #1](https://read.marvel.com/#/book/55901)")
     for row in guide["reading_order"]:
         assert_tappable(row["link"])
 
@@ -94,9 +92,7 @@ async def test_whats_next_returns_the_next_core_issue(session, loaded_event) -> 
     assert result["event"] == "King in Black"
 
 
-async def test_whats_next_lists_what_to_read_before_the_next_core(
-    session, loaded_event
-) -> None:
+async def test_whats_next_lists_what_to_read_before_the_next_core(session, loaded_event) -> None:
     entry = await _entry(session, "King in Black #3")
     result = await guide_service.whats_next(session, entry)
     between = [e["issue"] for e in result["read_before_next_core"]]
@@ -153,3 +149,48 @@ async def test_every_payload_carries_marvels_attribution(session, loaded_event) 
     assert "Marvel" in guide["attribution"]
     entry = await _entry(session, "King in Black #1")
     assert "Marvel" in (await guide_service.whats_next(session, entry))["attribution"]
+
+
+async def test_an_unreleased_issue_says_when_instead_of_just_no(session, loaded_event) -> None:
+    """The point of storing the date. "not on Marvel Unlimited" is true but
+    unhelpful for an issue that simply hasn't been released yet — the reader
+    can plan around "from 12 March"."""
+    from datetime import date, timedelta
+
+    from sqlalchemy import select
+
+    from marvel.links import NOT_ON_MU
+    from models.catalog import Issue
+    from service import guide as guide_service
+
+    issue = await session.scalar(select(Issue).where(Issue.key == "king-in-black-1"))
+    issue.digital_id = 55807
+    issue.unlimited_on = date.today() + timedelta(days=21)
+    await session.commit()
+
+    entries = await guide_service.all_entries(session)
+    entry = next(e for e in entries if e.key == "king-in-black-1")
+    payload = entry.to_payload()
+
+    assert payload["link"] == NOT_ON_MU, "no link that would not open"
+    assert payload["on_marvel_unlimited_from"] == issue.unlimited_on.isoformat()
+
+
+async def test_a_released_issue_carries_no_release_note(session, loaded_event) -> None:
+    """A date that has passed explains nothing; the link speaks for itself."""
+    from datetime import date, timedelta
+
+    from sqlalchemy import select
+
+    from models.catalog import Issue
+    from service import guide as guide_service
+
+    issue = await session.scalar(select(Issue).where(Issue.key == "king-in-black-1"))
+    issue.digital_id = 55807
+    issue.unlimited_on = date.today() - timedelta(days=400)
+    await session.commit()
+
+    entries = await guide_service.all_entries(session)
+    payload = next(e for e in entries if e.key == "king-in-black-1").to_payload()
+    assert "on_marvel_unlimited_from" not in payload
+    assert payload["link"].startswith("[")
