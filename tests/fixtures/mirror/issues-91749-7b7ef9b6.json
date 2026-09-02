@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91749"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91749,
+      "digitalId": 56028,
+      "title": "King in Black: Namor (2020) #3",
+      "issueNumber": "3",
+      "description": "THE BLACK TIDE lay waste to all that lies before them, cutting a swath of devastation and death across the ocean floor. The only chance to stop them may lie with ATTUMA\u2019s people \u2014 and if that fails, nothing stands between The Black Tide and Atlantis itself. A tragedy that will impact Atlantean history forever, and transform friendship into enmity. The secrets of THE KING IN BLACK are buried here.",
+      "modified": "2021-07-26T12:05:34+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91749/king_in_black_namor_2020_3",
+      "seriesId": 31379,
+      "seriesName": "King in Black: Namor (2020 - 2021)",
+      "onSaleDate": "2021-01-27T00:00:00+0000",
+      "unlimitedDate": "2021-05-03T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 11579,
+          "name": "Sunny Gho",
+          "role": "colorist"
+        },
+        {
+          "id": 13518,
+          "name": "Triona Farrell",
+          "role": "colorist"
+        },
+        {
+          "id": 10477,
+          "name": "Benjamin Dewey",
+          "role": "cover artist"
+        },
+        {
+          "id": 2133,
+          "name": "Tom Brevoort",
+          "role": "editor"
+        },
+        {
+          "id": 5251,
+          "name": "Vc Joe Caramagna",
+          "role": "letterer"
+        },
+        {
+          "id": 13879,
+          "name": "Jonas Scharf",
+          "role": "penciler"
+        },
+        {
+          "id": 758,
+          "name": "Leinil Francis Yu",
+          "role": "penciler"
+        },
+        {
+          "id": 1231,
+          "name": "Kurt Busiek",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/5/d0/6009ea1aa3944",
+        "extension": "jpg"
+      }
+    }
+  }
+}

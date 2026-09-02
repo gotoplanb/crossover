@@ -1,0 +1,26 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=King+in+Black+Wiccan+and+Hulkling&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "King in Black Wiccan and Hulkling",
+      "items": [
+        {
+          "id": 92168,
+          "title": "King in Black: Wiccan and Hulkling (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/92168/king_in_black_wiccan_and_hulkling_2021_1",
+          "seriesId": 31547,
+          "seriesName": "King in Black: Wiccan and Hulkling (2021)",
+          "onSaleDate": "2021-03-03T00:00:00+0000",
+          "unlimitedDate": "2021-06-07T00:00:00+0000",
+          "yearPage": 2021
+        }
+      ],
+      "count": 1
+    }
+  }
+}

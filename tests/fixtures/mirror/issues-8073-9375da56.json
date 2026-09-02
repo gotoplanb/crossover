@@ -1,0 +1,45 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/8073"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 8073,
+      "digitalId": 3124,
+      "title": "Daredevil (1964) #1",
+      "issueNumber": "1",
+      "description": null,
+      "modified": "2025-03-17T12:41:04+0000",
+      "pageCount": 23,
+      "detailUrl": "https://www.marvel.com/comics/issue/8073/daredevil_1964_1",
+      "seriesId": 2002,
+      "seriesName": "Daredevil (1964 - 1998)",
+      "onSaleDate": "1964-04-01T00:00:00+0000",
+      "unlimitedDate": "1964-04-01T00:00:00+0000",
+      "yearPage": 1964,
+      "creators": [
+        {
+          "id": 297,
+          "name": "Bill Everett",
+          "role": "cover artist"
+        },
+        {
+          "id": 1553,
+          "name": "Sam Rosen",
+          "role": "letterer"
+        },
+        {
+          "id": 30,
+          "name": "Stan Lee",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/7/10/51894efb25f92",
+        "extension": "jpg"
+      }
+    }
+  }
+}

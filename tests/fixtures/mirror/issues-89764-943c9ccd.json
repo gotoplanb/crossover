@@ -1,0 +1,55 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/89764"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 89764,
+      "digitalId": 56054,
+      "title": "Venom (2018) #32",
+      "issueNumber": "32",
+      "description": "KING IN BLACK ARRIVES! EDDIE BROCK is about to face the biggest challenge of his life\u2026but he's not alone.",
+      "modified": "2021-07-26T12:05:36+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/89764/venom_2018_32",
+      "seriesId": 24310,
+      "seriesName": "Venom (2018 - 2021)",
+      "onSaleDate": "2021-01-06T00:00:00+0000",
+      "unlimitedDate": "2021-04-12T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 11482,
+          "name": "Jesus Aburtov",
+          "role": "colorist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 10172,
+          "name": "Vc Clayton Cowles",
+          "role": "letterer"
+        },
+        {
+          "id": 10445,
+          "name": "Iban Coello",
+          "role": "penciler"
+        },
+        {
+          "id": 12712,
+          "name": "Donny Cates",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/a/00/5ff32d39dc738",
+        "extension": "jpg"
+      }
+    }
+  }
+}

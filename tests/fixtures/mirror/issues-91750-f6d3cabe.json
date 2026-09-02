@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91750"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91750,
+      "digitalId": 56159,
+      "title": "King in Black: Namor (2020) #4",
+      "issueNumber": "4",
+      "description": "The Black Tide\u2019s wave of devastation now threatens Atlantis itself. Namor, Dorma and Attuma may be the undersea world\u2019s only hope, but unless they can shake off their utter defeat from last issue, they don\u2019t even stand a chance. And worse, the one possible weapon they could wield against the Black Tide is in Murmansk, thousands of miles away. It\u2019s Atlantis\u2019s darkest hour\u2026",
+      "modified": "2021-07-26T12:05:34+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91750/king_in_black_namor_2020_4",
+      "seriesId": 31379,
+      "seriesName": "King in Black: Namor (2020 - 2021)",
+      "onSaleDate": "2021-02-24T00:00:00+0000",
+      "unlimitedDate": "2021-05-31T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 11579,
+          "name": "Sunny Gho",
+          "role": "colorist"
+        },
+        {
+          "id": 13518,
+          "name": "Triona Farrell",
+          "role": "colorist"
+        },
+        {
+          "id": 10477,
+          "name": "Benjamin Dewey",
+          "role": "cover artist"
+        },
+        {
+          "id": 13879,
+          "name": "Jonas Scharf",
+          "role": "cover artist"
+        },
+        {
+          "id": 2133,
+          "name": "Tom Brevoort",
+          "role": "editor"
+        },
+        {
+          "id": 5251,
+          "name": "Vc Joe Caramagna",
+          "role": "letterer"
+        },
+        {
+          "id": 758,
+          "name": "Leinil Francis Yu",
+          "role": "penciler"
+        },
+        {
+          "id": 1231,
+          "name": "Kurt Busiek",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/03/60303625e329f",
+        "extension": "jpg"
+      }
+    }
+  }
+}

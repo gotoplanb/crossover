@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91761"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91761,
+      "digitalId": 56161,
+      "title": "King in Black: Thunderbolts (2021) #2",
+      "issueNumber": "2",
+      "description": "THE THUNDERBOLTS GET COMMITTED! The secret to saving the world lies within the Ravencroft Institute, but can the Thunderbolts get it out? Not if a mob of Knullified inmates have anything to say about it! The Thunderbolts\u2019 plan to save the world is revealed, and it must be seen to be believed!",
+      "modified": "2021-07-26T12:05:39+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91761/king_in_black_thunderbolts_2021_2",
+      "seriesId": 31385,
+      "seriesName": "King in Black: Thunderbolts (2021)",
+      "onSaleDate": "2021-02-10T00:00:00+0000",
+      "unlimitedDate": "2021-05-17T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 11543,
+          "name": "Dan Brown",
+          "role": "colorist"
+        },
+        {
+          "id": 13558,
+          "name": "Juan Ferreyra",
+          "role": "colorist"
+        },
+        {
+          "id": 11921,
+          "name": "Jacob Thomas",
+          "role": "editor"
+        },
+        {
+          "id": 12974,
+          "name": "Vc Joe Sabino",
+          "role": "letterer"
+        },
+        {
+          "id": 189,
+          "name": "Kyle Hotz",
+          "role": "penciler"
+        },
+        {
+          "id": 12771,
+          "name": "Matthew Rosenberg",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/c0/60196ff1282e7",
+        "extension": "jpg"
+      }
+    }
+  }
+}

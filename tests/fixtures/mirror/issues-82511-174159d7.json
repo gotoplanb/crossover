@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/82511"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 82511,
+      "digitalId": 56181,
+      "title": "The Union (2020) #3",
+      "issueNumber": "3",
+      "description": "KELPIE GOES ROGUE! In the wake of the disastrous Knull invasion, Kelpie takes drastic action...but when her choices land her in hot water, only Union Jack will be able to save her!",
+      "modified": "2021-03-09T09:03:50+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/82511/the_union_2020_3",
+      "seriesId": 29327,
+      "seriesName": "The Union (2020 - 2021)",
+      "onSaleDate": "2021-02-24T00:00:00+0000",
+      "unlimitedDate": "2021-05-31T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 13021,
+          "name": "David Curiel",
+          "role": "colorist"
+        },
+        {
+          "id": 13003,
+          "name": "Nolan Woodard",
+          "role": "colorist"
+        },
+        {
+          "id": 8929,
+          "name": "Lebeau Underwood",
+          "role": "cover artist"
+        },
+        {
+          "id": 13027,
+          "name": "Darren Shan",
+          "role": "editor"
+        },
+        {
+          "id": 12993,
+          "name": "Vc Travis Lanham",
+          "role": "letterer"
+        },
+        {
+          "id": 474,
+          "name": "Andrea DI Vito",
+          "role": "penciler"
+        },
+        {
+          "id": 12489,
+          "name": "R.B. Silva",
+          "role": "penciler"
+        },
+        {
+          "id": 9226,
+          "name": "Paul Grist",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/d/30/6030360d95644",
+        "extension": "jpg"
+      }
+    }
+  }
+}

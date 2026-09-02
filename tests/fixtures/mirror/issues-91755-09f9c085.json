@@ -1,0 +1,55 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91755"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91755,
+      "digitalId": 55811,
+      "title": "King In Black: Iron Man/Doom (2020) #1",
+      "issueNumber": "1",
+      "description": "Iron Man has risked everything to save Eddie Brock, but now he\u2019s left with nothing but guilt. As longtime \u2018frenemy\u2019 Doctor Doom shows up with both counseling words and ulterior motives, they\u2019lll be forced to battle an all-too-familiar specter of the holiday season\u2014albeit one now twisted and controlled by the recent invasion of Earth by the symbiote homeworld. As Iron Man and Doom fight as temporary allies, their unexpected encounter both with each other and a horrifying inversion of yuletide joy may ultimately reveal to them the true meaning of Knull-mas.",
+      "modified": "2021-07-26T12:05:36+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91755/king_in_black_iron_mandoom_2020_1",
+      "seriesId": 31382,
+      "seriesName": "King In Black: Iron Man/Doom (2020)",
+      "onSaleDate": "2020-12-30T00:00:00+0000",
+      "unlimitedDate": "2021-04-05T00:00:00+0000",
+      "yearPage": 2020,
+      "creators": [
+        {
+          "id": 12239,
+          "name": "Guru Efx",
+          "role": "colorist"
+        },
+        {
+          "id": 2133,
+          "name": "Tom Brevoort",
+          "role": "editor"
+        },
+        {
+          "id": 12993,
+          "name": "Vc Travis Lanham",
+          "role": "letterer"
+        },
+        {
+          "id": 11757,
+          "name": "Salvador Larroca",
+          "role": "penciler"
+        },
+        {
+          "id": 13861,
+          "name": "Christopher Cantwell",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/c/90/5fda7db6809b2",
+        "extension": "jpg"
+      }
+    }
+  }
+}

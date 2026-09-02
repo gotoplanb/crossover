@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/85648"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 85648,
+      "digitalId": 55836,
+      "title": "Venom (2018) #31",
+      "issueNumber": "31",
+      "description": "KING IN BLACK ARRIVES! What happens to Eddie Brock when he finally comes face to face with the lord of the abyss, the KING IN BLACK: KNULL?",
+      "modified": "2021-07-26T12:05:32+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/85648/venom_2018_31",
+      "seriesId": 24310,
+      "seriesName": "Venom (2018 - 2021)",
+      "onSaleDate": "2020-12-09T00:00:00+0000",
+      "unlimitedDate": "2021-03-15T00:00:00+0000",
+      "yearPage": 2020,
+      "creators": [
+        {
+          "id": 4991,
+          "name": "Frank Martin",
+          "role": "colorist"
+        },
+        {
+          "id": 11482,
+          "name": "Jesus Aburtov",
+          "role": "colorist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 10172,
+          "name": "Vc Clayton Cowles",
+          "role": "letterer"
+        },
+        {
+          "id": 10445,
+          "name": "Iban Coello",
+          "role": "penciler"
+        },
+        {
+          "id": 12712,
+          "name": "Donny Cates",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/4/f0/5fcaaf90a6cad",
+        "extension": "jpg"
+      }
+    }
+  }
+}

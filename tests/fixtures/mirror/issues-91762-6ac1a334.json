@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91762"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91762,
+      "digitalId": 56410,
+      "title": "King in Black: Thunderbolts (2021) #3",
+      "issueNumber": "3",
+      "description": "THE EXPLOSIVE FINALE! What are the Thunderbolts doing with the Sentry\u2019s body? Oh\u2026Oh, no. Really? That\u2019s the plan??? Well, as long as everything comes out all right in the end. Wait, THAT\u2019S how it ends??? YIKES.",
+      "modified": "2021-07-26T12:05:39+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91762/king_in_black_thunderbolts_2021_3",
+      "seriesId": 31385,
+      "seriesName": "King in Black: Thunderbolts (2021)",
+      "onSaleDate": "2021-03-03T00:00:00+0000",
+      "unlimitedDate": "2021-06-07T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 11543,
+          "name": "Dan Brown",
+          "role": "colorist"
+        },
+        {
+          "id": 13558,
+          "name": "Juan Ferreyra",
+          "role": "colorist"
+        },
+        {
+          "id": 11921,
+          "name": "Jacob Thomas",
+          "role": "editor"
+        },
+        {
+          "id": 12974,
+          "name": "Vc Joe Sabino",
+          "role": "letterer"
+        },
+        {
+          "id": 189,
+          "name": "Kyle Hotz",
+          "role": "penciler"
+        },
+        {
+          "id": 12771,
+          "name": "Matthew Rosenberg",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/60/6030353026108",
+        "extension": "jpg"
+      }
+    }
+  }
+}

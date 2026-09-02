@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91765"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91765,
+      "digitalId": 56037,
+      "title": "King in Black: Return of the Valkyries (2021) #1",
+      "issueNumber": "1",
+      "description": "JANE FOSTER RETURNS! Once there was an entire army of Valkyries, but now Jane Foster is the only one. When the King in Black comes to Midgard, Jane must rebuild the Valkyries to help stop him -- starting with Hildegarde, a warrior from Asgard's own hallowed halls, and X-Man Dani Moonstar, a former Valkyrie herself. But what Jane doesn't know is that she never was the only Valkyrie after all. Who is the fourth warrior? Jason Aaron and Torunn Gr\u00f8nbekk team up with artist Nina Vakueva for a story that will rock the foundations of the Marvel Universe!",
+      "modified": "2021-07-26T12:05:37+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91765/king_in_black_return_of_the_valkyries_2021_1",
+      "seriesId": 31388,
+      "seriesName": "King in Black: Return of the Valkyries (2021)",
+      "onSaleDate": "2021-01-06T00:00:00+0000",
+      "unlimitedDate": "2021-04-12T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 12744,
+          "name": "Tamra Bonvillain",
+          "role": "colorist"
+        },
+        {
+          "id": 13606,
+          "name": "Nina Vakueva",
+          "role": "cover artist"
+        },
+        {
+          "id": 12376,
+          "name": "Wilson Moss",
+          "role": "editor"
+        },
+        {
+          "id": 12974,
+          "name": "Vc Joe Sabino",
+          "role": "letterer"
+        },
+        {
+          "id": 13413,
+          "name": "Mattia De Iulis",
+          "role": "penciler"
+        },
+        {
+          "id": 11463,
+          "name": "Jason Aaron",
+          "role": "writer"
+        },
+        {
+          "id": 14017,
+          "name": "Torunn Gronbekk",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/c/d0/5ff34b666fb6b",
+        "extension": "jpg"
+      }
+    }
+  }
+}

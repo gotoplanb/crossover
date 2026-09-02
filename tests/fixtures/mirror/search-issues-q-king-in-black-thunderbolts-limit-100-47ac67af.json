@@ -1,0 +1,48 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=King+in+Black+Thunderbolts&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "King in Black Thunderbolts",
+      "items": [
+        {
+          "id": 91760,
+          "title": "King in Black: Thunderbolts (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91760/king_in_black_thunderbolts_2021_1",
+          "seriesId": 31385,
+          "seriesName": "King in Black: Thunderbolts (2021)",
+          "onSaleDate": "2021-01-13T00:00:00+0000",
+          "unlimitedDate": "2021-04-19T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91761,
+          "title": "King in Black: Thunderbolts (2021) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/91761/king_in_black_thunderbolts_2021_2",
+          "seriesId": 31385,
+          "seriesName": "King in Black: Thunderbolts (2021)",
+          "onSaleDate": "2021-02-10T00:00:00+0000",
+          "unlimitedDate": "2021-05-17T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91762,
+          "title": "King in Black: Thunderbolts (2021) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/91762/king_in_black_thunderbolts_2021_3",
+          "seriesId": 31385,
+          "seriesName": "King in Black: Thunderbolts (2021)",
+          "onSaleDate": "2021-03-03T00:00:00+0000",
+          "unlimitedDate": "2021-06-07T00:00:00+0000",
+          "yearPage": 2021
+        }
+      ],
+      "count": 3
+    }
+  }
+}

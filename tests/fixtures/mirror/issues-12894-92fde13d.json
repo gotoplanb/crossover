@@ -1,0 +1,45 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/12894"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 12894,
+      "digitalId": 91,
+      "title": "Fantastic Four (1961) #1",
+      "issueNumber": "1",
+      "description": "Jack Kirby set the standard for massive monster mayhem covers before the super hero boom. So bringing those elements together? Magical.",
+      "modified": "2025-08-07T20:14:48+0000",
+      "pageCount": 0,
+      "detailUrl": "https://www.marvel.com/comics/issue/12894/fantastic_four_1961_1",
+      "seriesId": 2121,
+      "seriesName": "Fantastic Four (1961 - 1998)",
+      "onSaleDate": "1961-11-01T00:00:00+0000",
+      "unlimitedDate": "1961-11-01T00:00:00+0000",
+      "yearPage": 1961,
+      "creators": [
+        {
+          "id": 13093,
+          "name": "Art Simek",
+          "role": "letterer"
+        },
+        {
+          "id": 196,
+          "name": "Jack Kirby",
+          "role": "penciler"
+        },
+        {
+          "id": 30,
+          "name": "Stan Lee",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/6/20/519b7424af23c",
+        "extension": "jpg"
+      }
+    }
+  }
+}

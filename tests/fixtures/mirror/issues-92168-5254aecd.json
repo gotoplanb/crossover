@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/92168"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 92168,
+      "digitalId": 56411,
+      "title": "King in Black: Wiccan and Hulkling (2021) #1",
+      "issueNumber": "1",
+      "description": "NO TIME TO CELEBRATE! Wiccan and Hulkling are freshly off the marriage altar and overdue for a proper celebration. So when the Shi\u2019ar invite them for an all-expenses paid vacation at their glitziest beach resort, you know Wiccan\u2019s already got their bags packed. But they\u2019ll have to hold the champagne \u2014 because Knull and his symbiote army are expanding across the galaxy! Tini Howard and Luciano Vecchio give everyone\u2019s favorite Young Avengers a honeymoon to die for!",
+      "modified": "2021-10-29T23:51:46+0000",
+      "pageCount": 40,
+      "detailUrl": "https://www.marvel.com/comics/issue/92168/king_in_black_wiccan_and_hulkling_2021_1",
+      "seriesId": 31547,
+      "seriesName": "King in Black: Wiccan and Hulkling (2021)",
+      "onSaleDate": "2021-03-03T00:00:00+0000",
+      "unlimitedDate": "2021-06-07T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 14157,
+          "name": "Alejandro Sanchez",
+          "role": "colorist"
+        },
+        {
+          "id": 13674,
+          "name": "Espen Grundetjern",
+          "role": "colorist"
+        },
+        {
+          "id": 11961,
+          "name": "Luciano Vecchio",
+          "role": "cover artist"
+        },
+        {
+          "id": 12376,
+          "name": "Wilson Moss",
+          "role": "editor"
+        },
+        {
+          "id": 14075,
+          "name": "Vc Ariana Maher",
+          "role": "letterer"
+        },
+        {
+          "id": 357,
+          "name": "Jim Cheung",
+          "role": "penciler"
+        },
+        {
+          "id": 13536,
+          "name": "Tini Howard",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/30/6030352db978a",
+        "extension": "jpg"
+      }
+    }
+  }
+}

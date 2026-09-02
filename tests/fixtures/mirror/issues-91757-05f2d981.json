@@ -1,0 +1,75 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91757"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91757,
+      "digitalId": 56029,
+      "title": "King in Black: Planet of the Symbiotes (2021) #1",
+      "issueNumber": "1",
+      "description": "DARKNESS REIGNS OVER THE MARVEL UNIVERSE!",
+      "modified": "2021-07-26T12:05:39+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91757/king_in_black_planet_of_the_symbiotes_2021_1",
+      "seriesId": 31384,
+      "seriesName": "King in Black: Planet of the Symbiotes (2021)",
+      "onSaleDate": "2021-01-13T00:00:00+0000",
+      "unlimitedDate": "2021-04-19T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 442,
+          "name": "Dean White",
+          "role": "colorist"
+        },
+        {
+          "id": 12991,
+          "name": "Rachelle Rosenberg",
+          "role": "colorist"
+        },
+        {
+          "id": 12790,
+          "name": "Danilo S. Beyruth",
+          "role": "cover artist"
+        },
+        {
+          "id": 13236,
+          "name": "Guiu Vilanova",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 12980,
+          "name": "Vc Cory Petit",
+          "role": "letterer"
+        },
+        {
+          "id": 9586,
+          "name": "Tony Moore",
+          "role": "penciler"
+        },
+        {
+          "id": 13137,
+          "name": "Clay Chapman",
+          "role": "writer"
+        },
+        {
+          "id": 91,
+          "name": "Frank Tieri",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/8/04/5ff8cf2f77dd7",
+        "extension": "jpg"
+      }
+    }
+  }
+}

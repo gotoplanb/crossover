@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91766"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91766,
+      "digitalId": 56038,
+      "title": "King in Black: Return of the Valkyries (2021) #2",
+      "issueNumber": "2",
+      "description": "SAVE THE SENTRY \u2013 SAVE THE VALKYRIES \u2013 SAVE THE EARTH! Knull and his symbiote horrors have come to Earth, and now all Jane Foster sees when she looks at that big blue globe\u2026is a vision of death. Most of Earth\u2019s heroes are locked in battle on the ground, and it\u2019s up to Jane and the Sentry to protect the rest! But Knull\u2019s power has spread over the galaxy and infected creatures even older than the gods\u2026and it may not matter how many Valkyries Jane can bring to their aid.",
+      "modified": "2021-07-26T12:05:42+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91766/king_in_black_return_of_the_valkyries_2021_2",
+      "seriesId": 31388,
+      "seriesName": "King in Black: Return of the Valkyries (2021)",
+      "onSaleDate": "2021-02-03T00:00:00+0000",
+      "unlimitedDate": "2021-05-10T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 12744,
+          "name": "Tamra Bonvillain",
+          "role": "colorist"
+        },
+        {
+          "id": 13606,
+          "name": "Nina Vakueva",
+          "role": "cover artist"
+        },
+        {
+          "id": 12376,
+          "name": "Wilson Moss",
+          "role": "editor"
+        },
+        {
+          "id": 12974,
+          "name": "Vc Joe Sabino",
+          "role": "letterer"
+        },
+        {
+          "id": 13413,
+          "name": "Mattia De Iulis",
+          "role": "penciler"
+        },
+        {
+          "id": 11463,
+          "name": "Jason Aaron",
+          "role": "writer"
+        },
+        {
+          "id": 14017,
+          "name": "Torunn Gronbekk",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/c/30/6009e1cf54dbe",
+        "extension": "jpg"
+      }
+    }
+  }
+}

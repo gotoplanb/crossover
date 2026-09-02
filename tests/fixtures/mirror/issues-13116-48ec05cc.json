@@ -1,0 +1,50 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/13116"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 13116,
+      "digitalId": 3328,
+      "title": "Fantastic Four (1961) #3",
+      "issueNumber": "3",
+      "description": "regular cover",
+      "modified": "2025-05-02T09:11:38+0000",
+      "pageCount": 0,
+      "detailUrl": "https://www.marvel.com/comics/issue/13116/fantastic_four_1961_3",
+      "seriesId": 2121,
+      "seriesName": "Fantastic Four (1961 - 1998)",
+      "onSaleDate": "1962-03-01T00:00:00+0000",
+      "unlimitedDate": "1962-03-01T00:00:00+0000",
+      "yearPage": 1962,
+      "creators": [
+        {
+          "id": 1089,
+          "name": "Sol Brodsky",
+          "role": "cover artist"
+        },
+        {
+          "id": 13093,
+          "name": "Art Simek",
+          "role": "letterer"
+        },
+        {
+          "id": 196,
+          "name": "Jack Kirby",
+          "role": "penciler"
+        },
+        {
+          "id": 30,
+          "name": "Stan Lee",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/40/536d726cd5114",
+        "extension": "jpg"
+      }
+    }
+  }
+}

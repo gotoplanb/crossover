@@ -1,0 +1,55 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/89766"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 89766,
+      "digitalId": 56429,
+      "title": "Venom (2018) #34",
+      "issueNumber": "34",
+      "description": "THIS IS IT! After a pulse-pounding race to the finish, VENOM #34 stands as the series' final tie-in to the KING IN BLACK epic! But is this issue also the end of the Venom symbiote as we know it?! From maestros DONNY CATES, IBAN COELLO and JESUS ABURTOV, this one sets the stage for VENOM #200 - and EVERYTHING that follows!",
+      "modified": "2021-07-26T12:05:47+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/89766/venom_2018_34",
+      "seriesId": 24310,
+      "seriesName": "Venom (2018 - 2021)",
+      "onSaleDate": "2021-04-07T00:00:00+0000",
+      "unlimitedDate": "2021-07-12T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 11482,
+          "name": "Jesus Aburtov",
+          "role": "colorist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 10172,
+          "name": "Vc Clayton Cowles",
+          "role": "letterer"
+        },
+        {
+          "id": 10445,
+          "name": "Iban Coello",
+          "role": "penciler"
+        },
+        {
+          "id": 12712,
+          "name": "Donny Cates",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/00/6066107933daa",
+        "extension": "jpg"
+      }
+    }
+  }
+}

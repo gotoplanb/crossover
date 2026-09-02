@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/66869"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 66869,
+      "digitalId": 47759,
+      "title": "Venomized (2018) #3",
+      "issueNumber": "3",
+      "description": "With one of their strongest allies consumed by the Poisons, the heroes of Earth must rally and stand against one of their own! Meanwhile, the Poisons have been working in secret to shore up their defenses, but have they thought of everything?",
+      "modified": "2018-11-09T17:55:07+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/66869/venomized_2018_3",
+      "seriesId": 24144,
+      "seriesName": "Venomized (2018)",
+      "onSaleDate": "2018-04-18T00:00:00+0000",
+      "unlimitedDate": "2018-10-22T00:00:00+0000",
+      "yearPage": 2018,
+      "creators": [
+        {
+          "id": 12604,
+          "name": "Jim Campbell",
+          "role": "colorist"
+        },
+        {
+          "id": 12984,
+          "name": "Matt Yackey",
+          "role": "colorist"
+        },
+        {
+          "id": 10445,
+          "name": "Iban Coello",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 5251,
+          "name": "Vc Joe Caramagna",
+          "role": "letterer"
+        },
+        {
+          "id": 11875,
+          "name": "Nick Bradshaw",
+          "role": "penciler"
+        },
+        {
+          "id": 10023,
+          "name": "Cullen Bunn",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/f/60/5ace6a9c7a7d1",
+        "extension": "jpg"
+      }
+    }
+  }
+}

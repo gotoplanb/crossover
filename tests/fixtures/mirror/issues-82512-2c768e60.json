@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/82512"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 82512,
+      "digitalId": 56467,
+      "title": "The Union (2020) #4",
+      "issueNumber": "4",
+      "description": "Caught in the cries of the Choir! With their sonic-powered teammate in trouble, Union Jack and the team must rescue the Choir before it's too late! But what the Union finds out about the Choir may be too much even for them! Plus, meet the team's newest recruit\u2026Bulldog!",
+      "modified": "2021-04-22T12:31:08+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/82512/the_union_2020_4",
+      "seriesId": 29327,
+      "seriesName": "The Union (2020 - 2021)",
+      "onSaleDate": "2021-03-31T00:00:00+0000",
+      "unlimitedDate": "2021-07-05T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 13021,
+          "name": "David Curiel",
+          "role": "colorist"
+        },
+        {
+          "id": 13003,
+          "name": "Nolan Woodard",
+          "role": "colorist"
+        },
+        {
+          "id": 8929,
+          "name": "Lebeau Underwood",
+          "role": "cover artist"
+        },
+        {
+          "id": 13027,
+          "name": "Darren Shan",
+          "role": "editor"
+        },
+        {
+          "id": 12993,
+          "name": "Vc Travis Lanham",
+          "role": "letterer"
+        },
+        {
+          "id": 474,
+          "name": "Andrea DI Vito",
+          "role": "penciler"
+        },
+        {
+          "id": 12489,
+          "name": "R.B. Silva",
+          "role": "penciler"
+        },
+        {
+          "id": 9226,
+          "name": "Paul Grist",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/a0/605cee2933367",
+        "extension": "jpg"
+      }
+    }
+  }
+}

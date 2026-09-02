@@ -1,0 +1,45 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/8164"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 8164,
+      "digitalId": 1672,
+      "title": "Daredevil (1964) #181",
+      "issueNumber": "181",
+      "description": " \"One Wins. One Dies.\" The cover's text immediately lets you know something big is going down this issue. And Frank Miller's badass imagery drives the point home.",
+      "modified": "2025-03-04T20:24:10+0000",
+      "pageCount": 0,
+      "detailUrl": "https://www.marvel.com/comics/issue/8164/daredevil_1964_181",
+      "seriesId": 2002,
+      "seriesName": "Daredevil (1964 - 1998)",
+      "onSaleDate": "1982-04-01T00:00:00+0000",
+      "unlimitedDate": "1982-04-01T00:00:00+0000",
+      "yearPage": 1982,
+      "creators": [
+        {
+          "id": 570,
+          "name": "Klaus Janson",
+          "role": "cover artist"
+        },
+        {
+          "id": 1759,
+          "name": "Joe Rosen",
+          "role": "letterer"
+        },
+        {
+          "id": 17,
+          "name": "Frank Miller",
+          "role": "penciler"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/b/d0/4bc47aaa7154d",
+        "extension": "jpg"
+      }
+    }
+  }
+}

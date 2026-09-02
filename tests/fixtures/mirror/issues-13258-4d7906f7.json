@@ -1,0 +1,50 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/13258"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 13258,
+      "digitalId": 4657,
+      "title": "Fantastic Four (1961) #52",
+      "issueNumber": "52",
+      "description": "The First Appearance of The Black Panther, T'Challa, as well as the nation of Wakanda!  On a mission in the remote wilderness of Wakanda, the Fantastic Four encounter one of Marvel's most iconic heroes...and are bested in battle by the Black Panther!  But how are the Inhumans involved in this earthly encounter?",
+      "modified": "2024-09-21T09:43:27+0000",
+      "pageCount": 0,
+      "detailUrl": "https://www.marvel.com/comics/issue/13258/fantastic_four_1961_52",
+      "seriesId": 2121,
+      "seriesName": "Fantastic Four (1961 - 1998)",
+      "onSaleDate": "1966-07-01T00:00:00+0000",
+      "unlimitedDate": "1966-07-01T00:00:00+0000",
+      "yearPage": 1966,
+      "creators": [
+        {
+          "id": 1240,
+          "name": "Joe Sinnott",
+          "role": "cover artist"
+        },
+        {
+          "id": 1553,
+          "name": "Sam Rosen",
+          "role": "letterer"
+        },
+        {
+          "id": 196,
+          "name": "Jack Kirby",
+          "role": "penciler"
+        },
+        {
+          "id": 30,
+          "name": "Stan Lee",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/60/5372d7b815a17",
+        "extension": "jpg"
+      }
+    }
+  }
+}

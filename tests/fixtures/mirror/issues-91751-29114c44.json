@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91751"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91751,
+      "digitalId": 56027,
+      "title": "King in Black: Gwenom Vs. Carnage (2021) #1",
+      "issueNumber": "1",
+      "description": "GWEN STACY ENTERS THE FRAY AGAINST THE KING IN BLACK! Bonded to a synthetic symbiote from another reality, GHOST-SPIDER, aka Gwen Stacy of Earth-65, is unique among the webslingers of the multiverse! But when KNULL descends on her adopted home, his gravity well of dark psychic energy will reap unforeseen consequences not only on Gwen, but on her symbiotic suit as well!",
+      "modified": "2021-07-26T12:05:37+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91751/king_in_black_gwenom_vs_carnage_2021_1",
+      "seriesId": 31380,
+      "seriesName": "King in Black: Gwenom Vs. Carnage (2021)",
+      "onSaleDate": "2021-01-13T00:00:00+0000",
+      "unlimitedDate": "2021-04-19T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 13201,
+          "name": "Juan Fernandez",
+          "role": "colorist"
+        },
+        {
+          "id": 9329,
+          "name": "Rico Renzi",
+          "role": "colorist"
+        },
+        {
+          "id": 12820,
+          "name": "F Flaviano",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 14075,
+          "name": "Vc Ariana Maher",
+          "role": "letterer"
+        },
+        {
+          "id": 1248,
+          "name": "Ken Lashley",
+          "role": "penciler"
+        },
+        {
+          "id": 13556,
+          "name": "Seanan Mcguire",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/6/e0/5ff32d805529f",
+        "extension": "jpg"
+      }
+    }
+  }
+}

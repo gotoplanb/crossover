@@ -1,0 +1,26 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=King+in+Black+Iron+Man+Doom&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "King in Black Iron Man Doom",
+      "items": [
+        {
+          "id": 91755,
+          "title": "King In Black: Iron Man/Doom (2020) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91755/king_in_black_iron_mandoom_2020_1",
+          "seriesId": 31382,
+          "seriesName": "King In Black: Iron Man/Doom (2020)",
+          "onSaleDate": "2020-12-30T00:00:00+0000",
+          "unlimitedDate": "2021-04-05T00:00:00+0000",
+          "yearPage": 2020
+        }
+      ],
+      "count": 1
+    }
+  }
+}

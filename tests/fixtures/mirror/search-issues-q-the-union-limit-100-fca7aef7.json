@@ -1,0 +1,103 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=The+Union&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "The Union",
+      "items": [
+        {
+          "id": 82509,
+          "title": "The Union (2020) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/82509/the_union_2020_1",
+          "seriesId": 29327,
+          "seriesName": "The Union (2020 - 2021)",
+          "onSaleDate": "2020-12-02T00:00:00+0000",
+          "unlimitedDate": "2021-03-08T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 82510,
+          "title": "The Union (2020) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/82510/the_union_2020_2",
+          "seriesId": 29327,
+          "seriesName": "The Union (2020 - 2021)",
+          "onSaleDate": "2021-01-13T00:00:00+0000",
+          "unlimitedDate": "2021-04-19T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 82511,
+          "title": "The Union (2020) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/82511/the_union_2020_3",
+          "seriesId": 29327,
+          "seriesName": "The Union (2020 - 2021)",
+          "onSaleDate": "2021-02-24T00:00:00+0000",
+          "unlimitedDate": "2021-05-31T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 82512,
+          "title": "The Union (2020) #4",
+          "issueNumber": "4",
+          "detailUrl": "https://www.marvel.com/comics/issue/82512/the_union_2020_4",
+          "seriesId": 29327,
+          "seriesName": "The Union (2020 - 2021)",
+          "onSaleDate": "2021-03-31T00:00:00+0000",
+          "unlimitedDate": "2021-07-05T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 82513,
+          "title": "The Union (2020) #5",
+          "issueNumber": "5",
+          "detailUrl": "https://www.marvel.com/comics/issue/82513/the_union_2020_5",
+          "seriesId": 29327,
+          "seriesName": "The Union (2020 - 2021)",
+          "onSaleDate": "2021-05-05T00:00:00+0000",
+          "unlimitedDate": "2021-08-09T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 114266,
+          "title": "Union Jack the Ripper: Blood Hunt (2024) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/114266/union_jack_the_ripper_blood_hunt_2024_1",
+          "seriesId": 39163,
+          "seriesName": "Union Jack the Ripper: Blood Hunt (2024 - Present)",
+          "onSaleDate": "2024-05-22T00:00:00+0000",
+          "unlimitedDate": "2024-05-09T00:00:00+0000",
+          "yearPage": 2024
+        },
+        {
+          "id": 114267,
+          "title": "Union Jack the Ripper: Blood Hunt (2024) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/114267/union_jack_the_ripper_blood_hunt_2024_2",
+          "seriesId": 39163,
+          "seriesName": "Union Jack the Ripper: Blood Hunt (2024 - Present)",
+          "onSaleDate": "2024-06-26T00:00:00+0000",
+          "unlimitedDate": "2024-06-12T00:00:00+0000",
+          "yearPage": 2024
+        },
+        {
+          "id": 114268,
+          "title": "Union Jack the Ripper: Blood Hunt (2024) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/114268/union_jack_the_ripper_blood_hunt_2024_3",
+          "seriesId": 39163,
+          "seriesName": "Union Jack the Ripper: Blood Hunt (2024 - Present)",
+          "onSaleDate": "2024-07-10T00:00:00+0000",
+          "unlimitedDate": "2024-07-10T00:00:00+0000",
+          "yearPage": 2024
+        }
+      ],
+      "count": 8
+    }
+  }
+}

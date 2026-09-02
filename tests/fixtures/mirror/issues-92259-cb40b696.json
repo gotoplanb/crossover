@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/92259"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 92259,
+      "digitalId": 56463,
+      "title": "King in Black: Namor (2020) #5",
+      "issueNumber": "5",
+      "description": "The grand finale! As the Dark Tide threatens Atlantis, Namor, Attuma and Dorma make a desperate, dangerous attempt to save the undersea world \u2014 but even if they can manage it, it\u2019ll come at a great cost. Learn the fate of Atlantis \u2014 of Attuma \u2014 of the Dark Tide \u2014 and the future of the Dark Tide as well. What will come out of THE KING IN BLACK for Namor and Atlantis? Watch it unfold here.",
+      "modified": "2021-07-26T12:05:34+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/92259/king_in_black_namor_2020_5",
+      "seriesId": 31379,
+      "seriesName": "King in Black: Namor (2020 - 2021)",
+      "onSaleDate": "2021-04-14T00:00:00+0000",
+      "unlimitedDate": "2021-07-19T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 11579,
+          "name": "Sunny Gho",
+          "role": "colorist"
+        },
+        {
+          "id": 13518,
+          "name": "Triona Farrell",
+          "role": "colorist"
+        },
+        {
+          "id": 10477,
+          "name": "Benjamin Dewey",
+          "role": "cover artist"
+        },
+        {
+          "id": 13879,
+          "name": "Jonas Scharf",
+          "role": "cover artist"
+        },
+        {
+          "id": 758,
+          "name": "Leinil Francis Yu",
+          "role": "cover artist"
+        },
+        {
+          "id": 2133,
+          "name": "Tom Brevoort",
+          "role": "editor"
+        },
+        {
+          "id": 5251,
+          "name": "Vc Joe Caramagna",
+          "role": "letterer"
+        },
+        {
+          "id": 1231,
+          "name": "Kurt Busiek",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/c0/6066104982001",
+        "extension": "jpg"
+      }
+    }
+  }
+}

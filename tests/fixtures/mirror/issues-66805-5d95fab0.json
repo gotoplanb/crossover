@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/66805"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 66805,
+      "digitalId": 47710,
+      "title": "Venomized (2018) #2",
+      "issueNumber": "2",
+      "description": "Venom and the X-Men have returned from the extraterrestrial adventures of \"Poison-X\" to find dozens of heroes and villains bonded with Klyntar symbiotes - and none of 'em are happy about it! The grand plans of the Poisons begins to make themselves known...including their designs for Cletus Kasady! One Avenger might not make out in one piece!",
+      "modified": "2024-10-10T09:40:22+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/66805/venomized_2018_2",
+      "seriesId": 24144,
+      "seriesName": "Venomized (2018)",
+      "onSaleDate": "2018-04-11T00:00:00+0000",
+      "unlimitedDate": "2018-04-11T00:00:00+0000",
+      "yearPage": 2018,
+      "creators": [
+        {
+          "id": 12604,
+          "name": "Jim Campbell",
+          "role": "colorist"
+        },
+        {
+          "id": 12984,
+          "name": "Matt Yackey",
+          "role": "colorist"
+        },
+        {
+          "id": 10445,
+          "name": "Iban Coello",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 5251,
+          "name": "Vc Joe Caramagna",
+          "role": "letterer"
+        },
+        {
+          "id": 11875,
+          "name": "Nick Bradshaw",
+          "role": "penciler"
+        },
+        {
+          "id": 10023,
+          "name": "Cullen Bunn",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/7/00/5ac5259b70f99",
+        "extension": "jpg"
+      }
+    }
+  }
+}

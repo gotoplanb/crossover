@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91767"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91767,
+      "digitalId": 56171,
+      "title": "King in Black: Return of the Valkyries (2021) #3",
+      "issueNumber": "3",
+      "description": "THE NEW VALKYRIE FINDS HER WEAPON \u2014 WILL IT BE ENOUGH? Plus, a spotlight on Dani Moonstar as the X-Man fights to save both human and mutantkind! Jane Foster is going to need all the friends and power she can muster, but Knull and his symbiote army are slaughtering at a rate that even a hundred Valkyries couldn\u2019t match\u2026and now Knull has some of the world\u2019s greatest heroes on his side. Can four warriors hope to stem the tide?",
+      "modified": "2021-07-26T12:05:43+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91767/king_in_black_return_of_the_valkyries_2021_3",
+      "seriesId": 31388,
+      "seriesName": "King in Black: Return of the Valkyries (2021)",
+      "onSaleDate": "2021-02-24T00:00:00+0000",
+      "unlimitedDate": "2021-05-31T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 12744,
+          "name": "Tamra Bonvillain",
+          "role": "colorist"
+        },
+        {
+          "id": 13606,
+          "name": "Nina Vakueva",
+          "role": "cover artist"
+        },
+        {
+          "id": 12376,
+          "name": "Wilson Moss",
+          "role": "editor"
+        },
+        {
+          "id": 12974,
+          "name": "Vc Joe Sabino",
+          "role": "letterer"
+        },
+        {
+          "id": 13413,
+          "name": "Mattia De Iulis",
+          "role": "penciler"
+        },
+        {
+          "id": 11463,
+          "name": "Jason Aaron",
+          "role": "writer"
+        },
+        {
+          "id": 14017,
+          "name": "Torunn Gronbekk",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/5/f0/6033e50ea3f09",
+        "extension": "jpg"
+      }
+    }
+  }
+}

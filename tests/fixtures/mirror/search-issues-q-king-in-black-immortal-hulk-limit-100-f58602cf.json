@@ -1,0 +1,26 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=King+in+Black+Immortal+Hulk&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "King in Black Immortal Hulk",
+      "items": [
+        {
+          "id": 91754,
+          "title": "King In Black: Immortal Hulk (2020) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91754/king_in_black_immortal_hulk_2020_1",
+          "seriesId": 31381,
+          "seriesName": "King In Black: Immortal Hulk (2020)",
+          "onSaleDate": "2020-12-16T00:00:00+0000",
+          "unlimitedDate": "2021-03-22T00:00:00+0000",
+          "yearPage": 2020
+        }
+      ],
+      "count": 1
+    }
+  }
+}

@@ -1,6 +1,6 @@
 .PHONY: help install up down migrate revision run seed load test lint format \
         check-api-key sync-event list-events psql connector install-hooks snapshot \
-        reader-password revoke-sessions enrich \
+        reader-password revoke-sessions enrich record-mirror \
         secrets sonar-scan sonar-gate coverage
 
 help:
@@ -23,6 +23,8 @@ help:
 	@echo "  make sync-event slug=king-in-black — fetch the roster, confirm digital ids"
 	@echo ""
 	@echo "  make enrich [limit=25]        — fill in bookmarked issues missing cover art"
+	@echo "  make record-mirror            — capture mirror responses as replayable fixtures"
+	@echo "  make snapshot slug=X offline=1 — rebuild a snapshot from recordings, no requests"
 	@echo ""
 	@echo "Development:"
 	@echo "  make install-hooks — install the pre-commit / pre-push gates"
@@ -82,7 +84,7 @@ load:
 # this pulls from a third-party mirror, slowly and once, and commits the result.
 snapshot:
 	@if [ -z "$(slug)" ]; then echo "Usage: make snapshot slug=king-in-black"; exit 1; fi
-	.venv/bin/python -m scripts.fetch_snapshot "$(slug)"
+	.venv/bin/python -m scripts.fetch_snapshot "$(slug)" $(if $(offline),--offline,) $(if $(record),--record,)
 
 # SPEC §0's precondition. Run this before curating anything else: it prints the
 # digital-id coverage number, which is the go/no-go on the whole linking premise.
@@ -96,6 +98,9 @@ list-events:
 sync-event:
 	@if [ -z "$(slug)" ]; then echo "Usage: make sync-event slug=king-in-black"; exit 1; fi
 	.venv/bin/python -m scripts.cli sync-event "$(slug)"
+
+record-mirror:
+	.venv/bin/python -m scripts.record_mirror
 
 enrich:
 	.venv/bin/python -m scripts.cli enrich $(if $(limit),--limit $(limit),)

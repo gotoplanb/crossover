@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/66706"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 66706,
+      "digitalId": 47709,
+      "title": "Venomized (2018) #1",
+      "issueNumber": "1",
+      "description": "The story that began in VENOMVERSE reaches its epic conclusion with VENOMIZED! The POISONS, a species that hungers for super-powered symbiotes and their hosts, have picked their next target...THE MARVEL UNIVERSE ITSELF! Their first objective? Put every superhuman in a Klyntar symbiote - and CONSUME THEM! But with VENOM and the X-MEN still missing after the events of \"Poison-X,\" the planet and its heroes are defenseless!",
+      "modified": "2024-10-10T09:40:21+0000",
+      "pageCount": 40,
+      "detailUrl": "https://www.marvel.com/comics/issue/66706/venomized_2018_1",
+      "seriesId": 24144,
+      "seriesName": "Venomized (2018)",
+      "onSaleDate": "2018-04-04T00:00:00+0000",
+      "unlimitedDate": "2018-04-04T00:00:00+0000",
+      "yearPage": 2018,
+      "creators": [
+        {
+          "id": 12604,
+          "name": "Jim Campbell",
+          "role": "colorist"
+        },
+        {
+          "id": 12984,
+          "name": "Matt Yackey",
+          "role": "colorist"
+        },
+        {
+          "id": 10445,
+          "name": "Iban Coello",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 5251,
+          "name": "Vc Joe Caramagna",
+          "role": "letterer"
+        },
+        {
+          "id": 11875,
+          "name": "Nick Bradshaw",
+          "role": "penciler"
+        },
+        {
+          "id": 10023,
+          "name": "Cullen Bunn",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/f/20/5b50fe9bc2bf2",
+        "extension": "jpg"
+      }
+    }
+  }
+}

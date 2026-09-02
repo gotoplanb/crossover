@@ -1,0 +1,74 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/series/31379/issues?limit=500"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "series_id": 31379,
+      "series_name": "King in Black: Namor (2020 - 2021)",
+      "items": [
+        {
+          "id": 92259,
+          "title": "King in Black: Namor (2020) #5",
+          "issueNumber": "5",
+          "detailUrl": "https://www.marvel.com/comics/issue/92259/king_in_black_namor_2020_5",
+          "seriesId": 31379,
+          "seriesName": "King in Black: Namor (2020 - 2021)",
+          "onSaleDate": "2021-04-14T00:00:00+0000",
+          "unlimitedDate": "2021-07-19T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91750,
+          "title": "King in Black: Namor (2020) #4",
+          "issueNumber": "4",
+          "detailUrl": "https://www.marvel.com/comics/issue/91750/king_in_black_namor_2020_4",
+          "seriesId": 31379,
+          "seriesName": "King in Black: Namor (2020 - 2021)",
+          "onSaleDate": "2021-02-24T00:00:00+0000",
+          "unlimitedDate": "2021-05-31T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91749,
+          "title": "King in Black: Namor (2020) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/91749/king_in_black_namor_2020_3",
+          "seriesId": 31379,
+          "seriesName": "King in Black: Namor (2020 - 2021)",
+          "onSaleDate": "2021-01-27T00:00:00+0000",
+          "unlimitedDate": "2021-05-03T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91748,
+          "title": "King in Black: Namor (2020) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/91748/king_in_black_namor_2020_2",
+          "seriesId": 31379,
+          "seriesName": "King in Black: Namor (2020 - 2021)",
+          "onSaleDate": "2020-12-30T00:00:00+0000",
+          "unlimitedDate": "2021-04-05T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 91747,
+          "title": "King in Black: Namor (2020) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91747/king_in_black_namor_2020_1",
+          "seriesId": 31379,
+          "seriesName": "King in Black: Namor (2020 - 2021)",
+          "onSaleDate": "2020-12-09T00:00:00+0000",
+          "unlimitedDate": "2021-03-15T00:00:00+0000",
+          "yearPage": 2020
+        }
+      ],
+      "total": 5,
+      "limit": 500,
+      "offset": 0,
+      "has_next": false
+    }
+  }
+}

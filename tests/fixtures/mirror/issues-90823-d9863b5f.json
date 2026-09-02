@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/90823"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 90823,
+      "digitalId": 56462,
+      "title": "King In Black: Ghost Rider (2021) #1",
+      "issueNumber": "1",
+      "description": "THE WAR FOR HELL\u2019S THRONE MEETS THE KING IN BLACK! All Ghost Rider wants is to destroy Mephisto, round up an army of escaped demons, and secure his seat on the throne of hell. Is that so much to ask? But now a dark god from space has shown up to throw the world into chaos, and some of Johnny\u2019s old friends have come to ask for his help. It may take everything they\u2019ve got to stop this madness. Maybe even\u2026the devil himself?",
+      "modified": "2021-07-26T12:05:45+0000",
+      "pageCount": 40,
+      "detailUrl": "https://www.marvel.com/comics/issue/90823/king_in_black_ghost_rider_2021_1",
+      "seriesId": 31705,
+      "seriesName": "King In Black: Ghost Rider (2021)",
+      "onSaleDate": "2021-03-31T00:00:00+0000",
+      "unlimitedDate": "2021-07-05T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 13449,
+          "name": "Chris Sotomayor",
+          "role": "colorist"
+        },
+        {
+          "id": 426,
+          "name": "Jason Keith",
+          "role": "colorist"
+        },
+        {
+          "id": 12624,
+          "name": "Juan Frigeri",
+          "role": "cover artist"
+        },
+        {
+          "id": 11921,
+          "name": "Jacob Thomas",
+          "role": "editor"
+        },
+        {
+          "id": 5251,
+          "name": "Vc Joe Caramagna",
+          "role": "letterer"
+        },
+        {
+          "id": 12999,
+          "name": "Will Sliney",
+          "role": "penciler"
+        },
+        {
+          "id": 13137,
+          "name": "Clay Chapman",
+          "role": "writer"
+        },
+        {
+          "id": 12699,
+          "name": "Ed Brisson",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/6/70/605cee44b6338",
+        "extension": "jpg"
+      }
+    }
+  }
+}

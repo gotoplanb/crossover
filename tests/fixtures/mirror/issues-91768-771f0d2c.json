@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91768"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91768,
+      "digitalId": 56464,
+      "title": "King in Black: Return of the Valkyries (2021) #4",
+      "issueNumber": "4",
+      "description": "THE LAST RIDE OF THE VALKYRIES! Brunnhilde. Jane Foster. Dani Moonstar. Hildegarde. And the mysterious stranger who\u2019s worn the title longer than any of them. The Valkyries are united, and at last they have a plan \u2013 but so does the King in Black. Every soul in existence is at stake \u2013 including the Valkyries\u2019 own!",
+      "modified": "2021-07-26T12:05:43+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91768/king_in_black_return_of_the_valkyries_2021_4",
+      "seriesId": 31388,
+      "seriesName": "King in Black: Return of the Valkyries (2021)",
+      "onSaleDate": "2021-03-31T00:00:00+0000",
+      "unlimitedDate": "2021-07-05T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 12744,
+          "name": "Tamra Bonvillain",
+          "role": "colorist"
+        },
+        {
+          "id": 13606,
+          "name": "Nina Vakueva",
+          "role": "cover artist"
+        },
+        {
+          "id": 12376,
+          "name": "Wilson Moss",
+          "role": "editor"
+        },
+        {
+          "id": 12974,
+          "name": "Vc Joe Sabino",
+          "role": "letterer"
+        },
+        {
+          "id": 13413,
+          "name": "Mattia De Iulis",
+          "role": "penciler"
+        },
+        {
+          "id": 11463,
+          "name": "Jason Aaron",
+          "role": "writer"
+        },
+        {
+          "id": 14017,
+          "name": "Torunn Gronbekk",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/7/10/605cee443979d",
+        "extension": "jpg"
+      }
+    }
+  }
+}

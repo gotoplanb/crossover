@@ -1,0 +1,40 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/13005"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 13005,
+      "digitalId": 3326,
+      "title": "Fantastic Four (1961) #2",
+      "issueNumber": "2",
+      "description": "The First Appearance of the Skrulls!  THE SKRULLS ATTACK EARTH! From deep in space comes the Skrulls. A shape-changing alien race with one goal, to destroy the Fantastic Four and conquer Earth. Can Reed Richards come up with a plan to stop them in time?",
+      "modified": "2025-07-30T15:39:00+0000",
+      "pageCount": 0,
+      "detailUrl": "https://www.marvel.com/comics/issue/13005/fantastic_four_1961_2",
+      "seriesId": 2121,
+      "seriesName": "Fantastic Four (1961 - 1998)",
+      "onSaleDate": "1962-01-01T00:00:00+0000",
+      "unlimitedDate": "1962-01-01T00:00:00+0000",
+      "yearPage": 1962,
+      "creators": [
+        {
+          "id": 196,
+          "name": "Jack Kirby",
+          "role": "penciler"
+        },
+        {
+          "id": 30,
+          "name": "Stan Lee",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/d0/536d72ee76127",
+        "extension": "jpg"
+      }
+    }
+  }
+}

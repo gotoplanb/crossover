@@ -1,0 +1,55 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91754"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91754,
+      "digitalId": 55810,
+      "title": "King In Black: Immortal Hulk (2020) #1",
+      "issueNumber": "1",
+      "description": "A PRESENT FOR THE HULK! The Hulk is in a bad place. Half of his alters are dead or missing \u2014 including Bruce Banner \u2014 and the Leader\u2019s got the rest of him on the ropes. But never let it be said that Joe Fixit doesn\u2019t know how to have a good time \u2014 and he\u2019s out to make sure this is the best holiday the Hulk\u2019s ever had. He just has to fight his way through a planet of symbiotes first.",
+      "modified": "2021-07-26T12:05:35+0000",
+      "pageCount": 40,
+      "detailUrl": "https://www.marvel.com/comics/issue/91754/king_in_black_immortal_hulk_2020_1",
+      "seriesId": 31381,
+      "seriesName": "King In Black: Immortal Hulk (2020)",
+      "onSaleDate": "2020-12-16T00:00:00+0000",
+      "unlimitedDate": "2021-03-22T00:00:00+0000",
+      "yearPage": 2020,
+      "creators": [
+        {
+          "id": 4991,
+          "name": "Frank Martin",
+          "role": "colorist"
+        },
+        {
+          "id": 12376,
+          "name": "Wilson Moss",
+          "role": "editor"
+        },
+        {
+          "id": 12980,
+          "name": "Vc Cory Petit",
+          "role": "letterer"
+        },
+        {
+          "id": 12979,
+          "name": "Aaron Kuder",
+          "role": "penciler"
+        },
+        {
+          "id": 12174,
+          "name": "Al Ewing",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/d/30/5fcfb889bf551",
+        "extension": "jpg"
+      }
+    }
+  }
+}

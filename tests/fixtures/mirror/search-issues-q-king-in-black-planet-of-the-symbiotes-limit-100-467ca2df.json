@@ -1,0 +1,48 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=King+in+Black+Planet+of+the+Symbiotes&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "King in Black Planet of the Symbiotes",
+      "items": [
+        {
+          "id": 91757,
+          "title": "King in Black: Planet of the Symbiotes (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91757/king_in_black_planet_of_the_symbiotes_2021_1",
+          "seriesId": 31384,
+          "seriesName": "King in Black: Planet of the Symbiotes (2021)",
+          "onSaleDate": "2021-01-13T00:00:00+0000",
+          "unlimitedDate": "2021-04-19T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91758,
+          "title": "King in Black: Planet of the Symbiotes (2021) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/91758/king_in_black_planet_of_the_symbiotes_2021_2",
+          "seriesId": 31384,
+          "seriesName": "King in Black: Planet of the Symbiotes (2021)",
+          "onSaleDate": "2021-02-17T00:00:00+0000",
+          "unlimitedDate": "2021-05-24T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91759,
+          "title": "King in Black: Planet of the Symbiotes (2021) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/91759/king_in_black_planet_of_the_symbiotes_2021_3",
+          "seriesId": 31384,
+          "seriesName": "King in Black: Planet of the Symbiotes (2021)",
+          "onSaleDate": "2021-04-07T00:00:00+0000",
+          "unlimitedDate": "2021-07-12T00:00:00+0000",
+          "yearPage": 2021
+        }
+      ],
+      "count": 3
+    }
+  }
+}

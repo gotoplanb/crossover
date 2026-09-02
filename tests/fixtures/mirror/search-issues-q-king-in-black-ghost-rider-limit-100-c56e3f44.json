@@ -1,0 +1,26 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=King+in+Black+Ghost+Rider&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "King in Black Ghost Rider",
+      "items": [
+        {
+          "id": 90823,
+          "title": "King In Black: Ghost Rider (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/90823/king_in_black_ghost_rider_2021_1",
+          "seriesId": 31705,
+          "seriesName": "King In Black: Ghost Rider (2021)",
+          "onSaleDate": "2021-03-31T00:00:00+0000",
+          "unlimitedDate": "2021-07-05T00:00:00+0000",
+          "yearPage": 2021
+        }
+      ],
+      "count": 1
+    }
+  }
+}

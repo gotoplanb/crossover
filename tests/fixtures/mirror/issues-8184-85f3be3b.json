@@ -1,0 +1,45 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/8184"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 8184,
+      "digitalId": 4254,
+      "title": "Daredevil (1964) #2",
+      "issueNumber": "2",
+      "description": null,
+      "modified": "2025-04-18T09:29:51+0000",
+      "pageCount": 0,
+      "detailUrl": "https://www.marvel.com/comics/issue/8184/daredevil_1964_2",
+      "seriesId": 2002,
+      "seriesName": "Daredevil (1964 - 1998)",
+      "onSaleDate": "1964-06-01T00:00:00+0000",
+      "unlimitedDate": "1964-06-01T00:00:00+0000",
+      "yearPage": 1964,
+      "creators": [
+        {
+          "id": 1523,
+          "name": "Vince Colletta",
+          "role": "cover artist"
+        },
+        {
+          "id": 1553,
+          "name": "Sam Rosen",
+          "role": "letterer"
+        },
+        {
+          "id": 30,
+          "name": "Stan Lee",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/6/40/57220d8c515cf",
+        "extension": "jpg"
+      }
+    }
+  }
+}

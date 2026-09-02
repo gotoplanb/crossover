@@ -1,0 +1,85 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91759"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91759,
+      "digitalId": 56407,
+      "title": "King in Black: Planet of the Symbiotes (2021) #3",
+      "issueNumber": "3",
+      "description": "A DARK SHADOW LOOMS OVER CLOAK AND DAGGER! PLUS: THE RETURN OF TOXIN!",
+      "modified": "2021-07-26T12:05:46+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91759/king_in_black_planet_of_the_symbiotes_2021_3",
+      "seriesId": 31384,
+      "seriesName": "King in Black: Planet of the Symbiotes (2021)",
+      "onSaleDate": "2021-04-07T00:00:00+0000",
+      "unlimitedDate": "2021-07-12T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 13162,
+          "name": "Erick Arciniega",
+          "role": "colorist"
+        },
+        {
+          "id": 8706,
+          "name": "Jay David Ramos",
+          "role": "colorist"
+        },
+        {
+          "id": 12991,
+          "name": "Rachelle Rosenberg",
+          "role": "colorist"
+        },
+        {
+          "id": 12790,
+          "name": "Danilo S. Beyruth",
+          "role": "cover artist"
+        },
+        {
+          "id": 13601,
+          "name": "Victor Nava",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 12980,
+          "name": "Vc Cory Petit",
+          "role": "letterer"
+        },
+        {
+          "id": 12369,
+          "name": "Gerardo Sandoval",
+          "role": "penciler"
+        },
+        {
+          "id": 489,
+          "name": "Philip Tan",
+          "role": "penciler"
+        },
+        {
+          "id": 13173,
+          "name": "Rodney Barnes",
+          "role": "writer"
+        },
+        {
+          "id": 14104,
+          "name": "Steve Orlando",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/2/03/6066106767c0a",
+        "extension": "jpg"
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=King+in+Black+Captain+America&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "King in Black Captain America",
+      "items": [
+        {
+          "id": 91746,
+          "title": "King in Black: Captain America (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91746/king_in_black_captain_america_2021_1",
+          "seriesId": 31378,
+          "seriesName": "King in Black: Captain America (2021)",
+          "onSaleDate": "2021-03-03T00:00:00+0000",
+          "unlimitedDate": "2021-06-07T00:00:00+0000",
+          "yearPage": 2021
+        }
+      ],
+      "count": 1
+    }
+  }
+}

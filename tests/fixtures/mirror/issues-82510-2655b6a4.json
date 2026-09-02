@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/82510"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 82510,
+      "digitalId": 55132,
+      "title": "The Union (2020) #2",
+      "issueNumber": "2",
+      "description": "The Union must battle for their lives (and each other) as the Empyre Invasion crescendos! Thrust unto the global stage, will they be able to prove themselves as a team or will they crumble as the world watches? Plus, a devastating blow to the fledgling team rocks them to their very core!",
+      "modified": "2021-07-26T12:05:39+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/82510/the_union_2020_2",
+      "seriesId": 29327,
+      "seriesName": "The Union (2020 - 2021)",
+      "onSaleDate": "2021-01-13T00:00:00+0000",
+      "unlimitedDate": "2021-04-19T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 13021,
+          "name": "David Curiel",
+          "role": "colorist"
+        },
+        {
+          "id": 13003,
+          "name": "Nolan Woodard",
+          "role": "colorist"
+        },
+        {
+          "id": 8929,
+          "name": "Lebeau Underwood",
+          "role": "cover artist"
+        },
+        {
+          "id": 13027,
+          "name": "Darren Shan",
+          "role": "editor"
+        },
+        {
+          "id": 12993,
+          "name": "Vc Travis Lanham",
+          "role": "letterer"
+        },
+        {
+          "id": 474,
+          "name": "Andrea DI Vito",
+          "role": "penciler"
+        },
+        {
+          "id": 208,
+          "name": "Paco Medina",
+          "role": "penciler"
+        },
+        {
+          "id": 9226,
+          "name": "Paul Grist",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/c/50/5ff8cf30a6b60",
+        "extension": "jpg"
+      }
+    }
+  }
+}

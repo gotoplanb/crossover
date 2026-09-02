@@ -1,0 +1,45 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/8295"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 8295,
+      "digitalId": 4264,
+      "title": "Daredevil (1964) #3",
+      "issueNumber": "3",
+      "description": "The First Appearance of the Owl!  Daredevil battles The Owl, the overlord of all crime in Manhattan! Matt Murdock must defeat The Owl in order to save Karen Page!",
+      "modified": "2024-09-20T09:33:59+0000",
+      "pageCount": 0,
+      "detailUrl": "https://www.marvel.com/comics/issue/8295/daredevil_1964_3",
+      "seriesId": 2002,
+      "seriesName": "Daredevil (1964 - 1998)",
+      "onSaleDate": "1964-08-01T00:00:00+0000",
+      "unlimitedDate": "1964-08-01T00:00:00+0000",
+      "yearPage": 1964,
+      "creators": [
+        {
+          "id": 1523,
+          "name": "Vince Colletta",
+          "role": "cover artist"
+        },
+        {
+          "id": 1553,
+          "name": "Sam Rosen",
+          "role": "letterer"
+        },
+        {
+          "id": 30,
+          "name": "Stan Lee",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/b0/57220e529ffcf",
+        "extension": "jpg"
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=King+in+Black+Return+of+the+Valkyries&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "King in Black Return of the Valkyries",
+      "items": [
+        {
+          "id": 91765,
+          "title": "King in Black: Return of the Valkyries (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91765/king_in_black_return_of_the_valkyries_2021_1",
+          "seriesId": 31388,
+          "seriesName": "King in Black: Return of the Valkyries (2021)",
+          "onSaleDate": "2021-01-06T00:00:00+0000",
+          "unlimitedDate": "2021-04-12T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91766,
+          "title": "King in Black: Return of the Valkyries (2021) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/91766/king_in_black_return_of_the_valkyries_2021_2",
+          "seriesId": 31388,
+          "seriesName": "King in Black: Return of the Valkyries (2021)",
+          "onSaleDate": "2021-02-03T00:00:00+0000",
+          "unlimitedDate": "2021-05-10T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91767,
+          "title": "King in Black: Return of the Valkyries (2021) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/91767/king_in_black_return_of_the_valkyries_2021_3",
+          "seriesId": 31388,
+          "seriesName": "King in Black: Return of the Valkyries (2021)",
+          "onSaleDate": "2021-02-24T00:00:00+0000",
+          "unlimitedDate": "2021-05-31T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91768,
+          "title": "King in Black: Return of the Valkyries (2021) #4",
+          "issueNumber": "4",
+          "detailUrl": "https://www.marvel.com/comics/issue/91768/king_in_black_return_of_the_valkyries_2021_4",
+          "seriesId": 31388,
+          "seriesName": "King in Black: Return of the Valkyries (2021)",
+          "onSaleDate": "2021-03-31T00:00:00+0000",
+          "unlimitedDate": "2021-07-05T00:00:00+0000",
+          "yearPage": 2021
+        }
+      ],
+      "count": 4
+    }
+  }
+}

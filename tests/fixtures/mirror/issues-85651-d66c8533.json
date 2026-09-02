@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/85651"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 85651,
+      "digitalId": 56025,
+      "title": "King in Black (2020) #3",
+      "issueNumber": "3",
+      "description": "After last issue's shocking finale, the heroes of the Marvel Universe are reeling. Outgunned and outmanned, but never outdone, they unite and face KNULL, God of the Abyss, as he ensnares the planet in the darkness of his reign! Superstars DONNY CATES and RYAN STEGMAN continue to raise the game - and the stakes for the Marvel Universe in this Earth-shattering epic!",
+      "modified": "2021-07-26T12:05:40+0000",
+      "pageCount": 40,
+      "detailUrl": "https://www.marvel.com/comics/issue/85651/king_in_black_2020_3",
+      "seriesId": 30150,
+      "seriesName": "King in Black (2020 - 2021)",
+      "onSaleDate": "2021-01-20T00:00:00+0000",
+      "unlimitedDate": "2021-04-26T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 4991,
+          "name": "Frank Martin",
+          "role": "colorist"
+        },
+        {
+          "id": 13260,
+          "name": "Jp Mayer",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 10172,
+          "name": "Vc Clayton Cowles",
+          "role": "letterer"
+        },
+        {
+          "id": 1156,
+          "name": "Ryan Stegman",
+          "role": "penciler"
+        },
+        {
+          "id": 12712,
+          "name": "Donny Cates",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/d/20/5ff8cf367e5d1",
+        "extension": "jpg"
+      }
+    }
+  }
+}

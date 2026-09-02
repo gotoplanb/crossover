@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91746"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91746,
+      "digitalId": 56156,
+      "title": "King in Black: Captain America (2021) #1",
+      "issueNumber": "1",
+      "description": "Captain America is in a brutal battle to win the streets of Manhattan back from Knull\u2019s forces, aided by the Winter Soldier and the Falcon\u2026but there\u2019s a darkness inside Steve that he\u2019s struggling to shake. Can his closest friends help him through, or will he succumb to the shadows? Danny Lore (IRONHEART 2020) and Mirko Colak (DEADPOOL, PUNISHER) join forces for a twisted and terrifying story at the heart of the war against Knull!",
+      "modified": "2021-07-26T12:05:44+0000",
+      "pageCount": 40,
+      "detailUrl": "https://www.marvel.com/comics/issue/91746/king_in_black_captain_america_2021_1",
+      "seriesId": 31378,
+      "seriesName": "King in Black: Captain America (2021)",
+      "onSaleDate": "2021-03-03T00:00:00+0000",
+      "unlimitedDate": "2021-06-07T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 13162,
+          "name": "Erick Arciniega",
+          "role": "colorist"
+        },
+        {
+          "id": 12239,
+          "name": "Guru Efx",
+          "role": "colorist"
+        },
+        {
+          "id": 11345,
+          "name": "Mirko Colak",
+          "role": "cover artist"
+        },
+        {
+          "id": 13033,
+          "name": "Nico Leon",
+          "role": "cover artist"
+        },
+        {
+          "id": 13046,
+          "name": "Alanna Smith",
+          "role": "editor"
+        },
+        {
+          "id": 5251,
+          "name": "Vc Joe Caramagna",
+          "role": "letterer"
+        },
+        {
+          "id": 11757,
+          "name": "Salvador Larroca",
+          "role": "penciler"
+        },
+        {
+          "id": 14045,
+          "name": "Danny Lore",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/5/80/6030354da0da8",
+        "extension": "jpg"
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91756"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91756,
+      "digitalId": 56158,
+      "title": "King In Black: Marauders (2021) #1",
+      "issueNumber": "1",
+      "description": "THE QUEEN IN RED SAILS! Red Queen Kate Pryde and her crew of Marauders set sail against the forces of Knull! Captain Kate has pledged to fight for the needy, and a global disaster like this one gives plenty of folks in need.",
+      "modified": "2021-07-26T12:05:42+0000",
+      "pageCount": 40,
+      "detailUrl": "https://www.marvel.com/comics/issue/91756/king_in_black_marauders_2021_1",
+      "seriesId": 31383,
+      "seriesName": "King In Black: Marauders (2021)",
+      "onSaleDate": "2021-02-03T00:00:00+0000",
+      "unlimitedDate": "2021-05-10T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 3708,
+          "name": "Carlos Lopez",
+          "role": "colorist"
+        },
+        {
+          "id": 10279,
+          "name": "Matthew Wilson",
+          "role": "colorist"
+        },
+        {
+          "id": 2338,
+          "name": "Luke Ross",
+          "role": "cover artist"
+        },
+        {
+          "id": 12449,
+          "name": "Russell Dauterman",
+          "role": "cover artist"
+        },
+        {
+          "id": 8822,
+          "name": "Jordan D. White",
+          "role": "editor"
+        },
+        {
+          "id": 12980,
+          "name": "Vc Cory Petit",
+          "role": "letterer"
+        },
+        {
+          "id": 11680,
+          "name": "Gerry Duggan",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/a0/6009e21eeee86",
+        "extension": "jpg"
+      }
+    }
+  }
+}

@@ -1,0 +1,488 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=King+in+Black&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "King in Black",
+      "items": [
+        {
+          "id": 85649,
+          "title": "King in Black (2020) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/85649/king_in_black_2020_1",
+          "seriesId": 30150,
+          "seriesName": "King in Black (2020 - 2021)",
+          "onSaleDate": "2020-12-02T00:00:00+0000",
+          "unlimitedDate": "2021-03-08T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 85650,
+          "title": "King in Black (2020) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/85650/king_in_black_2020_2",
+          "seriesId": 30150,
+          "seriesName": "King in Black (2020 - 2021)",
+          "onSaleDate": "2020-12-23T00:00:00+0000",
+          "unlimitedDate": "2021-03-29T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 91747,
+          "title": "King in Black: Namor (2020) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91747/king_in_black_namor_2020_1",
+          "seriesId": 31379,
+          "seriesName": "King in Black: Namor (2020 - 2021)",
+          "onSaleDate": "2020-12-09T00:00:00+0000",
+          "unlimitedDate": "2021-03-15T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 91748,
+          "title": "King in Black: Namor (2020) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/91748/king_in_black_namor_2020_2",
+          "seriesId": 31379,
+          "seriesName": "King in Black: Namor (2020 - 2021)",
+          "onSaleDate": "2020-12-30T00:00:00+0000",
+          "unlimitedDate": "2021-04-05T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 91754,
+          "title": "King In Black: Immortal Hulk (2020) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91754/king_in_black_immortal_hulk_2020_1",
+          "seriesId": 31381,
+          "seriesName": "King In Black: Immortal Hulk (2020)",
+          "onSaleDate": "2020-12-16T00:00:00+0000",
+          "unlimitedDate": "2021-03-22T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 90118,
+          "title": "Symbiote Spider-Man: King in Black (2020) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/90118/symbiote_spider-man_king_in_black_2020_1",
+          "seriesId": 31035,
+          "seriesName": "Symbiote Spider-Man: King in Black (2020 - 2021)",
+          "onSaleDate": "2020-11-18T00:00:00+0000",
+          "unlimitedDate": "2021-02-22T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 90119,
+          "title": "Symbiote Spider-Man: King in Black (2020) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/90119/symbiote_spider-man_king_in_black_2020_2",
+          "seriesId": 31035,
+          "seriesName": "Symbiote Spider-Man: King in Black (2020 - 2021)",
+          "onSaleDate": "2020-12-16T00:00:00+0000",
+          "unlimitedDate": "2021-03-22T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 91755,
+          "title": "King In Black: Iron Man/Doom (2020) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91755/king_in_black_iron_mandoom_2020_1",
+          "seriesId": 31382,
+          "seriesName": "King In Black: Iron Man/Doom (2020)",
+          "onSaleDate": "2020-12-30T00:00:00+0000",
+          "unlimitedDate": "2021-04-05T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 85651,
+          "title": "King in Black (2020) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/85651/king_in_black_2020_3",
+          "seriesId": 30150,
+          "seriesName": "King in Black (2020 - 2021)",
+          "onSaleDate": "2021-01-20T00:00:00+0000",
+          "unlimitedDate": "2021-04-26T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 85652,
+          "title": "King in Black (2020) #4",
+          "issueNumber": "4",
+          "detailUrl": "https://www.marvel.com/comics/issue/85652/king_in_black_2020_4",
+          "seriesId": 30150,
+          "seriesName": "King in Black (2020 - 2021)",
+          "onSaleDate": "2021-02-17T00:00:00+0000",
+          "unlimitedDate": "2021-05-24T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 85653,
+          "title": "King in Black (2020) #5",
+          "issueNumber": "5",
+          "detailUrl": "https://www.marvel.com/comics/issue/85653/king_in_black_2020_5",
+          "seriesId": 30150,
+          "seriesName": "King in Black (2020 - 2021)",
+          "onSaleDate": "2021-04-07T00:00:00+0000",
+          "unlimitedDate": "2021-07-12T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91744,
+          "title": "King In Black: Black Knight (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91744/king_in_black_black_knight_2021_1",
+          "seriesId": 31376,
+          "seriesName": "King In Black: Black Knight (2021)",
+          "onSaleDate": "2021-02-03T00:00:00+0000",
+          "unlimitedDate": "2021-05-10T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91745,
+          "title": "King In Black: Black Panther  (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91745/king_in_black_black_panther_2021_1",
+          "seriesId": 31377,
+          "seriesName": "King In Black: Black Panther  (2021)",
+          "onSaleDate": "2021-02-10T00:00:00+0000",
+          "unlimitedDate": "2021-05-17T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 88756,
+          "title": "King In Black Handbook (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/88756/king_in_black_handbook_2021_1",
+          "seriesId": 30565,
+          "seriesName": "King In Black Handbook (2021)",
+          "onSaleDate": "2021-03-03T00:00:00+0000",
+          "unlimitedDate": "2021-06-07T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91749,
+          "title": "King in Black: Namor (2020) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/91749/king_in_black_namor_2020_3",
+          "seriesId": 31379,
+          "seriesName": "King in Black: Namor (2020 - 2021)",
+          "onSaleDate": "2021-01-27T00:00:00+0000",
+          "unlimitedDate": "2021-05-03T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91750,
+          "title": "King in Black: Namor (2020) #4",
+          "issueNumber": "4",
+          "detailUrl": "https://www.marvel.com/comics/issue/91750/king_in_black_namor_2020_4",
+          "seriesId": 31379,
+          "seriesName": "King in Black: Namor (2020 - 2021)",
+          "onSaleDate": "2021-02-24T00:00:00+0000",
+          "unlimitedDate": "2021-05-31T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91756,
+          "title": "King In Black: Marauders (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91756/king_in_black_marauders_2021_1",
+          "seriesId": 31383,
+          "seriesName": "King In Black: Marauders (2021)",
+          "onSaleDate": "2021-02-03T00:00:00+0000",
+          "unlimitedDate": "2021-05-10T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91760,
+          "title": "King in Black: Thunderbolts (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91760/king_in_black_thunderbolts_2021_1",
+          "seriesId": 31385,
+          "seriesName": "King in Black: Thunderbolts (2021)",
+          "onSaleDate": "2021-01-13T00:00:00+0000",
+          "unlimitedDate": "2021-04-19T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91761,
+          "title": "King in Black: Thunderbolts (2021) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/91761/king_in_black_thunderbolts_2021_2",
+          "seriesId": 31385,
+          "seriesName": "King in Black: Thunderbolts (2021)",
+          "onSaleDate": "2021-02-10T00:00:00+0000",
+          "unlimitedDate": "2021-05-17T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91762,
+          "title": "King in Black: Thunderbolts (2021) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/91762/king_in_black_thunderbolts_2021_3",
+          "seriesId": 31385,
+          "seriesName": "King in Black: Thunderbolts (2021)",
+          "onSaleDate": "2021-03-03T00:00:00+0000",
+          "unlimitedDate": "2021-06-07T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 92259,
+          "title": "King in Black: Namor (2020) #5",
+          "issueNumber": "5",
+          "detailUrl": "https://www.marvel.com/comics/issue/92259/king_in_black_namor_2020_5",
+          "seriesId": 31379,
+          "seriesName": "King in Black: Namor (2020 - 2021)",
+          "onSaleDate": "2021-04-14T00:00:00+0000",
+          "unlimitedDate": "2021-07-19T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 92791,
+          "title": "King In Black: Scream (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/92791/king_in_black_scream_2021_1",
+          "seriesId": 31706,
+          "seriesName": "King In Black: Scream (2021)",
+          "onSaleDate": "2021-03-24T00:00:00+0000",
+          "unlimitedDate": "2021-06-28T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 90823,
+          "title": "King In Black: Ghost Rider (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/90823/king_in_black_ghost_rider_2021_1",
+          "seriesId": 31705,
+          "seriesName": "King In Black: Ghost Rider (2021)",
+          "onSaleDate": "2021-03-31T00:00:00+0000",
+          "unlimitedDate": "2021-07-05T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91746,
+          "title": "King in Black: Captain America (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91746/king_in_black_captain_america_2021_1",
+          "seriesId": 31378,
+          "seriesName": "King in Black: Captain America (2021)",
+          "onSaleDate": "2021-03-03T00:00:00+0000",
+          "unlimitedDate": "2021-06-07T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 92968,
+          "title": "King in Black: Spider-Man (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/92968/king_in_black_spider-man_2021_1",
+          "seriesId": 31788,
+          "seriesName": "King in Black: Spider-Man (2021)",
+          "onSaleDate": "2021-03-17T00:00:00+0000",
+          "unlimitedDate": "2021-06-21T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 90120,
+          "title": "Symbiote Spider-Man: King in Black (2020) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/90120/symbiote_spider-man_king_in_black_2020_3",
+          "seriesId": 31035,
+          "seriesName": "Symbiote Spider-Man: King in Black (2020 - 2021)",
+          "onSaleDate": "2021-01-06T00:00:00+0000",
+          "unlimitedDate": "2021-04-12T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 90121,
+          "title": "Symbiote Spider-Man: King in Black (2020) #4",
+          "issueNumber": "4",
+          "detailUrl": "https://www.marvel.com/comics/issue/90121/symbiote_spider-man_king_in_black_2020_4",
+          "seriesId": 31035,
+          "seriesName": "Symbiote Spider-Man: King in Black (2020 - 2021)",
+          "onSaleDate": "2021-02-24T00:00:00+0000",
+          "unlimitedDate": "2021-05-31T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 90122,
+          "title": "Symbiote Spider-Man: King in Black (2020) #5",
+          "issueNumber": "5",
+          "detailUrl": "https://www.marvel.com/comics/issue/90122/symbiote_spider-man_king_in_black_2020_5",
+          "seriesId": 31035,
+          "seriesName": "Symbiote Spider-Man: King in Black (2020 - 2021)",
+          "onSaleDate": "2021-03-31T00:00:00+0000",
+          "unlimitedDate": "2021-07-05T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91751,
+          "title": "King in Black: Gwenom Vs. Carnage (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91751/king_in_black_gwenom_vs_carnage_2021_1",
+          "seriesId": 31380,
+          "seriesName": "King in Black: Gwenom Vs. Carnage (2021)",
+          "onSaleDate": "2021-01-13T00:00:00+0000",
+          "unlimitedDate": "2021-04-19T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91752,
+          "title": "King in Black: Gwenom Vs. Carnage (2021) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/91752/king_in_black_gwenom_vs_carnage_2021_2",
+          "seriesId": 31380,
+          "seriesName": "King in Black: Gwenom Vs. Carnage (2021)",
+          "onSaleDate": "2021-02-03T00:00:00+0000",
+          "unlimitedDate": "2021-05-10T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91753,
+          "title": "King in Black: Gwenom Vs. Carnage (2021) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/91753/king_in_black_gwenom_vs_carnage_2021_3",
+          "seriesId": 31380,
+          "seriesName": "King in Black: Gwenom Vs. Carnage (2021)",
+          "onSaleDate": "2021-03-03T00:00:00+0000",
+          "unlimitedDate": "2021-06-07T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 92168,
+          "title": "King in Black: Wiccan and Hulkling (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/92168/king_in_black_wiccan_and_hulkling_2021_1",
+          "seriesId": 31547,
+          "seriesName": "King in Black: Wiccan and Hulkling (2021)",
+          "onSaleDate": "2021-03-03T00:00:00+0000",
+          "unlimitedDate": "2021-06-07T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91757,
+          "title": "King in Black: Planet of the Symbiotes (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91757/king_in_black_planet_of_the_symbiotes_2021_1",
+          "seriesId": 31384,
+          "seriesName": "King in Black: Planet of the Symbiotes (2021)",
+          "onSaleDate": "2021-01-13T00:00:00+0000",
+          "unlimitedDate": "2021-04-19T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91758,
+          "title": "King in Black: Planet of the Symbiotes (2021) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/91758/king_in_black_planet_of_the_symbiotes_2021_2",
+          "seriesId": 31384,
+          "seriesName": "King in Black: Planet of the Symbiotes (2021)",
+          "onSaleDate": "2021-02-17T00:00:00+0000",
+          "unlimitedDate": "2021-05-24T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91759,
+          "title": "King in Black: Planet of the Symbiotes (2021) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/91759/king_in_black_planet_of_the_symbiotes_2021_3",
+          "seriesId": 31384,
+          "seriesName": "King in Black: Planet of the Symbiotes (2021)",
+          "onSaleDate": "2021-04-07T00:00:00+0000",
+          "unlimitedDate": "2021-07-12T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91765,
+          "title": "King in Black: Return of the Valkyries (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91765/king_in_black_return_of_the_valkyries_2021_1",
+          "seriesId": 31388,
+          "seriesName": "King in Black: Return of the Valkyries (2021)",
+          "onSaleDate": "2021-01-06T00:00:00+0000",
+          "unlimitedDate": "2021-04-12T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91766,
+          "title": "King in Black: Return of the Valkyries (2021) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/91766/king_in_black_return_of_the_valkyries_2021_2",
+          "seriesId": 31388,
+          "seriesName": "King in Black: Return of the Valkyries (2021)",
+          "onSaleDate": "2021-02-03T00:00:00+0000",
+          "unlimitedDate": "2021-05-10T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91767,
+          "title": "King in Black: Return of the Valkyries (2021) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/91767/king_in_black_return_of_the_valkyries_2021_3",
+          "seriesId": 31388,
+          "seriesName": "King in Black: Return of the Valkyries (2021)",
+          "onSaleDate": "2021-02-24T00:00:00+0000",
+          "unlimitedDate": "2021-05-31T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91768,
+          "title": "King in Black: Return of the Valkyries (2021) #4",
+          "issueNumber": "4",
+          "detailUrl": "https://www.marvel.com/comics/issue/91768/king_in_black_return_of_the_valkyries_2021_4",
+          "seriesId": 31388,
+          "seriesName": "King in Black: Return of the Valkyries (2021)",
+          "onSaleDate": "2021-03-31T00:00:00+0000",
+          "unlimitedDate": "2021-07-05T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 132785,
+          "title": "MARVEL RIVALS: KING IN BLACK (2025) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/132785/marvel_rivals_king_in_black_2025_1",
+          "seriesId": 44948,
+          "seriesName": "MARVEL RIVALS: KING IN BLACK (2025 - Present)",
+          "onSaleDate": "2025-10-29T00:00:00+0000",
+          "unlimitedDate": "2025-10-16T00:00:00+0000",
+          "yearPage": 2025
+        },
+        {
+          "id": 89793,
+          "title": "Savage Avengers Vol. 4: King In Black (Trade Paperback)",
+          "issueNumber": "0",
+          "detailUrl": "https://www.marvel.com/comics/collection/89793/savage_avengers_vol_4_king_in_black_trade_paperback",
+          "seriesId": 30902,
+          "seriesName": "Savage Avengers Vol. 4: King In Black (2021)",
+          "onSaleDate": "2021-09-15T00:00:00-0400",
+          "unlimitedDate": "2021-09-15T00:00:00-0400",
+          "yearPage": 2021
+        },
+        {
+          "id": 89776,
+          "title": "Venom By Donny Cates Vol. 6: King In Black (Trade Paperback)",
+          "issueNumber": "0",
+          "detailUrl": "https://www.marvel.com/comics/collection/89776/venom_by_donny_cates_vol_6_king_in_black_trade_paperback",
+          "seriesId": 30896,
+          "seriesName": "Venom By Donny Cates Vol. 6: King In Black (2021)",
+          "onSaleDate": "2021-08-25T00:00:00-0400",
+          "unlimitedDate": "2021-08-25T00:00:00-0400",
+          "yearPage": 2021
+        },
+        {
+          "id": 99788,
+          "title": "King In Black Omnibus (Trade Paperback)",
+          "issueNumber": "0",
+          "detailUrl": "https://www.marvel.com/comics/collection/99788/king_in_black_omnibus_trade_paperback",
+          "seriesId": 34341,
+          "seriesName": "King In Black Omnibus (2022)",
+          "onSaleDate": "2022-12-07T00:00:00+0000",
+          "unlimitedDate": "2023-04-28T17:22:19+0000",
+          "yearPage": 2022
+        }
+      ],
+      "count": 43
+    }
+  }
+}

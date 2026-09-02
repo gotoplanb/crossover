@@ -1,0 +1,75 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/82509"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 82509,
+      "digitalId": 54937,
+      "title": "The Union (2020) #1",
+      "issueNumber": "1",
+      "description": "The grand unveiling of The Union! A team of super heroes gathered from all over the United Kingdom, featuring Union Jack, Snakes, Kelpie, Choir, and their fearless leader, Brittania! But when disaster strikes on their first public debut, in the form of the invasion of Empyre, the fledgling team is immediately pushed to their limits! Don't miss out on an exciting new chapter of Marvel from legendary creators, Paul Grist (JUDGE DREDD, JACK STAFF) and Andrea Di Vito!",
+      "modified": "2021-07-26T12:05:33+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/82509/the_union_2020_1",
+      "seriesId": 29327,
+      "seriesName": "The Union (2020 - 2021)",
+      "onSaleDate": "2020-12-02T00:00:00+0000",
+      "unlimitedDate": "2021-03-08T00:00:00+0000",
+      "yearPage": 2020,
+      "creators": [
+        {
+          "id": 13021,
+          "name": "David Curiel",
+          "role": "colorist"
+        },
+        {
+          "id": 13003,
+          "name": "Nolan Woodard",
+          "role": "colorist"
+        },
+        {
+          "id": 476,
+          "name": "Drew Geraci",
+          "role": "cover artist"
+        },
+        {
+          "id": 8929,
+          "name": "Lebeau Underwood",
+          "role": "cover artist"
+        },
+        {
+          "id": 13027,
+          "name": "Darren Shan",
+          "role": "editor"
+        },
+        {
+          "id": 12993,
+          "name": "Vc Travis Lanham",
+          "role": "letterer"
+        },
+        {
+          "id": 474,
+          "name": "Andrea DI Vito",
+          "role": "penciler"
+        },
+        {
+          "id": 12489,
+          "name": "R.B. Silva",
+          "role": "penciler"
+        },
+        {
+          "id": 9226,
+          "name": "Paul Grist",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/1/20/601afd0b1cace",
+        "extension": "jpg"
+      }
+    }
+  }
+}

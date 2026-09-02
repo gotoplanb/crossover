@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91760"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91760,
+      "digitalId": 56030,
+      "title": "King in Black: Thunderbolts (2021) #1",
+      "issueNumber": "1",
+      "description": "KINGPIN\u2019S KILLERS VERSUS AN ARMY OF UNKILLABLE DRAGONS! An army of evil space dragons have come to attack Earth and are starting with New York. MAYOR FISK has a plan for that. Assembling a group of killers, mercenaries, and just generally pretty horrible people like TASKMASTER, RHINO, STAR, MR. FEAR, and BATROC THE LEAPER, Mayor Fisk tasks them with saving the city or die trying\u2026or die right then and there. The fate of the entire world may rest in the hands of the absolute worst people in the Marvel Universe. What could go wrong?",
+      "modified": "2025-05-01T21:11:20+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91760/king_in_black_thunderbolts_2021_1",
+      "seriesId": 31385,
+      "seriesName": "King in Black: Thunderbolts (2021)",
+      "onSaleDate": "2021-01-13T00:00:00+0000",
+      "unlimitedDate": "2021-04-19T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 11543,
+          "name": "Dan Brown",
+          "role": "colorist"
+        },
+        {
+          "id": 13558,
+          "name": "Juan Ferreyra",
+          "role": "colorist"
+        },
+        {
+          "id": 11921,
+          "name": "Jacob Thomas",
+          "role": "editor"
+        },
+        {
+          "id": 12974,
+          "name": "Vc Joe Sabino",
+          "role": "letterer"
+        },
+        {
+          "id": 189,
+          "name": "Kyle Hotz",
+          "role": "penciler"
+        },
+        {
+          "id": 12771,
+          "name": "Matthew Rosenberg",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/80/5ff8d0c58700c",
+        "extension": "jpg"
+      }
+    }
+  }
+}

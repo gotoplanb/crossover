@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91747"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91747,
+      "digitalId": 55812,
+      "title": "King in Black: Namor (2020) #1",
+      "issueNumber": "1",
+      "description": "Spinning out of the KING IN BLACK epic comes a dark, chilling story of the birth of Atlantis\u2019s greatest villains. The players: Namor, Lady Dorma of Atlantis, the outsider Attuma \u2014 all still in their teen years \u2014 and The Swift Riders, the Atlantean Empire\u2019s greatest heroes. It begins with alliances and possibility, as Attuma\u2019s people may join the Empire\u2026but what lies ahead is tragedy, betrayal, and the unleashing of dangerous, deadly magics. A deep dive into Marvel history\u2026and the birth of a threat that will only grow in menace across time.",
+      "modified": "2021-07-26T12:05:33+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91747/king_in_black_namor_2020_1",
+      "seriesId": 31379,
+      "seriesName": "King in Black: Namor (2020 - 2021)",
+      "onSaleDate": "2020-12-09T00:00:00+0000",
+      "unlimitedDate": "2021-03-15T00:00:00+0000",
+      "yearPage": 2020,
+      "creators": [
+        {
+          "id": 11579,
+          "name": "Sunny Gho",
+          "role": "colorist"
+        },
+        {
+          "id": 13518,
+          "name": "Triona Farrell",
+          "role": "colorist"
+        },
+        {
+          "id": 10477,
+          "name": "Benjamin Dewey",
+          "role": "cover artist"
+        },
+        {
+          "id": 13879,
+          "name": "Jonas Scharf",
+          "role": "cover artist"
+        },
+        {
+          "id": 2133,
+          "name": "Tom Brevoort",
+          "role": "editor"
+        },
+        {
+          "id": 5251,
+          "name": "Vc Joe Caramagna",
+          "role": "letterer"
+        },
+        {
+          "id": 758,
+          "name": "Leinil Francis Yu",
+          "role": "penciler"
+        },
+        {
+          "id": 1231,
+          "name": "Kurt Busiek",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/f/40/5fcfb8c3dd115",
+        "extension": "jpg"
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91744"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91744,
+      "digitalId": 56026,
+      "title": "King In Black: Black Knight (2021) #1",
+      "issueNumber": "1",
+      "description": "THE BLACK KNIGHT DUELS THE KING IN BLACK! KNULL\u2019s ferocious assault upon earth has begun and Dane Whitman \u2013 Avenger, hero, and wielder of the mighty Ebony Blade as the BLACK KNIGHT \u2013 takes up sword and shield to defend against the unstoppable onslaught. Though the blade grants Dane incredible power so too does it consume him with a lust for violence and destruction. As the endless horde of symbiote dragons darken the skies of Shanghai, will the Black Knight overcome the growing evil within himself and join AERO and SWORD MASTER in saving the city?! And what secrets will the battle against Knull reveal about Dane\u2019s past?",
+      "modified": "2021-07-26T12:05:40+0000",
+      "pageCount": 40,
+      "detailUrl": "https://www.marvel.com/comics/issue/91744/king_in_black_black_knight_2021_1",
+      "seriesId": 31376,
+      "seriesName": "King In Black: Black Knight (2021)",
+      "onSaleDate": "2021-02-03T00:00:00+0000",
+      "unlimitedDate": "2021-05-10T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 12551,
+          "name": "Jesus Saiz",
+          "role": "colorist"
+        },
+        {
+          "id": 12744,
+          "name": "Tamra Bonvillain",
+          "role": "colorist"
+        },
+        {
+          "id": 13038,
+          "name": "Daniel Mora",
+          "role": "cover artist"
+        },
+        {
+          "id": 13525,
+          "name": "Thomas Groneman",
+          "role": "editor"
+        },
+        {
+          "id": 12980,
+          "name": "Vc Cory Petit",
+          "role": "letterer"
+        },
+        {
+          "id": 13572,
+          "name": "Si Spurrier",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/3/30/6009e2022e7d8",
+        "extension": "jpg"
+      }
+    }
+  }
+}

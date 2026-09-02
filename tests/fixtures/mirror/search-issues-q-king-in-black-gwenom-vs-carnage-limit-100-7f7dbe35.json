@@ -1,0 +1,48 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/search/issues?q=King+in+Black+Gwenom+vs+Carnage&limit=100"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "query": "King in Black Gwenom vs Carnage",
+      "items": [
+        {
+          "id": 91751,
+          "title": "King in Black: Gwenom Vs. Carnage (2021) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/91751/king_in_black_gwenom_vs_carnage_2021_1",
+          "seriesId": 31380,
+          "seriesName": "King in Black: Gwenom Vs. Carnage (2021)",
+          "onSaleDate": "2021-01-13T00:00:00+0000",
+          "unlimitedDate": "2021-04-19T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91752,
+          "title": "King in Black: Gwenom Vs. Carnage (2021) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/91752/king_in_black_gwenom_vs_carnage_2021_2",
+          "seriesId": 31380,
+          "seriesName": "King in Black: Gwenom Vs. Carnage (2021)",
+          "onSaleDate": "2021-02-03T00:00:00+0000",
+          "unlimitedDate": "2021-05-10T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 91753,
+          "title": "King in Black: Gwenom Vs. Carnage (2021) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/91753/king_in_black_gwenom_vs_carnage_2021_3",
+          "seriesId": 31380,
+          "seriesName": "King in Black: Gwenom Vs. Carnage (2021)",
+          "onSaleDate": "2021-03-03T00:00:00+0000",
+          "unlimitedDate": "2021-06-07T00:00:00+0000",
+          "yearPage": 2021
+        }
+      ],
+      "count": 3
+    }
+  }
+}

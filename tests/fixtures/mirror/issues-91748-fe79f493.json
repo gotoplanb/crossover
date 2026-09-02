@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91748"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91748,
+      "digitalId": 55813,
+      "title": "King in Black: Namor (2020) #2",
+      "issueNumber": "2",
+      "description": "The Young Namor, Attuma and Dorma get to accompany the Swift Riders on a mission, see them in action and learn from them. But the mission involves Russian alchemists in 1930s Murmansk, a dangerous mystic relic, and a catastrophe that brings to life the most menacing threat that Atlantis has ever faced! Now all of undersea civilization is imperiled, and only three youngsters can save it!",
+      "modified": "2021-07-26T12:05:33+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91748/king_in_black_namor_2020_2",
+      "seriesId": 31379,
+      "seriesName": "King in Black: Namor (2020 - 2021)",
+      "onSaleDate": "2020-12-30T00:00:00+0000",
+      "unlimitedDate": "2021-04-05T00:00:00+0000",
+      "yearPage": 2020,
+      "creators": [
+        {
+          "id": 11579,
+          "name": "Sunny Gho",
+          "role": "colorist"
+        },
+        {
+          "id": 13518,
+          "name": "Triona Farrell",
+          "role": "colorist"
+        },
+        {
+          "id": 10477,
+          "name": "Benjamin Dewey",
+          "role": "cover artist"
+        },
+        {
+          "id": 2133,
+          "name": "Tom Brevoort",
+          "role": "editor"
+        },
+        {
+          "id": 5251,
+          "name": "Vc Joe Caramagna",
+          "role": "letterer"
+        },
+        {
+          "id": 758,
+          "name": "Leinil Francis Yu",
+          "role": "penciler"
+        },
+        {
+          "id": 1231,
+          "name": "Kurt Busiek",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/2/70/5fda7db6aed63",
+        "extension": "jpg"
+      }
+    }
+  }
+}

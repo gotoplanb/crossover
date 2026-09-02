@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/85650"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 85650,
+      "digitalId": 55808,
+      "title": "King in Black (2020) #2",
+      "issueNumber": "2",
+      "description": "HAIL TO THE KING!",
+      "modified": "2021-07-26T12:05:35+0000",
+      "pageCount": 40,
+      "detailUrl": "https://www.marvel.com/comics/issue/85650/king_in_black_2020_2",
+      "seriesId": 30150,
+      "seriesName": "King in Black (2020 - 2021)",
+      "onSaleDate": "2020-12-23T00:00:00+0000",
+      "unlimitedDate": "2021-03-29T00:00:00+0000",
+      "yearPage": 2020,
+      "creators": [
+        {
+          "id": 4991,
+          "name": "Frank Martin",
+          "role": "colorist"
+        },
+        {
+          "id": 13260,
+          "name": "Jp Mayer",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 10172,
+          "name": "Vc Clayton Cowles",
+          "role": "letterer"
+        },
+        {
+          "id": 1156,
+          "name": "Ryan Stegman",
+          "role": "penciler"
+        },
+        {
+          "id": 12712,
+          "name": "Donny Cates",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/2/70/5fda7deae30d9",
+        "extension": "jpg"
+      }
+    }
+  }
+}

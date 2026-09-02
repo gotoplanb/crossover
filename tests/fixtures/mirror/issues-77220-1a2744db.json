@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/77220"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 77220,
+      "digitalId": 55572,
+      "title": "Web Of Venom: Empyre's End (2020) #1",
+      "issueNumber": "1",
+      "description": "SPINNING OUT OF EMPYRE, KNULL\u2019S DOMAIN BEGINS!  FOR WEEKS, chaos engulfed Earth and space alike. First, the corpse of serial killer Cletus Kasady was bonded to a remnant of a mysteriously powerful alien symbiote, resurrecting his psychotic alter ego, Carnage.  THEN, the generations-long Kree/Skrull conflict reached a brutal head on Earth, with shocking and unforeseen consequences.  MEANWHILE one ancient entity at the edge of the universe has awoken. Born of  hate and darkness, it\u2019s the entity that feeds on chaos and brutality\u2014and one group of unlucky fighters is about to face it head-on\u2026",
+      "modified": "2021-07-26T12:05:30+0000",
+      "pageCount": 40,
+      "detailUrl": "https://www.marvel.com/comics/issue/77220/web_of_venom_empyres_end_2020_1",
+      "seriesId": 27668,
+      "seriesName": "Web Of Venom: Empyre's End (2020)",
+      "onSaleDate": "2020-11-04T00:00:00+0000",
+      "unlimitedDate": "2021-02-08T00:00:00+0000",
+      "yearPage": 2020,
+      "creators": [
+        {
+          "id": 8504,
+          "name": "Frank D'ARMATA",
+          "role": "colorist"
+        },
+        {
+          "id": 8706,
+          "name": "Jay David Ramos",
+          "role": "colorist"
+        },
+        {
+          "id": 13236,
+          "name": "Guiu Vilanova",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 10172,
+          "name": "Vc Clayton Cowles",
+          "role": "letterer"
+        },
+        {
+          "id": 489,
+          "name": "Philip Tan",
+          "role": "penciler"
+        },
+        {
+          "id": 13137,
+          "name": "Clay Chapman",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/9/00/601af761a0fc9",
+        "extension": "jpg"
+      }
+    }
+  }
+}

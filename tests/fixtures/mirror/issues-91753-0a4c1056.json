@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91753"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91753,
+      "digitalId": 56406,
+      "title": "King in Black: Gwenom Vs. Carnage (2021) #3",
+      "issueNumber": "3",
+      "description": "AMP VS. AMP, SYMBIOTE VS. SYMBIOTE, FRIEND VS. FRIEND! Unwittingly pulled into her bandmate Gwen Stacy\u2019s interdimensional adventures and the Marvel Universe, MARY JANE WATSON of Earth-65 has bonded to a symbiote and become a new and deadly iteration of CARNAGE! As dragons rain from the sky and New York finds itself on the precipice of the abyss, it\u2019s up to Gwen Stacy to rid MJ of the symbiotic spiders that have infected her and get them both home \u2014 while saving any civilians MJ endangers along the way!",
+      "modified": "2021-07-26T12:05:37+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91753/king_in_black_gwenom_vs_carnage_2021_3",
+      "seriesId": 31380,
+      "seriesName": "King in Black: Gwenom Vs. Carnage (2021)",
+      "onSaleDate": "2021-03-03T00:00:00+0000",
+      "unlimitedDate": "2021-06-07T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 13201,
+          "name": "Juan Fernandez",
+          "role": "colorist"
+        },
+        {
+          "id": 9329,
+          "name": "Rico Renzi",
+          "role": "colorist"
+        },
+        {
+          "id": 12820,
+          "name": "F Flaviano",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 14075,
+          "name": "Vc Ariana Maher",
+          "role": "letterer"
+        },
+        {
+          "id": 1248,
+          "name": "Ken Lashley",
+          "role": "penciler"
+        },
+        {
+          "id": 13556,
+          "name": "Seanan Mcguire",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/2/c0/6030354cb624e",
+        "extension": "jpg"
+      }
+    }
+  }
+}

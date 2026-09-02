@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/91758"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 91758,
+      "digitalId": 56160,
+      "title": "King in Black: Planet of the Symbiotes (2021) #2",
+      "issueNumber": "2",
+      "description": "IN THIS CORNER: A DRAGON MADE OF PARASITIC SLIME, SENT FROM OUTER SPACE TO CONSUME ANY AND ALL LIFE ON EARTH WITH EXTREME PREJUDICE! IN THAT CORNER: A BOMBASTIC BEHEMOTH PACKING A HUNDRED THOUSAND TONS OF ALL-AMERICAN MUSCLE \u2014 YOU KNOW HIM, YOU LOVE HIM\u2026 AMERICAN KAIJU! YUUU! EESSS! AAAAAYY!",
+      "modified": "2021-07-26T12:05:40+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/91758/king_in_black_planet_of_the_symbiotes_2021_2",
+      "seriesId": 31384,
+      "seriesName": "King in Black: Planet of the Symbiotes (2021)",
+      "onSaleDate": "2021-02-17T00:00:00+0000",
+      "unlimitedDate": "2021-05-24T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 12991,
+          "name": "Rachelle Rosenberg",
+          "role": "colorist"
+        },
+        {
+          "id": 189,
+          "name": "Kyle Hotz",
+          "role": "cover artist"
+        },
+        {
+          "id": 12457,
+          "name": "Edward Devin Lewis",
+          "role": "editor"
+        },
+        {
+          "id": 12980,
+          "name": "Vc Cory Petit",
+          "role": "letterer"
+        },
+        {
+          "id": 12998,
+          "name": "Jan Bazaldua",
+          "role": "penciler"
+        },
+        {
+          "id": 9586,
+          "name": "Tony Moore",
+          "role": "penciler"
+        },
+        {
+          "id": 12886,
+          "name": "Geoffrey Thorne",
+          "role": "writer"
+        },
+        {
+          "id": 14149,
+          "name": "Marc Bernadin",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/d/90/6026d18806771",
+        "extension": "jpg"
+      }
+    }
+  }
+}

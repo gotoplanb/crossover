@@ -23,13 +23,13 @@ import json
 import re
 import sys
 import time
-import urllib.error
-import urllib.parse
-import urllib.request
 from pathlib import Path
 from typing import Any
 
+import httpx
+
 from curation.schema import load_all_events
+from marvel.cassette import SyncRecordingTransport, available, replay
 from marvel.records import series_slug
 
 REPO = Path(__file__).resolve().parent.parent
@@ -64,21 +64,29 @@ class SnapshotError(RuntimeError):
     pass
 
 
-def _get(base: str, path: str, **params: Any) -> dict:
-    url = f"{base}{path}" + ("?" + urllib.parse.urlencode(params) if params else "")
+def _get(client: httpx.Client, base: str, path: str, **params: Any) -> dict:
+    """One GET, waiting out a rate limit rather than giving up.
+
+    The opposite policy to `MirrorClient._get`, and deliberately so: this is a
+    batch job with all night, where losing a run to a 429 wastes far more of the
+    budget than waiting does. The request-path client makes the other trade,
+    because holding a reader's tool call open is worse than a pending entry.
+    """
+    url = f"{base}{path}"
     for attempt in range(MAX_RETRIES):
         try:
-            with urllib.request.urlopen(url, timeout=30) as response:  # noqa: S310
-                return json.load(response)
-        except urllib.error.HTTPError as exc:
-            if exc.code != 429 or attempt == MAX_RETRIES - 1:
-                raise SnapshotError(f"{url}: {exc}") from exc
+            response = client.get(url, params=params, timeout=30)
+        except httpx.HTTPError as exc:
+            raise SnapshotError(f"{url}: {exc}") from exc
+        if response.status_code == 429 and attempt < MAX_RETRIES - 1:
             # Honor Retry-After when offered; otherwise back off exponentially.
-            wait = float(exc.headers.get("Retry-After") or BACKOFF_BASE_S * (2**attempt))
+            wait = float(response.headers.get("Retry-After") or BACKOFF_BASE_S * (2**attempt))
             print(f"  rate limited, waiting {wait:.0f}s", file=sys.stderr)
             time.sleep(wait)
-        except (urllib.error.URLError, TimeoutError) as exc:
-            raise SnapshotError(f"{url}: {exc}") from exc
+            continue
+        if response.status_code >= 400:
+            raise SnapshotError(f"{url}: HTTP {response.status_code}")
+        return response.json()
     raise SnapshotError(f"{url}: gave up after {MAX_RETRIES} attempts")
 
 
@@ -89,19 +97,20 @@ def _search_query(series_name: str, slug: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"[^A-Za-z0-9 ]", " ", series_name)).strip()
 
 
-def _find(base: str, issue) -> dict | None:
+def _find(client: httpx.Client, base: str, issue, delay: float) -> dict | None:
     slug = issue.series_slug
-    hits = _get(
-        base, "/search/issues", q=_search_query(issue.series_name, slug), limit=100
-    ).get("items") or []
-    time.sleep(REQUEST_DELAY_S)
+    hits = (
+        _get(
+            client, base, "/search/issues", q=_search_query(issue.series_name, slug), limit=100
+        ).get("items")
+        or []
+    )
+    time.sleep(delay)
     wanted_name = SERIES_NAME_OVERRIDES.get(slug)
     for hit in hits:
         name = hit.get("seriesName") or ""
         matches_series = name == wanted_name if wanted_name else series_slug(name) == slug
-        if matches_series and str(hit.get("issueNumber", "")).strip() == str(
-            issue.issue_number
-        ):
+        if matches_series and str(hit.get("issueNumber", "")).strip() == str(issue.issue_number):
             return hit
     return None
 
@@ -133,9 +142,7 @@ def to_marvel_shape(detail: dict) -> dict:
         "series": {"name": detail.get("seriesName") or ""},
         "dates": dates,
         "urls": (
-            [{"type": "detail", "url": detail["detailUrl"]}]
-            if detail.get("detailUrl")
-            else []
+            [{"type": "detail", "url": detail["detailUrl"]}] if detail.get("detailUrl") else []
         ),
         "thumbnail": {"path": cover.get("path"), "extension": cover.get("extension")},
         # The mirror carries no character list; an empty items array keeps the
@@ -150,7 +157,13 @@ def to_marvel_shape(detail: dict) -> dict:
     }
 
 
-def build(slug: str, base: str = DEFAULT_SOURCE) -> tuple[dict, list[str]]:
+def build(
+    slug: str,
+    base: str = DEFAULT_SOURCE,
+    *,
+    client: httpx.Client | None = None,
+    delay: float = REQUEST_DELAY_S,
+) -> tuple[dict, list[str]]:
     events = {e.slug: e for e in load_all_events()}
     if slug not in events:
         raise SnapshotError(f"no curated event {slug!r}")
@@ -159,12 +172,12 @@ def build(slug: str, base: str = DEFAULT_SOURCE) -> tuple[dict, list[str]]:
     results, unresolved = [], []
     for n, issue in enumerate(event.ordered, start=1):
         print(f"  [{n}/{len(event.ordered)}] {issue.key}", file=sys.stderr)
-        hit = _find(base, issue)
+        hit = _find(client, base, issue, delay)
         if hit is None:
             unresolved.append(issue.key)
             continue
-        results.append(to_marvel_shape(_get(base, f"/issues/{hit['id']}")))
-        time.sleep(REQUEST_DELAY_S)
+        results.append(to_marvel_shape(_get(client, base, f"/issues/{hit['id']}")))
+        time.sleep(delay)
 
     snapshot = {
         "_provenance": {
@@ -198,10 +211,32 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("slug")
     parser.add_argument("--source", default=DEFAULT_SOURCE)
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="replay recorded responses; never touches the mirror",
+    )
+    parser.add_argument(
+        "--record",
+        action="store_true",
+        help="fetch live and record every response for later --offline runs",
+    )
     args = parser.parse_args(argv)
 
+    # Rebuilding one 40-issue snapshot costs roughly 80 requests against a
+    # 60/min budget, so a re-run during curation work is the largest avoidable
+    # draw on it (#28). Record once, then iterate offline for free.
+    if args.offline:
+        transport, delay = replay(), 0.0
+        print(f"offline: replaying {available()} recording(s)", file=sys.stderr)
+    elif args.record:
+        transport, delay = SyncRecordingTransport(), REQUEST_DELAY_S
+    else:
+        transport, delay = None, REQUEST_DELAY_S
+
     try:
-        snapshot, unresolved = build(args.slug, args.source)
+        with httpx.Client(transport=transport) as client:
+            snapshot, unresolved = build(args.slug, args.source, client=client, delay=delay)
     except SnapshotError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1

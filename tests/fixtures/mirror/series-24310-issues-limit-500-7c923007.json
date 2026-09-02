@@ -1,0 +1,404 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/series/24310/issues?limit=500"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "series_id": 24310,
+      "series_name": "Venom (2018 - 2021)",
+      "items": [
+        {
+          "id": 89767,
+          "title": "Venom (2018) #35",
+          "issueNumber": "35",
+          "detailUrl": "https://www.marvel.com/comics/issue/89767/venom_2018_35",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2021-06-16T00:00:00+0000",
+          "unlimitedDate": "2021-09-20T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 89766,
+          "title": "Venom (2018) #34",
+          "issueNumber": "34",
+          "detailUrl": "https://www.marvel.com/comics/issue/89766/venom_2018_34",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2021-04-07T00:00:00+0000",
+          "unlimitedDate": "2021-07-12T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 89765,
+          "title": "Venom (2018) #33",
+          "issueNumber": "33",
+          "detailUrl": "https://www.marvel.com/comics/issue/89765/venom_2018_33",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2021-02-03T00:00:00+0000",
+          "unlimitedDate": "2021-05-10T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 89764,
+          "title": "Venom (2018) #32",
+          "issueNumber": "32",
+          "detailUrl": "https://www.marvel.com/comics/issue/89764/venom_2018_32",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2021-01-06T00:00:00+0000",
+          "unlimitedDate": "2021-04-12T00:00:00+0000",
+          "yearPage": 2021
+        },
+        {
+          "id": 85648,
+          "title": "Venom (2018) #31",
+          "issueNumber": "31",
+          "detailUrl": "https://www.marvel.com/comics/issue/85648/venom_2018_31",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2020-12-09T00:00:00+0000",
+          "unlimitedDate": "2021-03-15T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 80616,
+          "title": "Venom (2018) #30",
+          "issueNumber": "30",
+          "detailUrl": "https://www.marvel.com/comics/issue/80616/venom_2018_30",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2020-11-18T00:00:00+0000",
+          "unlimitedDate": "2021-02-22T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 80615,
+          "title": "Venom (2018) #29",
+          "issueNumber": "29",
+          "detailUrl": "https://www.marvel.com/comics/issue/80615/venom_2018_29",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2020-10-21T00:00:00+0000",
+          "unlimitedDate": "2020-10-21T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 77181,
+          "title": "Venom (2018) #28",
+          "issueNumber": "28",
+          "detailUrl": "https://www.marvel.com/comics/issue/77181/venom_2018_28",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2020-09-23T00:00:00+0000",
+          "unlimitedDate": "2020-12-28T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 77180,
+          "title": "Venom (2018) #27",
+          "issueNumber": "27",
+          "detailUrl": "https://www.marvel.com/comics/issue/77180/venom_2018_27",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2020-08-12T00:00:00+0000",
+          "unlimitedDate": "2020-11-16T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 77179,
+          "title": "Venom (2018) #26",
+          "issueNumber": "26",
+          "detailUrl": "https://www.marvel.com/comics/issue/77179/venom_2018_26",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2020-07-15T00:00:00+0000",
+          "unlimitedDate": "2020-07-15T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 77178,
+          "title": "Venom (2018) #25",
+          "issueNumber": "25",
+          "detailUrl": "https://www.marvel.com/comics/issue/77178/venom_2018_25",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2020-05-27T00:00:00+0000",
+          "unlimitedDate": "2020-10-05T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 77177,
+          "title": "Venom (2018) #24",
+          "issueNumber": "24",
+          "detailUrl": "https://www.marvel.com/comics/issue/77177/venom_2018_24",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2020-03-11T00:00:00+0000",
+          "unlimitedDate": "2020-09-14T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 77176,
+          "title": "Venom (2018) #23",
+          "issueNumber": "23",
+          "detailUrl": "https://www.marvel.com/comics/issue/77176/venom_2018_23",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2020-02-12T00:00:00+0000",
+          "unlimitedDate": "2020-08-17T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 77175,
+          "title": "Venom (2018) #22",
+          "issueNumber": "22",
+          "detailUrl": "https://www.marvel.com/comics/issue/77175/venom_2018_22",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2020-01-08T00:00:00+0000",
+          "unlimitedDate": "2020-01-08T00:00:00+0000",
+          "yearPage": 2020
+        },
+        {
+          "id": 77174,
+          "title": "Venom (2018) #21",
+          "issueNumber": "21",
+          "detailUrl": "https://www.marvel.com/comics/issue/77174/venom_2018_21",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-12-26T00:00:00+0000",
+          "unlimitedDate": "2020-06-29T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 77173,
+          "title": "Venom (2018) #20",
+          "issueNumber": "20",
+          "detailUrl": "https://www.marvel.com/comics/issue/77173/venom_2018_20",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-11-27T00:00:00+0000",
+          "unlimitedDate": "2020-06-01T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 77172,
+          "title": "Venom (2018) #19",
+          "issueNumber": "19",
+          "detailUrl": "https://www.marvel.com/comics/issue/77172/venom_2018_19",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-10-30T00:00:00+0000",
+          "unlimitedDate": "2020-05-04T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 74070,
+          "title": "Venom (2018) #18",
+          "issueNumber": "18",
+          "detailUrl": "https://www.marvel.com/comics/issue/74070/venom_2018_18",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-09-11T00:00:00+0000",
+          "unlimitedDate": "2020-03-16T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 74069,
+          "title": "Venom (2018) #17",
+          "issueNumber": "17",
+          "detailUrl": "https://www.marvel.com/comics/issue/74069/venom_2018_17",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-08-28T00:00:00+0000",
+          "unlimitedDate": "2020-03-02T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 74068,
+          "title": "Venom (2018) #16",
+          "issueNumber": "16",
+          "detailUrl": "https://www.marvel.com/comics/issue/74068/venom_2018_16",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-07-10T00:00:00+0000",
+          "unlimitedDate": "2020-01-13T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 74067,
+          "title": "Venom (2018) #15",
+          "issueNumber": "15",
+          "detailUrl": "https://www.marvel.com/comics/issue/74067/venom_2018_15",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-06-12T00:00:00+0000",
+          "unlimitedDate": "2019-12-16T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 74066,
+          "title": "Venom (2018) #14",
+          "issueNumber": "14",
+          "detailUrl": "https://www.marvel.com/comics/issue/74066/venom_2018_14",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-05-22T00:00:00+0000",
+          "unlimitedDate": "2019-11-25T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 74065,
+          "title": "Venom (2018) #13",
+          "issueNumber": "13",
+          "detailUrl": "https://www.marvel.com/comics/issue/74065/venom_2018_13",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-04-24T00:00:00+0000",
+          "unlimitedDate": "2019-10-28T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 67300,
+          "title": "Venom (2018) #12",
+          "issueNumber": "12",
+          "detailUrl": "https://www.marvel.com/comics/issue/67300/venom_2018_12",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-03-20T00:00:00+0000",
+          "unlimitedDate": "2019-09-23T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 67299,
+          "title": "Venom (2018) #11",
+          "issueNumber": "11",
+          "detailUrl": "https://www.marvel.com/comics/issue/67299/venom_2018_11",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-02-20T00:00:00+0000",
+          "unlimitedDate": "2019-08-26T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 67298,
+          "title": "Venom (2018) #10",
+          "issueNumber": "10",
+          "detailUrl": "https://www.marvel.com/comics/issue/67298/venom_2018_10",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2019-01-16T00:00:00+0000",
+          "unlimitedDate": "2019-07-22T00:00:00+0000",
+          "yearPage": 2019
+        },
+        {
+          "id": 67297,
+          "title": "Venom (2018) #9",
+          "issueNumber": "9",
+          "detailUrl": "https://www.marvel.com/comics/issue/67297/venom_2018_9",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2018-12-05T00:00:00+0000",
+          "unlimitedDate": "2019-06-10T00:00:00+0000",
+          "yearPage": 2018
+        },
+        {
+          "id": 67296,
+          "title": "Venom (2018) #8",
+          "issueNumber": "8",
+          "detailUrl": "https://www.marvel.com/comics/issue/67296/venom_2018_8",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2018-11-14T00:00:00+0000",
+          "unlimitedDate": "2018-11-14T00:00:00+0000",
+          "yearPage": 2018
+        },
+        {
+          "id": 67295,
+          "title": "Venom (2018) #7",
+          "issueNumber": "7",
+          "detailUrl": "https://www.marvel.com/comics/issue/67295/venom_2018_7",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2018-10-10T00:00:00+0000",
+          "unlimitedDate": "2018-10-10T00:00:00+0000",
+          "yearPage": 2018
+        },
+        {
+          "id": 67294,
+          "title": "Venom (2018) #6",
+          "issueNumber": "6",
+          "detailUrl": "https://www.marvel.com/comics/issue/67294/venom_2018_6",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2018-09-19T00:00:00+0000",
+          "unlimitedDate": "2019-03-25T00:00:00+0000",
+          "yearPage": 2018
+        },
+        {
+          "id": 67293,
+          "title": "Venom (2018) #5",
+          "issueNumber": "5",
+          "detailUrl": "https://www.marvel.com/comics/issue/67293/venom_2018_5",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2018-08-22T00:00:00+0000",
+          "unlimitedDate": "2019-02-25T00:00:00+0000",
+          "yearPage": 2018
+        },
+        {
+          "id": 70051,
+          "title": "Venom (2018) #4",
+          "issueNumber": "4",
+          "detailUrl": "https://www.marvel.com/comics/issue/70051/venom_2018_4",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2018-07-25T00:00:00+0000",
+          "unlimitedDate": "2019-01-28T00:00:00+0000",
+          "yearPage": 2018
+        },
+        {
+          "id": 70045,
+          "title": "Venom (2018) #3",
+          "issueNumber": "3",
+          "detailUrl": "https://www.marvel.com/comics/issue/70045/venom_2018_3",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2018-06-27T00:00:00+0000",
+          "unlimitedDate": "2018-12-31T00:00:00+0000",
+          "yearPage": 2018
+        },
+        {
+          "id": 70036,
+          "title": "Venom (2018) #2",
+          "issueNumber": "2",
+          "detailUrl": "https://www.marvel.com/comics/issue/70036/venom_2018_2",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2018-06-13T00:00:00+0000",
+          "unlimitedDate": "2018-12-17T00:00:00+0000",
+          "yearPage": 2018
+        },
+        {
+          "id": 67577,
+          "title": "Venom (2018) #1",
+          "issueNumber": "1",
+          "detailUrl": "https://www.marvel.com/comics/issue/67577/venom_2018_1",
+          "seriesId": 24310,
+          "seriesName": "Venom (2018 - 2021)",
+          "onSaleDate": "2018-05-09T00:00:00+0000",
+          "unlimitedDate": "2018-11-12T00:00:00+0000",
+          "yearPage": 2018
+        }
+      ],
+      "total": 35,
+      "limit": 500,
+      "offset": 0,
+      "has_next": false
+    }
+  }
+}

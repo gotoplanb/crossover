@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://marvel.emreparker.com/v1/issues/82513"
+  },
+  "response": {
+    "status": 200,
+    "json": {
+      "id": 82513,
+      "digitalId": 56831,
+      "title": "The Union (2020) #5",
+      "issueNumber": "5",
+      "description": "THE DRAMATIC FINALE! Doc Croc has defeated Union Jack and the team! But can this truly be the end of the line for our new heroes? Or can they receive one last push to pull it together?",
+      "modified": "2021-06-09T10:01:49+0000",
+      "pageCount": 32,
+      "detailUrl": "https://www.marvel.com/comics/issue/82513/the_union_2020_5",
+      "seriesId": 29327,
+      "seriesName": "The Union (2020 - 2021)",
+      "onSaleDate": "2021-05-05T00:00:00+0000",
+      "unlimitedDate": "2021-08-09T00:00:00+0000",
+      "yearPage": 2021,
+      "creators": [
+        {
+          "id": 13003,
+          "name": "Nolan Woodard",
+          "role": "colorist"
+        },
+        {
+          "id": 8929,
+          "name": "Lebeau Underwood",
+          "role": "cover artist"
+        },
+        {
+          "id": 13027,
+          "name": "Darren Shan",
+          "role": "editor"
+        },
+        {
+          "id": 12993,
+          "name": "Vc Travis Lanham",
+          "role": "letterer"
+        },
+        {
+          "id": 474,
+          "name": "Andrea DI Vito",
+          "role": "penciler"
+        },
+        {
+          "id": 9226,
+          "name": "Paul Grist",
+          "role": "writer"
+        }
+      ],
+      "cover": {
+        "path": "http://i.annihil.us/u/prod/marvel/i/mg/5/03/608990b337a13",
+        "extension": "jpg"
+      }
+    }
+  }
+}
