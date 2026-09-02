@@ -272,6 +272,32 @@ commit it, or the work is lost on the next deploy.
 
 Heroku eco dyno + Postgres, via the button above or by hand.
 
+Pushes to `main` deploy themselves once three repository settings exist — until
+then the `deploy` job skips, so CI stays green rather than red on a missing
+credential:
+
+```
+gh secret set HEROKU_API_KEY --body "$(heroku auth:token)"
+gh variable set HEROKU_APP_NAME --body crossover
+gh variable set HEROKU_APP_URL  --body https://your-app.herokuapp.com
+```
+
+Set them together. The job is gated on `HEROKU_APP_NAME` because GitHub does not
+allow `secrets` in a job-level `if`, so the variable existing without the secret
+would make the job run and fail.
+
+The job does three things, and the second is the one that matters: it pushes,
+then **waits for the release to actually succeed**, then smoke-checks `/healthz`.
+A `git push` to Heroku reports success even when the release command fails — the
+Procfile runs `alembic upgrade head`, and Heroku says as much itself ("this new
+release will not be available until the command succeeds"). Checking only the
+push would go green on a failed migration, which is precisely what a deploy gate
+is for.
+
+Deploys queue rather than race (`concurrency: deploy-heroku`), and the job never
+force-pushes: if Heroku's history has diverged from `main`, that is something a
+deploy should surface rather than overwrite.
+
 `Procfile` runs `alembic upgrade head` on **every** release. `app.json`'s
 `postdeploy` runs `crossover bootstrap` **once**, on a button install only — it
 seeds the first reader and reports any config that will bite later. A `git push

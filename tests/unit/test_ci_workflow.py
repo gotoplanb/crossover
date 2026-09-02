@@ -68,9 +68,7 @@ def test_the_unit_job_needs_no_database() -> None:
     wait behind Postgres starting."""
     checks = WORKFLOW["jobs"]["checks"]
     assert "services" not in checks
-    assert "tests/unit" in "\n".join(
-        step.get("run", "") for step in checks["steps"]
-    )
+    assert "tests/unit" in "\n".join(step.get("run", "") for step in checks["steps"])
 
 
 def test_the_full_suite_job_provides_postgres() -> None:
@@ -114,3 +112,73 @@ def test_dependabot_is_configured() -> None:
     config = yaml.safe_load((REPO / ".github" / "dependabot.yml").read_text())
     ecosystems = {u["package-ecosystem"] for u in config["updates"]}
     assert {"uv", "github-actions"} <= ecosystems
+
+
+# --- the deploy job ----------------------------------------------------------
+#
+# Deploying is the one job that changes something outside the repository, so its
+# guards are worth asserting rather than trusting to a careful reading.
+
+DEPLOY = WORKFLOW["jobs"]["deploy"]
+
+
+def test_deploy_waits_for_both_gates() -> None:
+    """Not just the fast one. A deploy that skipped the database suite would be
+    a deploy that skipped every migration test."""
+    assert set(DEPLOY["needs"]) == {"checks", "test"}
+
+
+def test_deploy_only_happens_on_a_push_to_main() -> None:
+    """A pull request from a fork must never be able to reach production."""
+    condition = DEPLOY["if"]
+    assert "github.event_name == 'push'" in condition
+    assert "github.ref == 'refs/heads/main'" in condition
+
+
+def test_deploy_skips_cleanly_when_unconfigured() -> None:
+    """Gated on the variable, not the secret: `secrets` cannot be referenced in
+    a job-level `if`, and a repo without the credential should skip rather than
+    turn red."""
+    assert "vars.HEROKU_APP_NAME != ''" in DEPLOY["if"]
+
+
+def test_deploys_queue_rather_than_race() -> None:
+    """The workflow-level group cancels superseded runs, which is right — a
+    newer commit should win. Two deploys pushing at once never is."""
+    assert DEPLOY["concurrency"]["group"] == "deploy-heroku"
+    assert DEPLOY["concurrency"]["cancel-in-progress"] is False
+
+
+def test_deploy_checks_that_the_release_actually_succeeded() -> None:
+    """The most important guard here. `git push` to Heroku succeeds even when
+    the release command fails — the Procfile runs `alembic upgrade head`, and
+    Heroku itself says the release "will not be available until the command
+    succeeds". Without this the pipeline would go green on a failed migration,
+    which is the exact failure a deploy gate exists to catch."""
+    steps = "\n".join(s.get("run", "") for s in DEPLOY["steps"])
+    assert "releases" in steps, "the release status is never queried"
+    assert "succeeded" in steps and "failed" in steps
+    assert "exit 1" in steps, "a failed release must fail the job"
+
+
+def test_deploy_pushes_full_history() -> None:
+    """Heroku's git receive rejects a shallow push, and checkout defaults to
+    depth 1."""
+    checkout = next(s for s in DEPLOY["steps"] if "checkout" in str(s.get("uses", "")))
+    assert checkout["with"]["fetch-depth"] == 0
+
+
+def test_deploy_does_not_force_push() -> None:
+    """If Heroku's history has diverged from ours, something happened that a
+    deploy should not paper over."""
+    steps = "\n".join(s.get("run", "") for s in DEPLOY["steps"])
+    assert "--force" not in steps and "-f " not in steps
+
+
+def test_the_credential_is_never_written_into_the_workflow() -> None:
+    raw = (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert "HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}" in raw
+    # The only occurrences may be the secret reference and shell expansions.
+    for line in raw.splitlines():
+        if "HEROKU_API_KEY" in line:
+            assert "secrets.HEROKU_API_KEY" in line or "$HEROKU_API_KEY" in line, line

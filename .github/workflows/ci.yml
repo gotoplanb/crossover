@@ -138,3 +138,90 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+
+  deploy:
+    name: deploy to Heroku
+    runs-on: ubuntu-latest
+    # Both gates, not just the fast one: a deploy that skipped the database
+    # suite would be a deploy that skipped every migration test.
+    needs: [checks, test]
+    # Skipped rather than failed while unconfigured, like `sonar` above — a
+    # fork or a repo without the credential should not go red. Gated on the
+    # *variable* because `secrets` cannot be referenced in a job-level `if`.
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      vars.HEROKU_APP_NAME != ''
+    concurrency:
+      # Deploys queue instead of racing. The workflow-level group cancels
+      # superseded *runs*, which is right — a newer commit should win — but two
+      # deploys pushing at once is never right.
+      group: deploy-heroku
+      cancel-in-progress: false
+    environment:
+      name: production
+      url: ${{ vars.HEROKU_APP_URL }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Heroku's git receive rejects a shallow push, and checkout defaults
+          # to depth 1.
+          fetch-depth: 0
+
+      - name: Push to Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ vars.HEROKU_APP_NAME }}
+        # Not --force. If Heroku's history has diverged from ours something
+        # happened that a deploy should not paper over.
+        run: |
+          git push "https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git" \
+            HEAD:refs/heads/main
+
+      - name: Wait for the release to succeed
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ vars.HEROKU_APP_NAME }}
+        # The push above succeeding does NOT mean the deploy went live. The
+        # Procfile declares `release: alembic upgrade head`, and Heroku says so
+        # itself: "this new release will not be available until the command
+        # succeeds." Without this step CI would report green on a failed
+        # migration, which is the exact failure a deploy gate exists to catch.
+        run: |
+          api() {
+            curl -sf \
+              -H "Accept: application/vnd.heroku+json; version=3" \
+              -H "Authorization: Bearer $HEROKU_API_KEY" \
+              "https://api.heroku.com/apps/$HEROKU_APP_NAME/$1"
+          }
+          for _ in $(seq 1 60); do
+            read -r release_version release_status \
+              <<<"$(api releases | jq -r '.[-1] | "\(.version) \(.status)"')"
+            case "$release_status" in
+              succeeded) echo "release v$release_version succeeded"; exit 0 ;;
+              failed)
+                echo "::error::release v$release_version failed — see the release log"
+                api "releases/$release_version" | jq -r '.output_stream_url // empty' \
+                  | xargs -r curl -s | tail -40
+                exit 1 ;;
+              *) echo "release v$release_version: $release_status"; sleep 5 ;;
+            esac
+          done
+          echo "::error::release did not settle in 5 minutes"
+          exit 1
+
+      - name: Smoke check
+        env:
+          HEROKU_APP_URL: ${{ vars.HEROKU_APP_URL }}
+        # A released dyno that cannot answer /healthz is not a deploy that
+        # worked, whatever the release status says.
+        run: |
+          url="${HEROKU_APP_URL:-}"
+          if [ -z "$url" ]; then echo "HEROKU_APP_URL unset — skipping"; exit 0; fi
+          for _ in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "${url%/}/healthz" || true)
+            [ "$code" = "200" ] && { echo "healthz 200"; exit 0; }
+            echo "healthz $code — retrying"; sleep 5
+          done
+          echo "::error::/healthz never returned 200 after the release"
+          exit 1
