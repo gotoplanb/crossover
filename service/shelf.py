@@ -31,6 +31,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from curation.resolve import candidates_from_guide, resolve
 from marvel.client import MarvelAPIError, MarvelClient, MarvelCredentialsMissing
 from marvel.links import attribution
+from marvel.mirror import MirrorClient
 from marvel.records import ComicRecord, cover_url, parse_comics
 from models.bookmark import Bookmark, ShelfCandidate
 from models.catalog import Issue
@@ -46,8 +47,12 @@ from service.guide import GuideEntry, all_entries
 #: Enough options to be useful out loud, few enough to read aloud in one breath.
 MAX_MATCHES = 4
 
+#: Stamped onto `digital_id_source` for anything the mirror supplied, so a row
+#: can always answer where its id came from (Gate B).
+MIRROR_SOURCE = "mirror:marvel.emreparker.com"
 
-def _record_to_match(record: ComicRecord) -> dict[str, Any]:
+
+def _record_to_match(record: ComicRecord, source: str = "marvel_api") -> dict[str, Any]:
     """A match candidate, described so it can be confirmed verbally.
 
     Cover date and cover art are both here on purpose: variant covers share a
@@ -55,7 +60,7 @@ def _record_to_match(record: ComicRecord) -> dict[str, Any]:
     can actually check against.
     """
     return {
-        "source": "marvel_api",
+        "source": source,
         "key": record.key,
         "issue": f"{record.series_name} #{record.issue_number}",
         "series": record.series_name,
@@ -66,6 +71,10 @@ def _record_to_match(record: ComicRecord) -> dict[str, Any]:
         # never used to build a link until the human has said yes.
         "digital_id": record.digital_id,
         "marvel_com_issue_id": record.marvel_com_issue_id,
+        # Gate B's recording half: an id is only linkable if the row can say
+        # where it came from. Carried on the match so `confirm` can stamp it
+        # onto the issue it creates.
+        "digital_id_source": source if record.digital_id else "",
     }
 
 
@@ -85,6 +94,15 @@ def _entry_to_match(entry: GuideEntry) -> dict[str, Any]:
 
 
 def _curated_matches(raw: str, pool: list[GuideEntry]) -> list[dict[str, Any]]:
+    """Curated matches for raw text.
+
+    A single result here does **not** mean curation was sure. The resolver
+    returns its nearest entry, and for text naming nothing in the roster that
+    nearest entry is still confidently wrong — "Some Unknown Series" resolves to
+    a real King in Black tie-in. That is why the network sources top this list
+    up rather than deferring to a curated hit: the person confirming needs the
+    alternatives in front of them.
+    """
     resolution = resolve(raw, candidates_from_guide(pool))
     by_key = {e.key: e for e in pool}
     if resolution.matched:
@@ -121,6 +139,30 @@ async def _marvel_matches(raw: str, client: MarvelClient | None) -> list[dict[st
     return [_record_to_match(r) for r in records[:MAX_MATCHES]]
 
 
+async def _mirror_matches(
+    raw: str, mirror: MirrorClient | None, limit: int
+) -> list[dict[str, Any]]:
+    """Candidates from the live mirror, for finds outside the curated set.
+
+    Marvel's API is gone, so without this a comic picked up in a shop that
+    belongs to no curated event can never resolve — it goes pending and stays
+    there. See `marvel.mirror` for why this one path is allowed to be live.
+
+    Two calls deep on purpose. `candidates` costs one request and returns enough
+    to rank; the per-issue detail call that carries the digital id and the cover
+    art is made only for the few being offered, because the mirror allows 60
+    requests a minute and phase 1 needs the art to be confirmable out loud.
+    """
+    if mirror is None or limit <= 0:
+        return []
+    matches: list[dict[str, Any]] = []
+    for candidate in await mirror.candidates(raw, limit=limit):
+        record = await mirror.record(candidate.issue_id)
+        if record is not None:
+            matches.append(_record_to_match(record, source=MIRROR_SOURCE))
+    return matches
+
+
 async def propose(
     session: AsyncSession,
     *,
@@ -128,6 +170,7 @@ async def propose(
     candidates: list[str],
     source: ShelfSource,
     client: MarvelClient | None = None,
+    mirror: MirrorClient | None = None,
 ) -> dict[str, Any]:
     """Phase 1. Resolve raw text; store the pending entries but nothing confirmed."""
     pool = await all_entries(session)
@@ -141,6 +184,15 @@ async def propose(
         if len(matches) < MAX_MATCHES:
             seen = {m["key"] for m in matches}
             matches += [m for m in await _marvel_matches(raw, client) if m["key"] not in seen]
+        if len(matches) < MAX_MATCHES:
+            # Last, because a curated issue carries an event and a reading
+            # position that a bare mirror record cannot.
+            seen = {m["key"] for m in matches}
+            matches += [
+                m
+                for m in await _mirror_matches(raw, mirror, MAX_MATCHES - len(matches))
+                if m["key"] not in seen
+            ]
 
         # The pending row is created now so the capture survives even if the
         # conversation ends here — the rack picks it up for confirmation later.
@@ -225,6 +277,7 @@ async def confirm(
             digital_id=match.get("digital_id"),
             marvel_com_issue_id=match.get("marvel_com_issue_id"),
             source_id=match.get("marvel_com_issue_id"),
+            digital_id_source=match.get("digital_id_source") or "",
             availability=(
                 Availability.LINKABLE.value
                 if match.get("digital_id")

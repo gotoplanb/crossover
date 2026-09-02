@@ -156,6 +156,48 @@ the evidence, so the evidence is now:
 
 That is more evidence than a single live API call ever provided.
 
+### The one live path — shelf finds
+
+Everything a reader *follows* comes from vendored data. One path is deliberately
+live: `add_to_shelf`, which resolves issues seen in the wild — a shop rack, a
+title said out loud. Those may belong to no curated event, so there is nothing
+to vendor ahead of time, and without a lookup such a find can never resolve. It
+goes pending and stays pending. `marvel/mirror.py` is that lookup.
+
+Its standing under Gate B is the same as the snapshot's, established
+per-capture rather than per-batch:
+
+1. **Identity match.** The id is read from the mirror's record for the specific
+   issue chosen — `GET /issues/{id}` — not from a search result, and not
+   assembled from parts. It is the id of that record or there is no id.
+2. **Recorded provenance.** Anything it supplies is stamped
+   `digital_id_source = "mirror:marvel.emreparker.com"`, distinct from
+   `snapshot:<slug>`, so a row always says which source vouched for it and the
+   two can be told apart later.
+3. **Human confirmation.** Nothing is committed until a person confirms the
+   series and number out loud, holding the book, in phase 2 of the capture
+   flow. That is a stronger check than the snapshot's sampling: it is
+   per-issue, not per-batch.
+
+What is *not* claimed: these ids are not individually browser-verified the way
+the four sampled snapshot ids were. The source is the same one that agreed with
+an independent dataset on 30 of 30 overlapping ids, but each new id rests on
+that reputation plus the confirmation above, not on its own reader-URL test.
+
+Three properties keep the dependency contained:
+
+- **Read-path independence.** The guide, the rack, and every link work with the
+  mirror unreachable. Only new off-event captures need it.
+- **Degradation, not failure.** Every failure — 404, 500, the rate limit,
+  malformed JSON, a dead host — returns no candidates rather than raising. The
+  entry stays pending with the raw text preserved, which is the same fallback a
+  blurry spine already had.
+- **A request budget.** The mirror allows 60 requests a minute. Resolution is
+  built around it: one search request produces the candidate list, and the
+  detail call carrying the digital id is spent only on candidates actually being
+  offered. Rate-limit responses are never waited out — holding a reader's tool
+  call open is worse than a pending entry they can clear from the rack.
+
 ### Historical note — the original precondition
 
 `GET /v1/public/events/{id}/comics` was never exercised against live Marvel

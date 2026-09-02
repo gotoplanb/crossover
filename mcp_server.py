@@ -33,6 +33,7 @@ from curation.resolve import candidates_from_guide, resolve
 from db.session import SessionLocal
 from marvel.client import MarvelClient
 from marvel.links import attribution
+from marvel.mirror import MirrorClient
 from models.types import ShelfSource
 from oauth_provider import resolve_access_token
 from observability import metrics
@@ -86,9 +87,7 @@ def instrumented(tool_name: str) -> Callable:
                     return result
                 finally:
                     current.set_attribute("mcp.outcome", outcome)
-                    metrics.record_tool_call(
-                        tool_name, outcome, time.perf_counter() - started
-                    )
+                    metrics.record_tool_call(tool_name, outcome, time.perf_counter() - started)
 
         return wrapper
 
@@ -200,8 +199,7 @@ async def list_events() -> dict[str, Any]:
     return {
         "events": [e.to_payload() for e in events],
         "coverage_note": (
-            "Deeply curated for a small number of events, best-effort for anything "
-            "else."
+            "Deeply curated for a small number of events, best-effort for anything else."
         ),
         "attribution": attribution(),
     }
@@ -220,9 +218,7 @@ async def get_event_guide(event_slug: str) -> dict[str, Any]:
         try:
             return await guide_service.get_event_guide(session, event_slug)
         except ValueError as exc:
-            raise ToolError(
-                f"{exc} Call list_events() for the slugs that exist."
-            ) from exc
+            raise ToolError(f"{exc} Call list_events() for the slugs that exist.") from exc
 
 
 @mcp.tool()
@@ -308,9 +304,7 @@ async def sequence_bookmarks(ordering: str = "clustered") -> dict[str, Any]:
     another call. Pass ordering="chronological" for strict publication order.
     """
     async with SessionLocal() as session:
-        return await bookmark_service.sequence_bookmarks(
-            session, _user_id(), ordering=ordering
-        )
+        return await bookmark_service.sequence_bookmarks(session, _user_id(), ordering=ordering)
 
 
 @mcp.tool()
@@ -366,13 +360,17 @@ async def add_to_shelf(
                 raise ToolError(str(exc)) from exc
         if not candidates:
             raise ToolError("pass at least one candidate string")
-        return await shelf_service.propose(
-            session,
-            user_id=_user_id(),
-            candidates=candidates,
-            source=shelf_source,
-            client=_marvel_client(),
-        )
+        # Closed on the way out: the mirror client pools a connection, and a
+        # tool call is the whole lifetime of that need.
+        async with MirrorClient() as mirror:
+            return await shelf_service.propose(
+                session,
+                user_id=_user_id(),
+                candidates=candidates,
+                source=shelf_source,
+                client=_marvel_client(),
+                mirror=mirror,
+            )
 
 
 # --- OAuth gate (pure ASGI, so SSE streaming is not buffered) ---
