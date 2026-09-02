@@ -63,6 +63,12 @@ MARVEL_CACHE_TOTAL = Counter(
     ["result"],
 )
 
+MIRROR_REQUESTS_TOTAL = Counter(
+    "crossover_mirror_requests_total",
+    "Metadata-mirror lookups by path family and outcome, cache hits included",
+    ["path", "outcome"],
+)
+
 LINKABLE_ISSUES = Gauge(
     "crossover_linkable_issues",
     "Curated issues with a confirmed Marvel Unlimited digital_id, by event",
@@ -109,13 +115,23 @@ def _endpoint_family(endpoint: str) -> str:
     return "/".join(parts)
 
 
+def record_mirror_request(path: str, outcome: str) -> None:
+    """Outcomes: `cached`, `ok`, `rate_limited`, `error`.
+
+    These labels answer a question we could not answer before: how often a
+    reader's shelf lookup fails for reasons that have nothing to do with their
+    comic. The mirror's 60/min budget is shared with whatever else uses the same
+    outbound address, so `rate_limited` is not ours to control and `cached` is
+    the only lever we have on it.
+    """
+    MIRROR_REQUESTS_TOTAL.labels(path=_endpoint_family(path), outcome=outcome).inc()
+
+
 def record_cache_lookup(result: str) -> None:
     MARVEL_CACHE_TOTAL.labels(result=result).inc()
 
 
-def set_catalog_gauges(
-    event: str, *, linkable: int, unavailable: int, unconfirmed: int
-) -> None:
+def set_catalog_gauges(event: str, *, linkable: int, unavailable: int, unconfirmed: int) -> None:
     """Publish the Gate B health numbers for one event.
 
     `unavailable` and `unconfirmed` are kept apart because they mean different

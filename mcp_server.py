@@ -33,7 +33,7 @@ from curation.resolve import candidates_from_guide, resolve
 from db.session import SessionLocal
 from marvel.client import MarvelClient
 from marvel.links import attribution
-from marvel.mirror import MirrorClient
+from marvel.mirror_cache import cached_mirror
 from models.types import ShelfSource
 from oauth_provider import resolve_access_token
 from observability import metrics
@@ -360,9 +360,10 @@ async def add_to_shelf(
                 raise ToolError(str(exc)) from exc
         if not candidates:
             raise ToolError("pass at least one candidate string")
-        # Closed on the way out: the mirror client pools a connection, and a
-        # tool call is the whole lifetime of that need.
-        async with MirrorClient() as mirror:
+        # Read through the cache: the mirror's 60/min budget is shared with
+        # whatever else uses this dyno's outbound address, and losing that race
+        # is what made shelf lookups intermittently return nothing (#28).
+        async with cached_mirror() as mirror:
             return await shelf_service.propose(
                 session,
                 user_id=_user_id(),

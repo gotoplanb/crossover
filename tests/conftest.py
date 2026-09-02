@@ -151,12 +151,29 @@ async def db_conn(schema: bool) -> AsyncIterator[AsyncConnection]:
     if not schema:
         pytest.skip("no Postgres reachable at DATABASE_URL — run `make up` first")
     from db.session import engine
+    from marvel import mirror_cache
 
     async with engine.connect() as conn:
         trans = await conn.begin()
+        # Keep the mirror response cache inside this transaction. The transport
+        # opens its own session by design — it must not borrow a caller's
+        # mid-request — but in tests that means committing to the developer's
+        # database, outside the rollback and surviving the run: anything going
+        # through the MCP shelf tool would leave rows behind.
+        #
+        # Patched here rather than in an autouse fixture on purpose. An autouse
+        # fixture would have to depend on `db_conn`, and `db_conn` *skips* when
+        # no Postgres is reachable — which would silently skip every unit test
+        # in CI's database-free `checks` job. Saved and restored by hand rather
+        # than with monkeypatch, so fixture teardown ordering is untouched.
+        original = mirror_cache.default_sessions
+        mirror_cache.default_sessions = lambda: AsyncSession(
+            bind=conn, expire_on_commit=False, join_transaction_mode="create_savepoint"
+        )
         try:
             yield conn
         finally:
+            mirror_cache.default_sessions = original
             await trans.rollback()
 
 
@@ -269,9 +286,7 @@ async def signed_in(client, session, user) -> AsyncIterator:
     # a browser does via the hidden field or the HTMX header. Set once here so
     # each test does not have to remember it — forgetting would produce a 403
     # that looks like an authorization bug.
-    row = await session.scalar(
-        select(UserSession).where(UserSession.token_hash == _hash(token))
-    )
+    row = await session.scalar(select(UserSession).where(UserSession.token_hash == _hash(token)))
     client.headers[CSRF_HEADER] = row.csrf_token
     yield client
 
@@ -294,9 +309,7 @@ async def sign_in(client, session):
         # signing in while already signed in — which is exactly the case that
         # broke when this helper used the cookie.
         page = (await client.get("/ui/login")).text
-        match = re.search(
-            rf'name="{CSRF_FIELD}" value="([^"]*)"', page
-        )
+        match = re.search(rf'name="{CSRF_FIELD}" value="([^"]*)"', page)
         response = await client.post(
             "/ui/login",
             data={

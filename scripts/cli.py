@@ -235,17 +235,35 @@ async def _enrich(limit: int | None) -> int:
     is a real limit, not a page size — run it again to continue.
     """
     from db.session import SessionLocal
-    from marvel.mirror import MirrorClient
+    from marvel.mirror_cache import cached_mirror
     from service.enrich import DEFAULT_LIMIT, enrich_bookmarked_issues
 
     # Resolved here rather than as an argparse default: this module defers every
     # heavy import into the command bodies, and reading the constant at
     # parser-build time would pull SQLAlchemy in on `--help`.
-    async with MirrorClient() as mirror, SessionLocal() as session:
+    async with cached_mirror() as mirror, SessionLocal() as session:
         report = await enrich_bookmarked_issues(
             session, mirror, limit=limit if limit is not None else DEFAULT_LIMIT
         )
     print(report.summary())
+    return 0
+
+
+async def _purge_mirror_cache(days: int) -> int:
+    """Drop cached mirror responses past their usefulness.
+
+    Nothing depends on these rows existing — losing them costs request budget,
+    not correctness — but the table has no natural ceiling, so something has to
+    trim it.
+    """
+    from datetime import timedelta
+
+    from db.session import SessionLocal
+    from marvel.mirror_cache import purge
+
+    async with SessionLocal() as session:
+        removed = await purge(session, timedelta(days=days))
+    print(f"dropped {removed} cached mirror response(s) older than {days} days")
     return 0
 
 
@@ -330,6 +348,9 @@ def main(argv: list[str] | None = None) -> int:
         help="issues to look up in one pass (default 25, one mirror request each)",
     )
 
+    p_mirror = sub.add_parser("purge-mirror-cache", help="drop old cached mirror responses")
+    p_mirror.add_argument("--older-than-days", type=int, default=90)
+
     p_conn = sub.add_parser("register-connector", help="register an OAuth client")
     p_conn.add_argument("name")
     p_conn.add_argument("email")
@@ -355,6 +376,8 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_seed(args.email, args.name, args.handle, args.admin))
         case "enrich":
             return asyncio.run(_enrich(args.limit))
+        case "purge-mirror-cache":
+            return asyncio.run(_purge_mirror_cache(args.older_than_days))
         case "register-connector":
             return asyncio.run(_register_connector(args.name, args.email, args.redirect_uri))
     return 1

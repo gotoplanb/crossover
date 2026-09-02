@@ -352,3 +352,14 @@ def test_matching_series_deduplicates_a_series_seen_twice() -> None:
         _hit(2, "Venom (2018 - 2021)", "2", series_id=30),
     ]
     assert MirrorClient._matching_series(hits, "Venom") == [30]
+
+
+@respx.mock
+async def test_a_json_array_body_is_treated_as_no_result() -> None:
+    """Valid JSON is not necessarily a readable body. A bare array reaching
+    `record()` would hit `.get()` on a list and raise an AttributeError that
+    nothing catches — a malformed upstream response becoming a crashed tool
+    call rather than a miss."""
+    respx.get(f"{DEFAULT_BASE_URL}/issues/1").mock(return_value=httpx.Response(200, json=[1, 2, 3]))
+    async with httpx.AsyncClient() as http:
+        assert await MirrorClient(client=http).record(1) is None

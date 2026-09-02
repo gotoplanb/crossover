@@ -144,7 +144,12 @@ class MirrorClient:
             response = await self._client().get(f"{self._base_url}{path}", params=params)
             if response.status_code >= 400:
                 return None
-            return response.json()
+            body = response.json()
+            # Valid JSON is not necessarily a body we can read. A bare array
+            # would reach `record()`, which calls `.get()` on it and raises an
+            # AttributeError that nothing here catches — turning a malformed
+            # upstream response into a crashed tool call rather than a miss.
+            return body if isinstance(body, dict) else None
         except (httpx.HTTPError, ValueError):
             return None
 

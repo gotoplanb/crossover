@@ -1,6 +1,7 @@
 from models.bookmark import Bookmark, ShelfCandidate
 from models.cache import MarvelResponseCache
 from models.catalog import Event, EventIssue, Issue, IssueReference
+from models.mirror_cache import MirrorResponseCache
 from models.oauth import OAuthAuthorizationCode, OAuthClient, OAuthToken
 from models.session import UserSession
 from models.types import (
@@ -30,6 +31,7 @@ __all__ = [
     "IssueReference",
     "IssueRole",
     "MarvelResponseCache",
+    "MirrorResponseCache",
     "NarrativeRole",
     "OAuthAuthorizationCode",
     "OAuthClient",
