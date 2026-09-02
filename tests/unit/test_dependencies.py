@@ -34,9 +34,25 @@ DISTRIBUTION_NAMES = {
 #: Modules that are ours, or the standard library, or pulled in transitively by
 #: a declared package in a way that is part of that package's public surface.
 LOCAL_PACKAGES = {
-    "alembic", "auth", "config", "csrf", "curation", "db", "lifespan", "main",
-    "marvel", "mcp_server", "models", "oauth_provider", "observability",
-    "routes", "scripts", "service", "templates_env", "tests",
+    "alembic",
+    "auth",
+    "config",
+    "csrf",
+    "curation",
+    "db",
+    "lifespan",
+    "main",
+    "marvel",
+    "mcp_server",
+    "models",
+    "oauth_provider",
+    "observability",
+    "oauth_conformance",
+    "routes",
+    "scripts",
+    "service",
+    "templates_env",
+    "tests",
 }
 
 
@@ -106,8 +122,7 @@ def test_every_imported_package_is_declared() -> None:
         if not _is_declared(module, declared)
     }
     assert not undeclared, (
-        "these are imported but not in pyproject.toml, so a fresh install would "
-        f"fail: {undeclared}"
+        f"these are imported but not in pyproject.toml, so a fresh install would fail: {undeclared}"
     )
 
 
