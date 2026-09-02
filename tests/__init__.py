@@ -6,14 +6,15 @@ reliable place to set environment variables that must exist *before*
 `config.settings` is first imported. `db/session.py` builds its engine at import
 time, so by the time conftest's own imports run it is already too late.
 
-Three things are set up here:
+Two things are set up here:
 
-1. `CROSSOVER_ADMIN_KEY`, which has no default in production code (a default in
-   a public repo is a published credential), so Settings would refuse to build.
-2. `OTEL_ENABLED=false`, because a BatchSpanProcessor with no collector
+1. `OTEL_ENABLED=false`, because a BatchSpanProcessor with no collector
    reachable retries in the background and makes the suite slow and noisy.
-3. `DATABASE_URL` rewritten to `<dbname>_test`, so the suite never touches the
+2. `DATABASE_URL` rewritten to `<dbname>_test`, so the suite never touches the
    development database. See `_as_test_database` for why that matters.
+
+Reader passwords are *not* set here: each test that needs one sets its own via
+monkeypatch, so a stray value cannot make a login test pass for the wrong reason.
 """
 
 from __future__ import annotations
@@ -23,7 +24,6 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 
-os.environ.setdefault("CROSSOVER_ADMIN_KEY", "pytest-admin-key-0123456789")
 os.environ["OTEL_ENABLED"] = "false"
 
 

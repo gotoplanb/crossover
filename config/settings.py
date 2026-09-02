@@ -18,9 +18,9 @@ class Settings(BaseSettings):
     # Absolute path, not the bare ".env" pydantic defaults to. That form is
     # resolved against the *current working directory*, so `python -m
     # scripts.cli ...` from anywhere but the repo root silently failed to find
-    # the file and then refused to build at all, because CROSSOVER_ADMIN_KEY has
-    # no default. Invisible on Heroku, where config vars are real environment
-    # variables, and confusing everywhere else.
+    # the file, and every setting silently fell back to its default. Invisible
+    # on Heroku, where config vars are real environment variables, and
+    # confusing everywhere else.
     model_config = SettingsConfigDict(
         env_file=ENV_FILE, env_file_encoding="utf-8", extra="ignore"
     )
@@ -106,9 +106,9 @@ class Settings(BaseSettings):
         and a seed, not a code change.
 
         Stored as the plaintext the operator chose. For a two-person deployment
-        that is the same exposure as `CROSSOVER_ADMIN_KEY` already carries: both
-        are visible to anyone who can read the config, and neither is a hash. If
-        this ever grows past people who share a household, hash them.
+        that is the same exposure any config var carries: visible to anyone who
+        can read the config, and not a hash. If this ever grows past people who
+        share a household, hash them.
         """
         if not valid_handle(handle):
             return None
