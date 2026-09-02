@@ -27,7 +27,7 @@ jobs:
     name: lint, secrets, unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -78,7 +78,7 @@ jobs:
       OTEL_ENABLED: "false"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -113,7 +113,7 @@ jobs:
       github.event_name == 'push' &&
       vars.SONAR_HOST_URL != ''
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Sonar wants full history to attribute new code to the right commits.
           fetch-depth: 0
