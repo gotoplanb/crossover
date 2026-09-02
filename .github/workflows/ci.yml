@@ -134,7 +134,7 @@ jobs:
         run: uv run pytest tests/unit -q --cov --cov-report=xml || true
 
       - name: Scan
-        uses: SonarSource/sonarqube-scan-action@v4
+        uses: SonarSource/sonarqube-scan-action@v8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
