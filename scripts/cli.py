@@ -104,10 +104,7 @@ async def _load_curation() -> int:
                 f"{applied.newly_linkable} newly linkable"
             )
             if applied.issues_unmatched:
-                print(
-                    "  no snapshot record for: "
-                    + ", ".join(sorted(applied.issues_unmatched))
-                )
+                print("  no snapshot record for: " + ", ".join(sorted(applied.issues_unmatched)))
     return 0
 
 
@@ -230,6 +227,28 @@ async def _purge_sessions(keep_days: int) -> int:
     return 0
 
 
+async def _enrich(limit: int | None) -> int:
+    """Fill in thin issue rows that a bookmark already points at.
+
+    Demand-driven: an issue earns a lookup by being on somebody's shelf. The
+    mirror allows 60 requests a minute and each issue costs one, so `--limit`
+    is a real limit, not a page size — run it again to continue.
+    """
+    from db.session import SessionLocal
+    from marvel.mirror import MirrorClient
+    from service.enrich import DEFAULT_LIMIT, enrich_bookmarked_issues
+
+    # Resolved here rather than as an argparse default: this module defers every
+    # heavy import into the command bodies, and reading the constant at
+    # parser-build time would pull SQLAlchemy in on `--help`.
+    async with MirrorClient() as mirror, SessionLocal() as session:
+        report = await enrich_bookmarked_issues(
+            session, mirror, limit=limit if limit is not None else DEFAULT_LIMIT
+        )
+    print(report.summary())
+    return 0
+
+
 async def _register_connector(name: str, email: str, redirect_uri: str) -> int:
     """Register an OAuth client for a Claude custom connector.
 
@@ -285,9 +304,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("load-curation", help="load curation YAML into the database")
     sub.add_parser("bootstrap", help="first-run setup for a fresh deploy (idempotent)")
 
-    p_revoke = sub.add_parser(
-        "revoke-sessions", help="sign a reader out on every device"
-    )
+    p_revoke = sub.add_parser("revoke-sessions", help="sign a reader out on every device")
     p_revoke.add_argument("handle")
 
     p_purge = sub.add_parser("purge-sessions", help="delete long-expired session rows")
@@ -301,6 +318,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_seed.add_argument(
         "--admin", action="store_true", help="grant the curation views and OAuth consent"
+    )
+
+    p_enrich = sub.add_parser(
+        "enrich", help="fill in bookmarked issues missing cover art or a digital id"
+    )
+    p_enrich.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="issues to look up in one pass (default 25, one mirror request each)",
     )
 
     p_conn = sub.add_parser("register-connector", help="register an OAuth client")
@@ -326,10 +353,10 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_purge_sessions(args.keep_days))
         case "seed":
             return asyncio.run(_seed(args.email, args.name, args.handle, args.admin))
+        case "enrich":
+            return asyncio.run(_enrich(args.limit))
         case "register-connector":
-            return asyncio.run(
-                _register_connector(args.name, args.email, args.redirect_uri)
-            )
+            return asyncio.run(_register_connector(args.name, args.email, args.redirect_uri))
     return 1
 
 

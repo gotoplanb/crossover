@@ -37,6 +37,11 @@ from marvel.records import ComicRecord, parse_comic, series_display_name
 
 DEFAULT_BASE_URL = "https://marvel.emreparker.com/v1"
 
+#: Stamped onto `digital_id_source` for anything this client supplies, so a row
+#: can always say which source vouched for its id, and so mirror-sourced ids can
+#: be told apart from `snapshot:<slug>` ones later (Gate B).
+MIRROR_SOURCE = "mirror:marvel.emreparker.com"
+
 #: Their search 500s on a colon, so "King in Black: Namor" must be asked for
 #: without punctuation.
 _PUNCTUATION = re.compile(r"[^A-Za-z0-9 ]")

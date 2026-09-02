@@ -22,6 +22,7 @@ per Gate B a pending entry never becomes a linkable id.
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Any
 from uuid import UUID
 
@@ -31,8 +32,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from curation.resolve import candidates_from_guide, resolve
 from marvel.client import MarvelAPIError, MarvelClient, MarvelCredentialsMissing
 from marvel.links import attribution
-from marvel.mirror import MirrorClient
-from marvel.records import ComicRecord, cover_url, parse_comics
+from marvel.mirror import MIRROR_SOURCE, MirrorClient
+from marvel.records import ComicRecord, cover_url, parse_comics, series_slug
+from marvel.sync import apply_record, promote_availability
 from models.bookmark import Bookmark, ShelfCandidate
 from models.catalog import Issue
 from models.types import (
@@ -47,9 +49,9 @@ from service.guide import GuideEntry, all_entries
 #: Enough options to be useful out loud, few enough to read aloud in one breath.
 MAX_MATCHES = 4
 
-#: Stamped onto `digital_id_source` for anything the mirror supplied, so a row
-#: can always answer where its id came from (Gate B).
-MIRROR_SOURCE = "mirror:marvel.emreparker.com"
+#: Re-exported so callers of this service read one name for the mirror's
+#: provenance stamp.
+__all__ = ["MAX_MATCHES", "MIRROR_SOURCE", "confirm", "propose"]
 
 
 def _record_to_match(record: ComicRecord, source: str = "marvel_api") -> dict[str, Any]:
@@ -71,6 +73,16 @@ def _record_to_match(record: ComicRecord, source: str = "marvel_api") -> dict[st
         # never used to build a link until the human has said yes.
         "digital_id": record.digital_id,
         "marvel_com_issue_id": record.marvel_com_issue_id,
+        # The rest of the record, carried so `confirm` can write a *complete*
+        # issue row without a second lookup. Phase 1 already paid for this data;
+        # re-fetching it would spend another request against a 60/min budget and
+        # would fail exactly when the mirror is down.
+        "marvel_api_comic_id": record.marvel_api_comic_id,
+        "series_slug": record.series_slug,
+        "thumbnail_path": record.thumbnail_path,
+        "thumbnail_extension": record.thumbnail_extension,
+        "characters": list(record.characters),
+        "creators": list(record.creators),
         # Gate B's recording half: an id is only linkable if the row can say
         # where it came from. Carried on the match so `confirm` can stamp it
         # onto the issue it creates.
@@ -137,6 +149,35 @@ async def _marvel_matches(raw: str, client: MarvelClient | None) -> list[dict[st
         exact = [r for r in records if r.issue_number == wanted]
         records = exact or records
     return [_record_to_match(r) for r in records[:MAX_MATCHES]]
+
+
+def record_from_match(match: dict[str, Any]) -> ComicRecord | None:
+    """Rebuild the `ComicRecord` a match was built from, or None.
+
+    None for a curated match, which names an issue that already exists in the
+    catalog — there is nothing to create and nothing to enrich.
+
+    This exists so the issue created by `confirm` goes through `apply_record`
+    like every other API-derived write, rather than a second hand-rolled
+    field-by-field copy that could drift from `API_OWNED_COLUMNS`.
+    """
+    if not match.get("marvel_api_comic_id"):
+        return None
+    cover_date = match.get("cover_date")
+    return ComicRecord(
+        marvel_api_comic_id=match["marvel_api_comic_id"],
+        series_name=match["series"],
+        series_slug=match.get("series_slug") or series_slug(match["series"]),
+        issue_number=int(match["number"]),
+        title=match.get("issue") or "",
+        published_on=date.fromisoformat(cover_date) if cover_date else None,
+        digital_id=match.get("digital_id"),
+        marvel_com_issue_id=match.get("marvel_com_issue_id"),
+        thumbnail_path=match.get("thumbnail_path"),
+        thumbnail_extension=match.get("thumbnail_extension"),
+        characters=list(match.get("characters") or []),
+        creators=list(match.get("creators") or []),
+    )
 
 
 async def _mirror_matches(
@@ -265,25 +306,27 @@ async def confirm(
 
     issue = await session.scalar(select(Issue).where(Issue.key == chosen_key))
     if issue is None:
-        # An off-event find: create the issue record from the confirmed match.
-        # digital_id is copied only because it came from a Marvel response for
-        # this exact issue in phase 1 — the Gate B rule holds.
+        # An off-event find: create the issue from the confirmed match. The
+        # digital_id is copied only because it came from a record for this exact
+        # issue in phase 1 — the Gate B rule holds, and `apply_record` stamps
+        # which source vouched for it.
         issue = Issue(
             key=chosen_key,
             series_name=match["series"],
-            series_slug=chosen_key.rsplit("-", 1)[0],
+            series_slug=match.get("series_slug") or chosen_key.rsplit("-", 1)[0],
             issue_number=int(match["number"]),
-            title=match["issue"],
-            digital_id=match.get("digital_id"),
-            marvel_com_issue_id=match.get("marvel_com_issue_id"),
-            source_id=match.get("marvel_com_issue_id"),
-            digital_id_source=match.get("digital_id_source") or "",
-            availability=(
-                Availability.LINKABLE.value
-                if match.get("digital_id")
-                else Availability.UNCONFIRMED.value
-            ),
+            title=match.get("issue") or "",
+            availability=Availability.UNCONFIRMED.value,
         )
+        # Not `record`: that name is the ShelfCandidate throughout this
+        # function, and shadowing it here silently rebound `record.raw_text`.
+        comic = record_from_match(match)
+        if comic is not None:
+            # The same write path a sync uses, so cover art, dates, creators and
+            # characters land too — an off-event find used to create a row with
+            # none of them — and so this can never write a curated column.
+            apply_record(issue, comic, source=match.get("digital_id_source") or "marvel-api")
+            promote_availability(issue)
         session.add(issue)
         await session.flush()
 

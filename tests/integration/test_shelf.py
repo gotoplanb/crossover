@@ -440,3 +440,45 @@ async def test_propose_without_a_mirror_still_works(session, user, loaded_event)
         mirror=None,
     )
     assert result["results"][0]["matches"] == []
+
+
+# --- rebuilding a record from a stored match ---------------------------------
+
+
+def test_a_curated_match_rebuilds_to_nothing() -> None:
+    """It names an issue already in the catalog, so there is nothing to create
+    and nothing to enrich."""
+    assert shelf_service.record_from_match({"source": "curated", "key": "venom-31"}) is None
+
+
+def test_a_record_match_rebuilds_completely() -> None:
+    """`confirm` writes the created issue through `apply_record`, so everything
+    that write path needs has to survive the round trip through JSONB."""
+    match = {
+        "marvel_api_comic_id": 8164,
+        "series": "Daredevil",
+        "series_slug": "daredevil",
+        "number": 181,
+        "issue": "Daredevil (1964) #181",
+        "cover_date": "1981-04-01",
+        "digital_id": 1672,
+        "marvel_com_issue_id": 8164,
+        "thumbnail_path": "http://i.annihil.us/u/prod/marvel/i/mg/1/2/abc",
+        "thumbnail_extension": "jpg",
+        "characters": ["Daredevil"],
+        "creators": ["Frank Miller"],
+    }
+    record = shelf_service.record_from_match(match)
+    assert record is not None
+    assert record.digital_id == 1672
+    assert record.published_on.isoformat() == "1981-04-01"
+    assert record.thumbnail_path and record.thumbnail_extension == "jpg"
+    assert record.creators == ["Frank Miller"]
+
+
+def test_a_record_match_without_a_cover_date_still_rebuilds() -> None:
+    record = shelf_service.record_from_match(
+        {"marvel_api_comic_id": 1, "series": "Venom", "number": 31, "cover_date": None}
+    )
+    assert record is not None and record.published_on is None
+    assert record.series_slug == "venom", "derived when the match predates the field"

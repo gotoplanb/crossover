@@ -1,6 +1,6 @@
 .PHONY: help install up down migrate revision run seed load test lint format \
         check-api-key sync-event list-events psql connector install-hooks snapshot \
-        reader-password revoke-sessions \
+        reader-password revoke-sessions enrich \
         secrets sonar-scan sonar-gate coverage
 
 help:
@@ -21,6 +21,8 @@ help:
 	@echo "  make check-api-key            — verify credentials + digital-id coverage"
 	@echo "  make list-events q=\"King in\"  — find an event's numeric Marvel id"
 	@echo "  make sync-event slug=king-in-black — fetch the roster, confirm digital ids"
+	@echo ""
+	@echo "  make enrich [limit=25]        — fill in bookmarked issues missing cover art"
 	@echo ""
 	@echo "Development:"
 	@echo "  make install-hooks — install the pre-commit / pre-push gates"
@@ -94,6 +96,9 @@ list-events:
 sync-event:
 	@if [ -z "$(slug)" ]; then echo "Usage: make sync-event slug=king-in-black"; exit 1; fi
 	.venv/bin/python -m scripts.cli sync-event "$(slug)"
+
+enrich:
+	.venv/bin/python -m scripts.cli enrich $(if $(limit),--limit $(limit),)
 
 connector:
 	@if [ -z "$(name)" ] || [ -z "$(email)" ] || [ -z "$(redirect)" ]; then \
