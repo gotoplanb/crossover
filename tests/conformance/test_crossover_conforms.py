@@ -8,12 +8,12 @@ is which side moved.
 from __future__ import annotations
 
 import pytest
+from oauth_conformance import Client, Principal, Tokens
+from oauth_conformance.suite import OAuthConformanceSuite
 from sqlalchemy import select
 
 from models.oauth import OAuthClient
 from models.user import User
-from oauth_conformance import Client, Principal, Tokens
-from oauth_conformance.suite import OAuthConformanceSuite
 from oauth_provider import (
     DEFAULT_SCOPE,
     get_active_client,
