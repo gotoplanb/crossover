@@ -13,29 +13,33 @@ allowed to stay ugly.
 
 from __future__ import annotations
 
+import hmac
 from contextlib import suppress
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Cookie, Depends, Form, Request, status
+from fastapi import APIRouter, Cookie, Depends, Form, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth import (
+    MIN_PASSWORD_LENGTH,
     SESSION_COOKIE,
     SESSION_TTL,
+    authenticate,
     create_session,
+    hash_password,
     resolve_session,
     revoke_session,
-    verify_reader_password,
 )
 from config.settings import get_settings
 from csrf import CSRF_COOKIE, csrf_protect, new_token, token_for
 from db.session import get_session
 from models.bookmark import Bookmark
 from models.catalog import Event, EventIssue, Issue, IssueReference
-from models.user import User
+from models.user import User, valid_handle
 from service import bookmarks as bookmark_service
 from service import guide as guide_service
 from service import shelf as shelf_service
@@ -88,7 +92,6 @@ async def login_form(
     session: Annotated[AsyncSession, Depends(get_session)],
     next: str = RACK_URL,
 ) -> HTMLResponse:
-    users = (await session.scalars(select(User).where(User.is_active.is_(True)))).all()
     # Signing in while already signed in is a real case here — two people share
     # a machine and hand it over. csrf_protect will then expect the *existing
     # session's* token, so the form has to carry that one; minting a pre-auth
@@ -103,7 +106,13 @@ async def login_form(
     request.state.csrf_token = token
 
     response = templates.TemplateResponse(
-        request, "login.html", {"next": next, "users": users, "error": None}
+        request,
+        "login.html",
+        {
+            "next": next,
+            "error": None,
+            "registration_open": get_settings().registration_open,
+        },
     )
     if existing:
         return response
@@ -130,18 +139,21 @@ async def login_submit(
     password: Annotated[str, Form()] = "",
     next: Annotated[str, Form()] = RACK_URL,
 ) -> HTMLResponse | RedirectResponse:
-    user = await session.scalar(select(User).where(User.handle == handle))
     # One message for every failure — a wrong password, an unknown handle and a
     # deactivated reader are indistinguishable, so the form cannot be used to
     # enumerate who exists.
-    if user is None or not user.is_active or not verify_reader_password(handle, password):
-        users = (await session.scalars(select(User).where(User.is_active.is_(True)))).all()
+    user = await authenticate(session, handle, password)
+    if user is None:
         # Same ordering rule as above: state before render.
         request.state.csrf_token = request.cookies.get(CSRF_COOKIE) or token_for(request)
         failed = templates.TemplateResponse(
             request,
             "login.html",
-            {"next": next, "users": users, "error": "Wrong password, or no such reader."},
+            {
+                "next": next,
+                "error": "Wrong password, or no such reader.",
+                "registration_open": get_settings().registration_open,
+            },
             status_code=status.HTTP_401_UNAUTHORIZED,
         )
         # Keep the same token so a mistyped password does not leave a form that
@@ -158,9 +170,7 @@ async def login_submit(
 
     # A fresh session per sign-in, so signing in again anywhere does not extend
     # the life of a cookie captured earlier.
-    token = await create_session(
-        session, user, user_agent=request.headers.get("user-agent", "")
-    )
+    token = await create_session(session, user, user_agent=request.headers.get("user-agent", ""))
     response = RedirectResponse(next or RACK_URL, status_code=status.HTTP_303_SEE_OTHER)
     response.set_cookie(
         SESSION_COOKIE,
@@ -171,6 +181,133 @@ async def login_submit(
         max_age=int(SESSION_TTL.total_seconds()),
     )
     # The pre-auth token has done its job; the session carries its own from here.
+    response.delete_cookie(CSRF_COOKIE)
+    return response
+
+
+def _register_page(
+    request: Request,
+    *,
+    error: str | None = None,
+    values: dict | None = None,
+    status_code: int = 200,
+) -> HTMLResponse:
+    """Render the registration form, preserving what was typed.
+
+    Same CSRF dance as the login form, and for the same reason: the page has no
+    session yet, so its token is double-submitted from a cookie, and
+    `request.state` must be set *before* the response is constructed because
+    Starlette renders in the constructor.
+    """
+    token = request.cookies.get(CSRF_COOKIE) or new_token()
+    request.state.csrf_token = token
+    response = templates.TemplateResponse(
+        request,
+        "register.html",
+        {
+            "error": error,
+            "values": values or {},
+            "min_password_length": MIN_PASSWORD_LENGTH,
+        },
+        status_code=status_code,
+    )
+    response.set_cookie(
+        CSRF_COOKIE,
+        token,
+        httponly=True,
+        secure=get_settings().ui_cookie_secure,
+        samesite="lax",
+    )
+    return response
+
+
+@router.get("/register", response_class=HTMLResponse, response_model=None)
+async def register_form(request: Request) -> HTMLResponse:
+    # 404 rather than a "registration is closed" page: a deployment that has not
+    # opted in should not advertise that the route exists at all.
+    if not get_settings().registration_open:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return _register_page(request)
+
+
+@router.post("/register", response_model=None)
+async def register_submit(
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    # Every field defaults to empty so an omitted one is rejected below with a
+    # readable message rather than by FastAPI with a 422.
+    invite_code: Annotated[str, Form()] = "",
+    handle: Annotated[str, Form()] = "",
+    email: Annotated[str, Form()] = "",
+    display_name: Annotated[str, Form()] = "",
+    password: Annotated[str, Form()] = "",
+    password_confirm: Annotated[str, Form()] = "",
+) -> HTMLResponse | RedirectResponse:
+    settings = get_settings()
+    if not settings.registration_open:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    handle = handle.strip().lower()
+    email = email.strip().lower()
+    kept = {"handle": handle, "email": email, "display_name": display_name}
+
+    def refuse(message: str) -> HTMLResponse:
+        return _register_page(
+            request, error=message, values=kept, status_code=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Constant-time: the invite code is a shared secret, and `==` on a secret
+    # leaks its prefix to anyone patient enough to measure.
+    if not hmac.compare_digest(invite_code.strip(), settings.invite_code or ""):
+        return refuse("That invite code isn't valid.")
+    if not valid_handle(handle):
+        return refuse(
+            "A handle starts with a letter and uses only lowercase letters, digits and underscores."
+        )
+    if "@" not in email or len(email) < 3:
+        return refuse("That doesn't look like an email address.")
+    if len(password) < MIN_PASSWORD_LENGTH:
+        return refuse(f"Use at least {MIN_PASSWORD_LENGTH} characters.")
+    if password != password_confirm:
+        return refuse("Those passwords don't match.")
+
+    taken = await session.scalar(
+        select(User).where((User.handle == handle) | (User.email == email))
+    )
+    if taken is not None:
+        return refuse("That handle or email is already registered.")
+
+    # `is_admin` is never read from the form. Admin is granted deliberately, by
+    # someone who already has it — a registration form that could grant it would
+    # make the invite code the only thing standing between a stranger and the
+    # curation views.
+    user = User(
+        email=email,
+        handle=handle,
+        display_name=display_name.strip() or handle.title(),
+        password_hash=hash_password(password),
+        is_admin=False,
+    )
+    session.add(user)
+    try:
+        await session.commit()
+    except IntegrityError:
+        # Two people claiming one handle at once. The check above makes this
+        # rare; the unique constraint is what makes it impossible.
+        await session.rollback()
+        return refuse("That handle or email is already registered.")
+    await session.refresh(user)
+
+    token = await create_session(session, user, user_agent=request.headers.get("user-agent", ""))
+    response = RedirectResponse(RACK_URL, status_code=status.HTTP_303_SEE_OTHER)
+    response.set_cookie(
+        SESSION_COOKIE,
+        token,
+        httponly=True,
+        secure=settings.ui_cookie_secure,
+        samesite="lax",
+        max_age=int(SESSION_TTL.total_seconds()),
+    )
     response.delete_cookie(CSRF_COOKIE)
     return response
 
@@ -235,9 +372,7 @@ async def toggle_read(
         session, user.id, bookmark_id, read=existing.read_at is None
     )
     # HTMX swaps just this control back in.
-    return templates.TemplateResponse(
-        request, "partials/read_toggle.html", {"bookmark": updated}
-    )
+    return templates.TemplateResponse(request, "partials/read_toggle.html", {"bookmark": updated})
 
 
 @router.post("/rack/confirm", response_model=None)
@@ -347,9 +482,7 @@ async def curate_move(
     if event is None or issue is None:
         return RedirectResponse(f"/ui/curate/{slug}", status_code=status.HTTP_303_SEE_OTHER)
     current = await session.scalar(
-        select(EventIssue).where(
-            EventIssue.event_id == event.id, EventIssue.issue_id == issue.id
-        )
+        select(EventIssue).where(EventIssue.event_id == event.id, EventIssue.issue_id == issue.id)
     )
     if current is not None:
         step = -1 if direction == "up" else 1

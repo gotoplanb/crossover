@@ -249,6 +249,38 @@ async def _enrich(limit: int | None) -> int:
     return 0
 
 
+async def _set_password(handle: str) -> int:
+    """Set a reader's password, read from a prompt rather than argv.
+
+    This is the whole password-recovery story: nothing here sends email, so a
+    forgotten password is reset by whoever runs the deployment. Read via
+    getpass so it does not land in shell history or in `ps`.
+    """
+    import getpass
+
+    from sqlalchemy import select
+
+    from auth import MIN_PASSWORD_LENGTH, set_password
+    from db.session import SessionLocal
+    from models.user import User
+
+    async with SessionLocal() as session:
+        user = await session.scalar(select(User).where(User.handle == handle))
+        if user is None:
+            print(f"no reader with handle {handle!r}")
+            return 1
+        first = getpass.getpass(f"new password for {handle}: ")
+        if len(first) < MIN_PASSWORD_LENGTH:
+            print(f"too short — use at least {MIN_PASSWORD_LENGTH} characters")
+            return 1
+        if first != getpass.getpass("again: "):
+            print("those did not match")
+            return 1
+        await set_password(session, user, first)
+    print(f"password set for {handle}")
+    return 0
+
+
 async def _purge_mirror_cache(days: int) -> int:
     """Drop cached mirror responses past their usefulness.
 
@@ -348,6 +380,9 @@ def main(argv: list[str] | None = None) -> int:
         help="issues to look up in one pass (default 25, one mirror request each)",
     )
 
+    p_pw = sub.add_parser("set-password", help="set a reader's password (prompts)")
+    p_pw.add_argument("handle")
+
     p_mirror = sub.add_parser("purge-mirror-cache", help="drop old cached mirror responses")
     p_mirror.add_argument("--older-than-days", type=int, default=90)
 
@@ -376,6 +411,8 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_seed(args.email, args.name, args.handle, args.admin))
         case "enrich":
             return asyncio.run(_enrich(args.limit))
+        case "set-password":
+            return asyncio.run(_set_password(args.handle))
         case "purge-mirror-cache":
             return asyncio.run(_purge_mirror_cache(args.older_than_days))
         case "register-connector":

@@ -54,19 +54,38 @@ make install                       # venv + deps
 make up                            # local Postgres on :5433 (loopback, trust auth)
 cp .env.example .env
 make migrate
-make seed email=you@example.com handle=you admin=1   # create a reader
-make reader-password               # generate CROSSOVER_PASSWORD_YOU, paste into .env
+make seed email=you@example.com handle=you admin=1   # create the first admin
+make reader-password               # generate an invite code for CROSSOVER_INVITE_CODE
+.venv/bin/python -m scripts.cli set-password you       # set your password
 make install-hooks                 # pre-commit / pre-push quality gates
 make run                           # http://localhost:8020
 ```
 
 ## Who can sign in
 
-Each reader has their own password, supplied as `CROSSOVER_PASSWORD_{HANDLE}`.
-That is what separates one person's rack from another's — a shared key could not.
-Admins additionally reach the curation views and can approve an OAuth grant;
-`is_admin` is a flag on the reader, so there is **no master admin key** to leak
-or share.
+Readers register themselves at `/ui/register` with an invite code, and their
+password is argon2id-hashed into the database. Each reader's password is what
+separates one person's rack from another's — a shared key could not.
+
+**Registration is closed unless `CROSSOVER_INVITE_CODE` is set.** Unset means
+closed, not open: the app writes to your database and spends a rate-limited
+third-party quota on every shelf lookup, so forgetting to configure the gate
+should not be the mistake that opens the door. Rotate the code to stop admitting
+people.
+
+Registration never grants admin. Admins reach the curation views and can approve
+an OAuth grant; `is_admin` is a flag set deliberately by someone who already has
+it (`make seed ... admin=1`), so there is **no master admin key** to leak or
+share, and the invite code buys a rack and nothing more.
+
+Nothing here sends email, so there is no password reset. Recovery is
+`python -m scripts.cli set-password <handle>`, run by whoever operates the
+deployment.
+
+Accounts created before passwords moved into the database accept their old
+`CROSSOVER_PASSWORD_{HANDLE}` once, hash it, and never read the environment
+again — so nobody has to be told a new password, and those config vars can be
+deleted after one sign-in each.
 
 Signing in mints a **revocable, expiring session token**. The cookie carries a
 random token, never the reader's database id — see `models/session.py` for why
@@ -266,7 +285,8 @@ heroku run python -m scripts.cli bootstrap   # config sanity check, idempotent
 Config vars: `DATABASE_URL` is injected by the addon and normalized for asyncpg
 in `config/settings.py` (Heroku hands out `postgres://`, which the driver cannot
 use). Set `CROSSOVER_PUBLIC_URL` (the https origin — it is the OAuth issuer),
-one `CROSSOVER_PASSWORD_{HANDLE}` per reader, and `UI_COOKIE_SECURE=true`. Leave
+`CROSSOVER_INVITE_CODE` (registration stays closed without it), and
+`UI_COOKIE_SECURE=true`. Leave
 `OTEL_ENABLED=false` unless a dyno can actually reach your collector.
 
 **The filesystem is ephemeral**, which is why curation YAML and the catalog

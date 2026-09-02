@@ -9,7 +9,7 @@ help:
 	@echo "  make up            — start the local Postgres"
 	@echo "  make migrate       — alembic upgrade head"
 	@echo "  make seed email=you@example.com handle=you [admin=1]  — create a reader"
-	@echo "  make reader-password — generate a password for CROSSOVER_PASSWORD_<HANDLE>"
+	@echo "  make reader-password — generate a random secret (invite code, password)"
 	@echo "  make revoke-sessions handle=dave — sign a reader out everywhere"
 	@echo "  make run           — serve on :8020 with reload (override: port=NNNN)"
 	@echo ""

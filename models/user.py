@@ -16,10 +16,13 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from db.base import Base
 
-#: A handle has to be a legal environment-variable suffix, because that is how
-#: its password is supplied: `CROSSOVER_PASSWORD_{HANDLE}`. Enforced at the
-#: seam where users are created rather than trusted, so a handle can never be
-#: created that has no way to authenticate.
+#: Lowercase, starts with a letter, no punctuation beyond an underscore.
+#: This originally existed because a handle had to be a legal
+#: environment-variable suffix — passwords were supplied as
+#: `CROSSOVER_PASSWORD_{HANDLE}`. Passwords now live in `password_hash`, so the
+#: constraint is no longer load-bearing, but it is kept: handles are typed at a
+#: login form and read aloud, and the narrow character set keeps them
+#: unambiguous.
 HANDLE_PATTERN = re.compile(r"^[a-z][a-z0-9_]{0,30}$")
 
 
@@ -32,9 +35,8 @@ class User(Base):
 
     id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
-    # Short lowercase identifier — "dave", "tabitha". Names the reader in the
-    # login form and, more importantly, names their password's environment
-    # variable: CROSSOVER_PASSWORD_DAVE.
+    # Short lowercase identifier — "dave", "tabitha". What a reader types at
+    # the login form, and chosen by them at registration.
     handle: Mapped[str] = mapped_column(
         String(32), unique=True, nullable=False, index=True, default=""
     )
@@ -44,6 +46,16 @@ class User(Base):
     # two people sharing one deployment.
     is_admin: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=False, server_default="false"
+    )
+    # argon2id, from `auth.hash_password`. Empty means no password is set, which
+    # is a real state rather than an error: the `claude` reader authenticates
+    # only through an OAuth token, and an account created before passwords moved
+    # into the database has none until its owner next signs in.
+    #
+    # Empty must therefore never authenticate. `auth.authenticate` is the single
+    # place that decides, and it refuses an empty hash outright.
+    password_hash: Mapped[str] = mapped_column(
+        String(255), nullable=False, default="", server_default=""
     )
     # Subject claim from whatever identity provider approved the OAuth grant.
     # Empty for users created by the seed script and authorized by admin consent.

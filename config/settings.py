@@ -13,7 +13,6 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 ENV_FILE = REPO_ROOT / ".env"
 
 
-
 class Settings(BaseSettings):
     # Absolute path, not the bare ".env" pydantic defaults to. That form is
     # resolved against the *current working directory*, so `python -m
@@ -21,9 +20,7 @@ class Settings(BaseSettings):
     # the file, and every setting silently fell back to its default. Invisible
     # on Heroku, where config vars are real environment variables, and
     # confusing everywhere else.
-    model_config = SettingsConfigDict(
-        env_file=ENV_FILE, env_file_encoding="utf-8", extra="ignore"
-    )
+    model_config = SettingsConfigDict(env_file=ENV_FILE, env_file_encoding="utf-8", extra="ignore")
 
     # Heroku hands us a postgres:// URL; SQLAlchemy's asyncpg driver needs
     # postgresql+asyncpg://. Normalized in `database_url` below rather than
@@ -50,6 +47,14 @@ class Settings(BaseSettings):
     # Set true when served over HTTPS so the admin cookie carries Secure.
     ui_cookie_secure: bool = Field(default=False, alias="UI_COOKIE_SECURE")
 
+    # Shared secret required to create an account. **Unset closes registration
+    # entirely** rather than opening it: this app writes to a database and
+    # spends a rate-limited third-party quota on every shelf lookup, so an
+    # accidentally open form is a way for a stranger to spend both. Failing
+    # closed means forgetting to configure it cannot be the mistake that opens
+    # the door.
+    invite_code: str | None = Field(default=None, alias="CROSSOVER_INVITE_CODE")
+
     # How long a cached Marvel response is considered fresh. The cache is
     # disposable (SPEC §3) so this is a politeness knob, not correctness.
     cache_ttl_hours: int = Field(default=24 * 7, alias="MARVEL_CACHE_TTL_HOURS")
@@ -57,9 +62,7 @@ class Settings(BaseSettings):
     # --- OpenTelemetry -> Watchtower's Alloy collector ---
     # Alloy receives OTLP on 4317 (gRPC) and fans traces out to Tempo and logs
     # to Loki. From inside a container, use host.docker.internal:4317.
-    otel_endpoint: str = Field(
-        default="http://localhost:4317", alias="OTEL_EXPORTER_OTLP_ENDPOINT"
-    )
+    otel_endpoint: str = Field(default="http://localhost:4317", alias="OTEL_EXPORTER_OTLP_ENDPOINT")
     otel_service_name: str = Field(default="crossover", alias="OTEL_SERVICE_NAME")
     # Off in tests: a BatchSpanProcessor with nothing listening retries in the
     # background and makes the suite slow and noisy for no signal.
@@ -73,6 +76,10 @@ class Settings(BaseSettings):
         elif url.startswith("postgresql://"):
             url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
         return url
+
+    @property
+    def registration_open(self) -> bool:
+        return bool(self.invite_code)
 
     @property
     def has_marvel_credentials(self) -> bool:
@@ -115,7 +122,6 @@ class Settings(BaseSettings):
         key = f"CROSSOVER_PASSWORD_{handle.upper()}"
         # Real environment first, so a config var always beats a stale .env.
         return os.environ.get(key) or self._env_file_values().get(key) or None
-
 
 
 @lru_cache

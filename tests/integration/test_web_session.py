@@ -35,25 +35,25 @@ def reader_password(user, monkeypatch) -> str:
 # --- login ---
 
 
-async def test_the_login_form_lists_active_readers(client, user) -> None:
+async def test_the_login_form_asks_for_a_handle(client, user) -> None:
     html = (await client.get("/ui/login")).text
-    assert user.handle in html
-    assert "Password" in html
+    assert 'name="handle"' in html and "Password" in html
+    assert user.handle not in html, "the form must not enumerate readers"
 
 
-async def test_the_login_form_explains_an_empty_allowlist(client, session) -> None:
-    """A fresh deploy with no readers should say what to run, not present an
-    empty dropdown with no explanation."""
-    from sqlalchemy import delete
+async def test_the_login_form_offers_registration_only_when_it_is_open(client, monkeypatch) -> None:
+    """Registration is closed unless an invite code is configured, and a closed
+    deployment should not advertise a route that will 404."""
+    from config.settings import get_settings
 
-    from models.user import User
+    monkeypatch.delenv("CROSSOVER_INVITE_CODE", raising=False)
+    get_settings.cache_clear()
+    assert "/ui/register" not in (await client.get("/ui/login")).text
 
-    await session.execute(delete(User))
-    await session.commit()
-
-    html = (await client.get("/ui/login")).text
-    assert "<option" not in html
-    assert "make seed" in html
+    monkeypatch.setenv("CROSSOVER_INVITE_CODE", "let-me-in-please")
+    get_settings.cache_clear()
+    assert "/ui/register" in (await client.get("/ui/login")).text
+    get_settings.cache_clear()
 
 
 async def test_signing_in_sets_a_session_cookie_and_redirects(
@@ -92,9 +92,7 @@ async def test_an_unknown_handle_is_401(sign_in) -> None:
     assert "Wrong password, or no such reader." in response.text
 
 
-async def test_a_deactivated_reader_cannot_sign_in(
-    sign_in, session, user, reader_password
-) -> None:
+async def test_a_deactivated_reader_cannot_sign_in(sign_in, session, user, reader_password) -> None:
     user.is_active = False
     await session.commit()
     response = await sign_in(user.handle, reader_password)
@@ -129,9 +127,7 @@ async def test_a_cookie_for_a_nonexistent_user_bounces_to_login(client) -> None:
     assert response.status_code == 303
 
 
-async def test_a_session_for_a_deactivated_reader_stops_working(
-    signed_in, session, user
-) -> None:
+async def test_a_session_for_a_deactivated_reader_stops_working(signed_in, session, user) -> None:
     """Deactivating a reader has to take effect on the web surface too, not just
     on their OAuth tokens — and without waiting for the session to expire."""
     assert (await signed_in.get("/ui/rack")).status_code == 200
@@ -195,9 +191,7 @@ async def test_confirming_from_the_rack_commits_the_entry(
     )
     assert response.status_code == 303
     saved = await session.scalar(
-        select(Bookmark).where(
-            Bookmark.user_id == user.id, Bookmark.status == "confirmed"
-        )
+        select(Bookmark).where(Bookmark.user_id == user.id, Bookmark.status == "confirmed")
     )
     assert saved.series_name == "King in Black: Namor"
 
@@ -215,9 +209,7 @@ async def test_confirming_a_stale_candidate_just_re_renders(signed_in) -> None:
     assert response.status_code == 303
 
 
-async def test_confirming_with_a_malformed_candidate_id_does_not_500(
-    signed_in
-) -> None:
+async def test_confirming_with_a_malformed_candidate_id_does_not_500(signed_in) -> None:
     response = await signed_in.post(
         "/ui/rack/confirm",
         data={"candidate_id": "not-a-uuid", "chosen_key": "king-in-black-1"},
@@ -233,12 +225,14 @@ async def test_curation_writes_require_the_admin_cookie(client, loaded_event) ->
     """Reading the rack needs a reader cookie; changing curated order needs the
     admin key as well."""
     for path, data in [
-        ("/ui/curate/king-in-black/move", {"issue_key": "king-in-black-1",
-                                          "direction": "up"}),
+        ("/ui/curate/king-in-black/move", {"issue_key": "king-in-black-1", "direction": "up"}),
         (
             "/ui/curate/king-in-black/reference",
-            {"from_key": "king-in-black-1", "to_key": "king-in-black-2",
-             "relation_type": "references"},
+            {
+                "from_key": "king-in-black-1",
+                "to_key": "king-in-black-2",
+                "relation_type": "references",
+            },
         ),
     ]:
         response = await client.post(path, data=data, follow_redirects=False)
@@ -247,9 +241,7 @@ async def test_curation_writes_require_the_admin_cookie(client, loaded_event) ->
 
 
 async def test_the_yaml_export_requires_the_admin_cookie(client, loaded_event) -> None:
-    response = await client.get(
-        "/ui/curate/king-in-black/export.yaml", follow_redirects=False
-    )
+    response = await client.get("/ui/curate/king-in-black/export.yaml", follow_redirects=False)
     assert response.status_code == 303
 
 
@@ -271,9 +263,7 @@ async def test_moving_an_unknown_issue_is_a_no_op(signed_in, loaded_event) -> No
     assert response.status_code == 303
 
 
-async def test_moving_the_first_issue_up_is_a_no_op(
-    signed_in, session, loaded_event
-) -> None:
+async def test_moving_the_first_issue_up_is_a_no_op(signed_in, session, loaded_event) -> None:
     """There is no position 0, and the swap must not create one."""
     from service import guide as guide_service
 
@@ -288,9 +278,7 @@ async def test_moving_the_first_issue_up_is_a_no_op(
     assert [e.position for e in after] == list(range(1, len(after) + 1))
 
 
-async def test_moving_the_last_issue_down_is_a_no_op(
-    signed_in, session, loaded_event
-) -> None:
+async def test_moving_the_last_issue_down_is_a_no_op(signed_in, session, loaded_event) -> None:
     from service import guide as guide_service
 
     _, before = await guide_service.event_entries(session, "king-in-black")
@@ -303,9 +291,7 @@ async def test_moving_the_last_issue_down_is_a_no_op(
     assert [e.key for e in after] == [e.key for e in before]
 
 
-async def test_a_self_referencing_edge_is_refused(
-    signed_in, session, loaded_event
-) -> None:
+async def test_a_self_referencing_edge_is_refused(signed_in, session, loaded_event) -> None:
     """`validate.check_references_resolve` rejects a self-edge, so the UI must
     not be able to create one — otherwise the admin view can put the repo into a
     state the data-quality suite fails on."""
@@ -340,9 +326,7 @@ async def test_a_self_referencing_edge_is_refused(
     assert self_edges == 0
 
 
-async def test_an_edge_to_an_unknown_issue_is_refused(
-    signed_in, session, loaded_event
-) -> None:
+async def test_an_edge_to_an_unknown_issue_is_refused(signed_in, session, loaded_event) -> None:
     from sqlalchemy import func
 
     from models.catalog import IssueReference
@@ -377,9 +361,5 @@ async def test_a_non_numeric_omnibus_page_is_stored_as_null(
         },
         follow_redirects=False,
     )
-    edge = await session.scalar(
-        select(IssueReference)
-        .order_by(IssueReference.id.desc())
-        .limit(1)
-    )
+    edge = await session.scalar(select(IssueReference).order_by(IssueReference.id.desc()).limit(1))
     assert edge.omnibus_page is None

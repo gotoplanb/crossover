@@ -4,7 +4,7 @@
 <div class="max-w-sm mx-auto">
   <h1 class="text-2xl font-semibold tracking-tight">Crossover</h1>
   <p class="text-sm text-zinc-400 mt-2">
-    Pick who you are and use your own password — the rack is per-person.
+    Sign in with your own handle and password — the rack is per-person.
   </p>
   {% if error %}
   <p class="mt-4 text-sm text-red-400">{{ error }}</p>
@@ -13,12 +13,10 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
     <input type="hidden" name="next" value="{{ next }}">
     <label class="block">
-      <span class="text-sm text-zinc-300">Reader</span>
-      <select name="handle" class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm">
-        {% for user in users %}
-        <option value="{{ user.handle }}">{{ user.display_name or user.handle }}</option>
-        {% endfor %}
-      </select>
+      <span class="text-sm text-zinc-300">Handle</span>
+      <input type="text" name="handle" autocomplete="username" autocapitalize="none"
+             spellcheck="false" autofocus
+             class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm">
     </label>
     <label class="block">
       <span class="text-sm text-zinc-300">Password</span>
@@ -29,11 +27,10 @@
       Sign in
     </button>
   </form>
-  {% if not users %}
-  <p class="mt-6 text-sm text-amber-400">
-    No readers exist yet. Run
-    <code class="text-zinc-300">make seed handle=you email=you@example.com</code>,
-    then set <code class="text-zinc-300">CROSSOVER_PASSWORD_YOU</code>.
+  {% if registration_open %}
+  <p class="mt-6 text-sm text-zinc-400">
+    No account? <a href="/ui/register" class="text-zinc-200 underline">Create one</a>
+    — you'll need the invite code.
   </p>
   {% endif %}
 </div>

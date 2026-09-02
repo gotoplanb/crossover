@@ -72,9 +72,7 @@ def test_a_near_miss_is_rejected(passwords) -> None:
     assert verify_reader_password("dave", DAVE_PASSWORD + "x") is False
 
 
-@pytest.mark.parametrize(
-    "handle", ["../etc/passwd", "DAVE", "has space", "1leading", "", "a" * 40]
-)
+@pytest.mark.parametrize("handle", ["../etc/passwd", "DAVE", "has space", "1leading", "", "a" * 40])
 def test_a_handle_that_cannot_name_an_env_var_is_refused(handle, passwords) -> None:
     """A handle becomes part of an environment variable name, so anything that
     is not a legal suffix must never reach `os.environ.get`."""
@@ -179,11 +177,15 @@ async def test_an_admin_reaches_the_curation_views(
     assert (await client.get("/ui/curate/king-in-black")).status_code == 200
 
 
-async def test_the_login_form_offers_handles_not_emails(client, readers) -> None:
-    """Emails are the reader's, not the app's to display on a public page."""
+async def test_the_login_form_names_nobody(client, readers) -> None:
+    """It used to render a dropdown of every active reader, which was fine for a
+    household and became a directory of everyone with an account the moment
+    registration opened. Neither handles nor emails belong on a public page."""
     html = (await client.get("/ui/login")).text
-    assert 'value="dave"' in html
     assert "dave@test.local" not in html
+    assert 'value="dave"' not in html
+    assert "<select" not in html, "a reader list is a list of who exists"
+    assert 'name="handle"' in html, "the handle is typed, not chosen"
 
 
 async def test_racks_stay_separate(
