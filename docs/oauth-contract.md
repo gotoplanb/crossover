@@ -30,9 +30,25 @@ from the cause to be genuinely hard to diagnose.
 
 ## The rule
 
-> **The principal is an explicit input to the grant. It is never derived from
-> the client record.** Whether the principal equals the consenting actor is app
-> policy — self-grant or delegation.
+> **A token acts as the principal its grant was issued for.** Where a client can
+> serve more than one principal, the principal must be an explicit input to the
+> grant — deriving it from the client record is sound only when the two are
+> provably one-to-one. Whether the principal equals the *consenting actor* is app
+> policy: self-grant or delegation.
+
+That is the second draft. The first said the principal must **never** be derived
+from the client record, and writing conduct's adapter proved it wrong: conduct's
+`OAuthClient` has a foreign key to exactly one `ClientApp`, so a client there
+cannot act for two principals however hard you push. Deriving is not a defect
+when the two are provably the same entity — it became one in crossover only
+because the port made the relationship one-to-many and kept the derivation.
+
+An implementation declares which world it is in with
+`separates_client_from_principal`. False makes the suite skip the assertions
+that are structurally meaningless — there is no second principal to confuse —
+and run a narrower substitute that still insists the token acts as *that*
+principal, across a refresh. It is not an opt-out: an implementation that *can*
+separate them and doesn't will still fail.
 
 An earlier draft said "the grant binds to whoever consented", and that is wrong.
 In `conduct` an admin approves and the token acts as a *machine*: the consenting
@@ -113,17 +129,39 @@ adapter is the entire file; the assertions are shared.
 
 ## Status
 
-| Service | Principal | Adapter | Result |
+| Service | Principal | One-to-one? | Result |
 |---|---|---|---|
-| crossover | `("human", user_id)` | yes | 11/11 |
-| conduct | `("machine", client_app_id)` | not yet | — |
-| brokerage portal | `("user", pk)` | not yet | — |
-| davestanton.com | none | out of scope | read-only by design |
+| crossover | `("human", user_id)` | no | 12 passed, 1 skipped |
+| conduct | `("machine", client_app_id)` | **yes** | 9 passed, 3 skipped |
+| in-memory reference | `("machine", id)` | no | 10 passed, 2 skipped |
+| brokerage portal | `("user", pk)` | no | not yet |
+| davestanton.com | none | — | out of scope, read-only by design |
 
-Only crossover is verified. The other two adapters are a file each and the
-interesting part is what they turn up — particularly `conduct`, whose whole
-value here is proving the contract really is indifferent to what a principal is
-rather than merely claiming to be.
+Conduct's adapter lives in that repo as `tests/test_oauth_conformance.py` and
+runs with crossover on `PYTHONPATH`; it skips itself when the package is not
+importable, so it cannot break CI for something that is not published anywhere.
+
+## What writing the adapters actually turned up
+
+Neither finding came from reading code. Both came from making a second
+implementation answer the same questions.
+
+1. **An assertion was testing shape rather than substance.** "Plain PKCE is
+   refused before a code exists" — but crossover rejects the method at its HTTP
+   layer while its provider mints a code that `verify_pkce` then refuses to
+   redeem. Both safe; which layer says no is not the contract's business.
+   Reframed to "plain PKCE can never produce a token".
+
+2. **A shared helper had crossover's model baked into it.** `_granted` minted a
+   principal unrelated to the client, which quietly assumed the two could
+   differ. Six conduct assertions failed for a reason that had nothing to do
+   with what they were checking. The helper now grants to the client's own
+   registrant, and the tests that care about the distinction construct it
+   themselves.
+
+Both are exactly the class of error a suite written against one implementation
+accumulates without anyone noticing, which was the argument for doing this
+before extracting a library rather than after.
 
 `davestanton.com` is excluded on purpose: it is read-only and anonymous, so
 there is no principal to bind and the suite would mostly assert `N/A`. If it

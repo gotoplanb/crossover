@@ -32,6 +32,10 @@ def challenge_for(verifier: str) -> str:
 CHALLENGE = challenge_for(VERIFIER)
 
 
+def _separates(oauth) -> bool:
+    return getattr(oauth, "separates_client_from_principal", True)
+
+
 class OAuthConformanceSuite:
     """Run against one implementation via an `oauth` fixture."""
 
@@ -48,6 +52,12 @@ class OAuthConformanceSuite:
         human and the relationship becomes one-to-many, and one person's client
         starts reading another person's data.
         """
+        if not _separates(oauth):
+            pytest.skip(
+                "this implementation's client and principal are one-to-one, so "
+                "there is no second principal to confuse — see "
+                "test_a_one_to_one_implementation_still_binds_correctly"
+            )
         registrant = await oauth.make_principal()
         approver = await oauth.make_principal()
         assert registrant != approver, "adapter must mint distinct principals"
@@ -68,6 +78,8 @@ class OAuthConformanceSuite:
         """The same bug with a longer fuse. Deriving the principal again at
         refresh time re-binds a rotated token to the registrant — a day later,
         far from anything that would suggest a cause."""
+        if not _separates(oauth):
+            pytest.skip("client and principal are one-to-one here")
         registrant = await oauth.make_principal()
         approver = await oauth.make_principal()
         client = await oauth.register_client(redirect_uris=[REDIRECT], registrant=registrant)
@@ -87,6 +99,8 @@ class OAuthConformanceSuite:
         """The practical consequence, and the reason the rule is worth having:
         a single registered client should serve everyone, each with their own
         separately-revocable token."""
+        if not _separates(oauth):
+            pytest.skip("one client cannot serve two principals in this model")
         client = await oauth.register_client(redirect_uris=[REDIRECT])
         first, second = await oauth.make_principal(), await oauth.make_principal()
 
@@ -107,6 +121,31 @@ class OAuthConformanceSuite:
         assert issued[0].access != issued[1].access
         assert await oauth.resolve(issued[0].access) == first
         assert await oauth.resolve(issued[1].access) == second
+
+    async def test_a_one_to_one_implementation_still_binds_correctly(self, oauth) -> None:
+        """The substitute for the three assertions above.
+
+        Where a client has exactly one principal there is nothing to mix up,
+        but the token must still act as *that* principal and keep doing so
+        across a refresh. Without this, declaring the capability False would be
+        a way to opt out of the contract's subject entirely.
+        """
+        if _separates(oauth):
+            pytest.skip("covered by the stronger assertions above")
+
+        principal = await oauth.make_principal()
+        client = await oauth.register_client(redirect_uris=[REDIRECT], registrant=principal)
+        code = await oauth.authorize(
+            client=client, principal=principal, redirect_uri=REDIRECT, code_challenge=CHALLENGE
+        )
+        tokens = await oauth.exchange(
+            client=client, code=code, verifier=VERIFIER, redirect_uri=REDIRECT
+        )
+        assert await oauth.resolve(tokens.access) == principal
+
+        if tokens.refresh is not None:
+            rotated = await oauth.refresh(client=client, refresh_token=tokens.refresh)
+            assert await oauth.resolve(rotated.access) == principal
 
     # --- authorization codes -------------------------------------------------
 
@@ -202,8 +241,17 @@ class OAuthConformanceSuite:
 
     @staticmethod
     async def _granted(oauth):
-        client = await oauth.register_client(redirect_uris=[REDIRECT])
+        """A client with one code outstanding, for tests that do not care whose.
+
+        The principal is the client's *own* registrant. An earlier version
+        minted an unrelated one, which quietly assumed the two could differ —
+        true in crossover, structurally impossible in conduct, and it failed six
+        assertions there for a reason that had nothing to do with what they
+        were checking. Tests that care about the distinction set it up
+        themselves.
+        """
         principal = await oauth.make_principal()
+        client = await oauth.register_client(redirect_uris=[REDIRECT], registrant=principal)
         code = await oauth.authorize(
             client=client, principal=principal, redirect_uri=REDIRECT, code_challenge=CHALLENGE
         )

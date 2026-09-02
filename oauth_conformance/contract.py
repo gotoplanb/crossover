@@ -59,6 +59,23 @@ class OAuthImplementation(Protocol):
     implementation wraps its calls.
     """
 
+    #: Whether this service's model lets one client act for more than one
+    #: principal.
+    #:
+    #: This exists because the first draft of the contract was wrong. It said
+    #: the principal must never be derived from the client record — which would
+    #: have failed `conduct`, whose principal *is* its client: `OAuthClient` has
+    #: a foreign key to exactly one `ClientApp`, so a client there cannot serve
+    #: two principals however hard you push. Deriving is not a defect when the
+    #: two are provably one-to-one; it became one in `crossover` only because
+    #: the port made the relationship one-to-many and kept the derivation.
+    #:
+    #: False makes the suite skip the assertions that are structurally
+    #: meaningless — there is no second principal to confuse — and run a
+    #: narrower substitute instead. It is not a way to opt out of the rule: an
+    #: implementation that *can* separate them and doesn't will still fail.
+    separates_client_from_principal: bool = True
+
     async def make_principal(self, kind: str = "human") -> Principal:
         """Create an identity a token could act as."""
 

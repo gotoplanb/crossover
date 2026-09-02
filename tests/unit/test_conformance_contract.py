@@ -155,3 +155,92 @@ def test_a_principal_can_key_a_dict() -> None:
     """The suite puts them in sets and dicts while comparing grants."""
     seen = {Principal("machine", 7): "a"}
     assert seen[Principal("machine", "7")] == "a"
+
+
+@dataclass
+class OneToOneOAuth(InMemoryOAuth):
+    """A client that can only ever act for its own principal, like conduct's.
+
+    Conduct's `OAuthClient` has a foreign key to exactly one `ClientApp`, so
+    deriving the principal from the client is sound there. This mirrors that
+    shape so the paths conduct exercises are covered here too — and so the
+    substitute assertion is checked rather than merely offered.
+    """
+
+    separates_client_from_principal = False
+
+    #: Unlike the base class, this one rotates refresh tokens — because conduct
+    #: does, and the substitute assertion's "and keeps doing so across a
+    #: refresh" clause is otherwise never exercised anywhere in this repo.
+    refreshes: dict[str, tuple[Principal, str]] = field(default_factory=dict)
+
+    async def exchange(
+        self, *, client: Client, code: str, verifier: str, redirect_uri: str
+    ) -> Tokens:
+        issued = await super().exchange(
+            client=client, code=code, verifier=verifier, redirect_uri=redirect_uri
+        )
+        principal, client_id = self.tokens[issued.access]
+        refresh = secrets.token_hex(16)
+        self.refreshes[refresh] = (principal, client_id)
+        return Tokens(access=issued.access, refresh=refresh)
+
+    async def refresh(self, *, client: Client, refresh_token: str) -> Tokens:
+        found = self.refreshes.pop(refresh_token, None)  # rotation: single use
+        if found is None:
+            raise Refused("unknown or spent refresh token")
+        principal, client_id = found
+        access = secrets.token_hex(16)
+        self.tokens[access] = (principal, client_id)
+        rotated = secrets.token_hex(16)
+        self.refreshes[rotated] = (principal, client_id)
+        return Tokens(access=access, refresh=rotated)
+
+    async def authorize(
+        self,
+        *,
+        client: Client,
+        principal: Principal,
+        redirect_uri: str,
+        code_challenge: str,
+        code_challenge_method: str = "S256",
+    ) -> str:
+        if principal != client.registrant:
+            raise Refused("a grant here can only be for the client's own principal")
+        return await super().authorize(
+            client=client,
+            principal=principal,
+            redirect_uri=redirect_uri,
+            code_challenge=code_challenge,
+            code_challenge_method=code_challenge_method,
+        )
+
+
+@pytest.fixture
+async def one_to_one():
+    return OneToOneOAuth()
+
+
+class TestAOneToOneModelAlsoConforms(OAuthConformanceSuite):
+    """The same assertions where client and principal cannot differ."""
+
+    @pytest.fixture
+    def oauth(self, one_to_one):
+        return one_to_one
+
+
+async def test_a_one_to_one_model_refuses_a_foreign_principal(one_to_one) -> None:
+    """The property that makes deriving sound in the first place. If a client
+    *could* be made to act for someone else, `separates_client_from_principal =
+    False` would be a false claim and the skipped assertions would be hiding a
+    real defect."""
+    client = await one_to_one.register_client(redirect_uris=["https://example.test/callback"])
+    stranger = await one_to_one.make_principal()
+
+    with pytest.raises(Refused):
+        await one_to_one.authorize(
+            client=client,
+            principal=stranger,
+            redirect_uri="https://example.test/callback",
+            code_challenge="x",
+        )
