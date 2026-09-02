@@ -20,6 +20,7 @@ import hmac
 import secrets
 from base64 import urlsafe_b64encode
 from datetime import UTC, datetime, timedelta
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -34,8 +35,13 @@ ACCESS_TOKEN_PREFIX = "xo_at_"
 REFRESH_TOKEN_PREFIX = "xo_rt_"
 
 AUTH_CODE_TTL = timedelta(minutes=5)
-ACCESS_TOKEN_TTL = timedelta(hours=1)
-REFRESH_TOKEN_TTL = timedelta(days=30)
+# 24 hours. Refresh works and rotates, so an hour was invisible to a client that
+# uses it — but it is the difference between "seamless" and "re-authorize
+# constantly" for any client that does not, and re-auth here is a browser round
+# trip a reader has to notice. The sibling brokerage-portal service settled on
+# the same number for the same reason.
+ACCESS_TOKEN_TTL = timedelta(hours=24)
+REFRESH_TOKEN_TTL = timedelta(days=90)
 
 DEFAULT_SCOPE = "mcp"
 
@@ -110,18 +116,27 @@ async def issue_authorization_code(
     session: AsyncSession,
     *,
     client: OAuthClient,
+    user_id: UUID,
     redirect_uri: str,
     code_challenge: str,
     code_challenge_method: str,
     scope: str,
 ) -> str:
-    """Mint and persist an auth code; returns the raw code, shown once."""
+    """Mint and persist an auth code; returns the raw code, shown once.
+
+    `user_id` is the reader who approved at the consent screen, and it is the
+    principal the resulting token acts as. It is passed in rather than read off
+    `client.user_id` because those are different questions: who registered a
+    connector, and whose reading list this grant is for. Conflating them meant
+    one connector could only ever act as one person, so a second reader needed a
+    second connector registered on their behalf.
+    """
     raw_code = secrets.token_urlsafe(32)
     session.add(
         OAuthAuthorizationCode(
             code_hash=_hash(raw_code),
             client_id=client.client_id,
-            user_id=client.user_id,
+            user_id=user_id,
             redirect_uri=redirect_uri,
             code_challenge=code_challenge,
             code_challenge_method=code_challenge_method,
@@ -162,7 +177,8 @@ async def redeem_authorization_code(
         raise OAuthError("invalid_grant", "PKCE verification failed")
 
     row.used = True
-    token = _create_token(session, client, row.scope)
+    # The code carries the principal; the client is only how it arrived.
+    token = _create_token(session, client, row.scope, row.user_id)
     await session.commit()
     return token
 
@@ -170,7 +186,9 @@ async def redeem_authorization_code(
 # --- tokens ---
 
 
-def _create_token(session: AsyncSession, client: OAuthClient, scope: str) -> OAuthToken:
+def _create_token(
+    session: AsyncSession, client: OAuthClient, scope: str, user_id: UUID
+) -> OAuthToken:
     raw_access = f"{ACCESS_TOKEN_PREFIX}{secrets.token_urlsafe(32)}"
     raw_refresh = f"{REFRESH_TOKEN_PREFIX}{secrets.token_urlsafe(32)}"
     now = datetime.now(UTC)
@@ -178,7 +196,7 @@ def _create_token(session: AsyncSession, client: OAuthClient, scope: str) -> OAu
         access_token_hash=_hash(raw_access),
         refresh_token_hash=_hash(raw_refresh),
         client_id=client.client_id,
-        user_id=client.user_id,
+        user_id=user_id,
         scope=scope or DEFAULT_SCOPE,
         access_expires_at=now + ACCESS_TOKEN_TTL,
         refresh_expires_at=now + REFRESH_TOKEN_TTL,
@@ -205,7 +223,10 @@ async def refresh_token_grant(
         raise OAuthError("invalid_grant", "refresh token has expired")
 
     row.revoked = True
-    token = _create_token(session, client, row.scope)
+    # Carry the principal across rotation. Deriving it from the client here
+    # would silently re-bind a refreshed token to the connector's registrant,
+    # which is the same bug as above with a longer fuse.
+    token = _create_token(session, client, row.scope, row.user_id)
     await session.commit()
     return token
 

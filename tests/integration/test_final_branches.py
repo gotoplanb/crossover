@@ -101,7 +101,9 @@ async def test_an_unsupported_response_type_redirects_with_an_error(
     assert "error=unsupported_response_type" in response.headers["location"]
 
 
-async def test_approving_without_an_admin_session_is_refused(client) -> None:
+async def test_approving_without_being_signed_in_is_refused(client) -> None:
+    """The POST has no session to identify a principal, so there is nobody for
+    the grant to bind to."""
     response = await client.post(
         "/oauth/authorize",
         data={
@@ -112,7 +114,7 @@ async def test_approving_without_an_admin_session_is_refused(client) -> None:
         },
     )
     assert response.status_code == 400
-    assert "Admin session required" in response.text
+    assert "Sign in to connect a client" in response.text
 
 
 async def test_approving_for_an_unknown_client_is_refused(signed_in) -> None:

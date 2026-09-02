@@ -68,6 +68,7 @@ async def test_a_code_cannot_be_redeemed_by_a_different_client(session, user) ->
     code = await issue_authorization_code(
         session,
         client=first,
+        user_id=first.user_id,
         redirect_uri=REDIRECT,
         code_challenge=CHALLENGE,
         code_challenge_method="S256",
@@ -91,6 +92,7 @@ async def test_a_refresh_token_cannot_be_used_by_a_different_client(
     code = await issue_authorization_code(
         session,
         client=first,
+        user_id=first.user_id,
         redirect_uri=REDIRECT,
         code_challenge=CHALLENGE,
         code_challenge_method="S256",
@@ -110,6 +112,7 @@ async def test_an_expired_refresh_token_is_rejected(session, user) -> None:
     code = await issue_authorization_code(
         session,
         client=client,
+        user_id=client.user_id,
         redirect_uri=REDIRECT,
         code_challenge=CHALLENGE,
         code_challenge_method="S256",

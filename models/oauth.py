@@ -21,8 +21,14 @@ from db.base import Base
 
 
 class OAuthClient(Base):
-    """A registered connector (e.g. Claude on someone's phone), bound to the
-    User whose reading list it acts on."""
+    """A registered connector, e.g. Claude on someone's phone.
+
+    `user_id` is who *registered* it, kept for audit and for `register-connector`
+    to have an owner. It is deliberately **not** the principal its tokens act
+    as — that is the reader who approves at the consent screen, recorded on each
+    code and token. One connector therefore serves every reader in the
+    deployment, each with their own separately-revocable tokens.
+    """
 
     __tablename__ = "oauth_clients"
 

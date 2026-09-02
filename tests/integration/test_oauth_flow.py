@@ -53,10 +53,13 @@ async def connector(session, user):
     return client, secret
 
 
-async def _code(session, client) -> str:
+async def _code(session, client, user_id=None) -> str:
+    # These tests predate principal binding and are about code/PKCE mechanics,
+    # so they grant to the connector's own registrant unless told otherwise.
     return await issue_authorization_code(
         session,
         client=client,
+        user_id=user_id or client.user_id,
         redirect_uri="https://claude.ai/api/mcp/auth_callback",
         code_challenge=challenge(),
         code_challenge_method="S256",

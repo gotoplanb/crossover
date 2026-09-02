@@ -1,8 +1,14 @@
 """OAuth 2.0 HTTP endpoints: discovery, authorize (with consent), token.
 
 Ported from conduct. Security logic lives in `oauth_provider`; this module is
-request parsing, redirects, and rendering. Approval is "being logged in as
-admin" — appropriate for a two-person deployment.
+request parsing, redirects, and rendering.
+
+Approval is "being logged in", and the reader who approves becomes the principal
+the issued token acts as. It used to require *admin*, which was a symptom rather
+than a policy: the token's identity came from whoever registered the connector,
+so the person at the consent screen was only an approver and the gate stood in
+for authority they had no other reason to hold. Now that the grant binds to the
+signer, the only question worth asking is who they are.
 """
 
 from __future__ import annotations
@@ -42,9 +48,11 @@ router = APIRouter(
 )
 
 
-async def _is_admin(session: AsyncSession, token: str | None) -> bool:
+async def _reader(session: AsyncSession, token: str | None) -> User | None:
+    """The signed-in reader, or None. Any active reader may connect their own
+    list; nothing here is an admin act."""
     user = await resolve_session(session, token)
-    return user is not None and user.is_admin
+    return user if user is not None and user.is_active else None
 
 
 @router.get("/.well-known/oauth-authorization-server")
@@ -100,21 +108,23 @@ async def authorize_form(
     if code_challenge_method != "S256" or not code_challenge:
         return _redirect_error(redirect_uri, "invalid_request", state, "PKCE S256 required")
 
-    # Approving a connector is an admin act, and admin is now a property of the
-    # signed-in reader rather than a separate cookie.
-    if not await _is_admin(session, crossover_session):
+    # Whoever is signed in is who the token will act as, so an anonymous
+    # visitor is sent to log in rather than refused — signing in *is* the
+    # identity step, not a precondition to it.
+    reader = await _reader(session, crossover_session)
+    if reader is None:
         next_url = f"{request.url.path}?{request.url.query}"
         return RedirectResponse(
             f"/ui/login?next={quote(next_url, safe='')}", status_code=status.HTTP_303_SEE_OTHER
         )
 
-    user = await session.get(User, client.user_id)
     return templates.TemplateResponse(
         request,
         "oauth_consent.html",
         {
             "client_name": client.name,
-            "user_email": user.email if user else "?",
+            "reader_name": reader.display_name or reader.handle,
+            "reader_email": reader.email,
             "scope": scope or "mcp",
             "fields": {
                 "response_type": response_type,
@@ -142,8 +152,9 @@ async def authorize_submit(
     state: Annotated[str, Form()] = "",
     crossover_session: Annotated[str | None, Cookie()] = None,
 ) -> HTMLResponse | RedirectResponse:
-    if not await _is_admin(session, crossover_session):
-        return _error_page(request, "Admin session required to approve.")
+    reader = await _reader(session, crossover_session)
+    if reader is None:
+        return _error_page(request, "Sign in to connect a client to your reading list.")
     client = await get_active_client(session, client_id)
     if client is None or not redirect_uri_allowed(client, redirect_uri):
         return _error_page(request, "Unknown client_id or unregistered redirect_uri.")
@@ -153,6 +164,7 @@ async def authorize_submit(
     code = await issue_authorization_code(
         session,
         client=client,
+        user_id=reader.id,
         redirect_uri=redirect_uri,
         code_challenge=code_challenge,
         code_challenge_method=code_challenge_method,
