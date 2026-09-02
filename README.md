@@ -31,6 +31,13 @@ mid-chapter shows up on the rack with no sync step.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/gotoplanb/crossover)
 
+The button asks for five things and generates two of them. `CROSSOVER_PUBLIC_URL`
+has to be corrected after the app is named — it is the OAuth issuer, so a Claude
+connector cannot attach if it is wrong. `CROSSOVER_OWNER_PASSWORD` and
+`CROSSOVER_INVITE_CODE` are generated per deploy; read them back from
+**Settings → Config Vars**. The owner password is hashed into the database on
+first boot and never read from config again, so you can delete it afterwards.
+
 Provisions a dyno and Postgres, generates a password for the reader you name,
 and seeds them as an admin. **What you get immediately:** the King in Black reading guide,
 40 issues with covers and working Marvel Unlimited links, and the MCP endpoint

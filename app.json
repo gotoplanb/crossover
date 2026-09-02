@@ -1,6 +1,6 @@
 {
   "name": "Crossover",
-  "description": "Marvel event tie-in guide as an MCP service \u2014 answers \"we just finished this issue, what's next and which tie-ins expand on it?\" from inside a conversation.",
+  "description": "Marvel event tie-in guide as an MCP service — answers \"we just finished this issue, what's next and which tie-ins expand on it?\" from inside a conversation.",
   "repository": "https://github.com/gotoplanb/crossover",
   "logo": "https://i.annihil.us/u/prod/marvel/i/mg/9/c0/601afd588b59d/portrait_incredible.jpg",
   "keywords": [
@@ -21,21 +21,25 @@
   ],
   "env": {
     "CROSSOVER_PUBLIC_URL": {
-      "description": "The https URL this app will be reachable at, e.g. https://your-app-name.herokuapp.com \u2014 use the app name you chose above. This is the OAuth issuer and is checked by the MCP transport, so a Claude connector cannot attach if it is wrong. It can be corrected after deploy.",
+      "description": "The https URL this app will be reachable at, e.g. https://your-app-name.herokuapp.com — use the app name you chose above. This is the OAuth issuer and is checked by the MCP transport, so a Claude connector cannot attach if it is wrong. It can be corrected after deploy.",
       "value": "https://CHANGE-ME.herokuapp.com",
       "required": true
     },
     "CROSSOVER_OWNER_EMAIL": {
-      "description": "Creates the first reader, so you can sign in immediately. The allowlist is deliberately small \u2014 reading lists are per-person.",
+      "description": "Creates the first reader, so you can sign in immediately. The allowlist is deliberately small — reading lists are per-person.",
       "required": true
     },
     "CROSSOVER_OWNER_HANDLE": {
-      "description": "Short lowercase login name for the first reader, e.g. \"dave\". It also names that reader's password variable, CROSSOVER_PASSWORD_<HANDLE>. Letters, digits and underscores only.",
+      "description": "Short lowercase login name for the first reader, e.g. \"dave\". Letters, digits and underscores only. This is what you type at the login page.",
       "value": "owner",
       "required": true
     },
-    "CROSSOVER_PASSWORD_OWNER": {
-      "description": "Password for the first reader, if you keep the default handle \"owner\". Generated per-deploy; read it back from Settings -> Config Vars, or change it to something memorable. Each additional reader needs their own CROSSOVER_PASSWORD_<HANDLE>.",
+    "CROSSOVER_OWNER_PASSWORD": {
+      "description": "Password for the first reader, hashed into the database on first boot and never read from config again. Generated per-deploy: read it back from Settings -> Config Vars to sign in, then you can delete it. Independent of the handle above, unlike the older per-reader variables.",
+      "generator": "secret"
+    },
+    "CROSSOVER_INVITE_CODE": {
+      "description": "Shared secret anyone needs to create their own account at /ui/register. Generated per-deploy, so registration is open only to people you give this to — change it to stop admitting anyone. Registration never grants admin, so the code buys a reading list and nothing more.",
       "generator": "secret"
     },
     "UI_COOKIE_SECURE": {
@@ -43,7 +47,7 @@
       "value": "true"
     },
     "OTEL_ENABLED": {
-      "description": "OpenTelemetry export. Off by default \u2014 the collector it targets is a local Grafana Alloy, which a dyno cannot reach. Set true only if you have a reachable OTLP endpoint.",
+      "description": "OpenTelemetry export. Off by default — the collector it targets is a local Grafana Alloy, which a dyno cannot reach. Set true only if you have a reachable OTLP endpoint.",
       "value": "false"
     }
   },

@@ -12,7 +12,6 @@ else would catch it.
 
 from __future__ import annotations
 
-import inspect
 import json
 from pathlib import Path
 
@@ -27,9 +26,7 @@ APP_JSON = json.loads((REPO / "app.json").read_text())
 def _aliases() -> dict[str, object]:
     """Setting alias -> field, for every setting the app reads from the env."""
     return {
-        (field.alias or name): field
-        for name, field in Settings.model_fields.items()
-        if field.alias
+        (field.alias or name): field for name, field in Settings.model_fields.items() if field.alias
     }
 
 
@@ -46,9 +43,9 @@ DELIBERATELY_OMITTED = {"MARVEL_PUBLIC_KEY", "MARVEL_PRIVATE_KEY"}
 #: discovered from the model. Reader passwords especially: the set of readers is
 #: *data*, and adding one should be a config var and a seed, not a code change.
 DYNAMIC_ENV_VARS = {
-    "CROSSOVER_OWNER_EMAIL",     # consumed by `crossover bootstrap`
-    "CROSSOVER_OWNER_HANDLE",    # ditto
-    "CROSSOVER_PASSWORD_OWNER",  # Settings.reader_password("owner")
+    "CROSSOVER_OWNER_EMAIL",  # consumed by `crossover bootstrap`
+    "CROSSOVER_OWNER_HANDLE",  # ditto
+    "CROSSOVER_OWNER_PASSWORD",  # ditto — hashed onto the first reader
 }
 
 
@@ -64,17 +61,31 @@ def test_the_dynamic_vars_are_genuinely_read() -> None:
     """The allowlist above is an escape hatch, so it has to be checked against
     the code rather than trusted — otherwise it becomes a place typos hide."""
     cli = (REPO / "scripts" / "cli.py").read_text()
-    assert "CROSSOVER_OWNER_EMAIL" in cli
-    assert "CROSSOVER_OWNER_HANDLE" in cli
-
-    from config.settings import Settings
-
-    assert "CROSSOVER_PASSWORD_" in inspect.getsource(Settings.reader_password)
+    for name in DYNAMIC_ENV_VARS:
+        assert name in cli, f"{name} is in the allowlist but nothing reads it"
 
 
 def test_the_first_reader_gets_a_generated_password() -> None:
     """Otherwise a button deploy creates an admin who cannot sign in."""
-    entry = APP_JSON["env"]["CROSSOVER_PASSWORD_OWNER"]
+    entry = APP_JSON["env"]["CROSSOVER_OWNER_PASSWORD"]
+    assert entry.get("generator") == "secret"
+    assert "value" not in entry
+
+
+def test_the_owner_password_is_not_coupled_to_the_handle() -> None:
+    """The legacy form was `CROSSOVER_PASSWORD_{HANDLE}`, so a deploy where
+    somebody changed the handle set a password under a name nothing reads — a
+    login page that could not be passed, for a reason invisible from the config
+    screen. The template must not offer that shape."""
+    for name in APP_JSON["env"]:
+        assert not name.startswith("CROSSOVER_PASSWORD_"), name
+
+
+def test_registration_is_openable_without_a_deploy() -> None:
+    """A generated per-deploy code, so the deployer can invite somebody by
+    handing it over rather than editing config and redeploying. Random, so it is
+    closed to everyone else."""
+    entry = APP_JSON["env"]["CROSSOVER_INVITE_CODE"]
     assert entry.get("generator") == "secret"
     assert "value" not in entry
 

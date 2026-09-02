@@ -142,23 +142,64 @@ async def _seed(email: str, name: str, handle: str = "", is_admin: bool = False)
 
     role = "admin" if user.is_admin else "reader"
     print(f"{role}: {user.display_name} <{user.email}> handle={user.handle}")
-    if get_settings().reader_password(user.handle) is None:
+    if not user.password_hash and get_settings().reader_password(user.handle) is None:
         print(
-            f"  ! CROSSOVER_PASSWORD_{user.handle.upper()} is not set — "
-            "this reader cannot sign in until it is."
+            f"  ! {user.handle} has no password yet. Set one with: "
+            f"python -m scripts.cli set-password {user.handle}"
         )
     return 0
+
+
+async def _give_owner_a_password(email: str) -> list[str]:
+    """Hash `CROSSOVER_OWNER_PASSWORD` onto the first reader, if one is offered.
+
+    Deliberately *not* `CROSSOVER_PASSWORD_{HANDLE}`. That legacy variable's
+    name depends on the handle, so a one-click deploy where somebody changed
+    the handle away from the default produced an app with a password set under
+    a name nothing reads — a login page that cannot be passed, for a reason
+    invisible from the config screen.
+
+    Idempotent, and never clobbers: an existing password stays. Re-running a
+    postdeploy hook must not silently reset the owner's credential.
+    """
+    from sqlalchemy import select
+
+    from auth import MIN_PASSWORD_LENGTH, set_password
+    from db.session import SessionLocal
+    from models.user import User
+
+    raw = os.environ.get("CROSSOVER_OWNER_PASSWORD", "")
+    async with SessionLocal() as session:
+        user = await session.scalar(select(User).where(User.email == email))
+        if user is None:
+            return []
+        if user.password_hash:
+            return []
+        if not raw:
+            return [
+                f"{user.handle!r} has no password. Set CROSSOVER_OWNER_PASSWORD and "
+                "re-run bootstrap, or use: python -m scripts.cli set-password "
+                f"{user.handle}"
+            ]
+        if len(raw) < MIN_PASSWORD_LENGTH:
+            return [
+                f"CROSSOVER_OWNER_PASSWORD is shorter than {MIN_PASSWORD_LENGTH} "
+                "characters, so it was not set."
+            ]
+        await set_password(session, user, raw)
+        print(f"password set for {user.handle}")
+    return []
 
 
 async def _bootstrap() -> int:
     """First-run setup for a fresh deploy. Idempotent.
 
     Run from `app.json`'s postdeploy hook, so a one-click deploy produces a
-    *usable* app rather than one with an empty reader allowlist and a login page
-    nobody can get past. Also surfaces the two config mistakes that are silent
-    until they bite: a weak admin key, and a public URL that doesn't match where
-    the app actually is (which breaks OAuth and the MCP transport, but only when
-    a connector tries to attach).
+    *usable* app rather than one with no readers and a login page nobody can get
+    past. Also surfaces the config mistakes that stay silent until they bite: a
+    public URL that doesn't match where the app actually is (which breaks OAuth
+    and the MCP transport, but only when a connector tries to attach), an owner
+    with no way to sign in, and registration left closed.
     """
     settings = get_settings()
     problems: list[str] = []
@@ -178,10 +219,18 @@ async def _bootstrap() -> int:
     handle = os.environ.get("CROSSOVER_OWNER_HANDLE", "").strip().lower()
     if email:
         await _seed(email, "", handle=handle, is_admin=True)
+        problems.extend(await _give_owner_a_password(email))
     else:
         problems.append(
             "CROSSOVER_OWNER_EMAIL is not set, so no reader exists and nobody can "
             "sign in. Create one with: heroku run python -m scripts.cli seed you@example.com"
+        )
+
+    if not get_settings().registration_open:
+        problems.append(
+            "CROSSOVER_INVITE_CODE is not set, so nobody else can create an "
+            "account. That is the safe default — set it when you want to let "
+            "somebody in, and change it to stop."
         )
 
     if problems:
