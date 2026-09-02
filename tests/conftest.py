@@ -256,11 +256,76 @@ async def signed_in(client, session, user) -> AsyncIterator:
     that set the old admin-key cookie directly — which stopped being how auth
     works when sessions landed.
     """
-    from auth import SESSION_COOKIE, create_session
+    from sqlalchemy import select
+
+    from auth import SESSION_COOKIE, _hash, create_session
+    from csrf import CSRF_HEADER
+    from models.session import UserSession
 
     token = await create_session(session, user)
     client.cookies.set(SESSION_COOKIE, token)
+
+    # Carry the session's CSRF token on every request from this client, the way
+    # a browser does via the hidden field or the HTMX header. Set once here so
+    # each test does not have to remember it — forgetting would produce a 403
+    # that looks like an authorization bug.
+    row = await session.scalar(
+        select(UserSession).where(UserSession.token_hash == _hash(token))
+    )
+    client.headers[CSRF_HEADER] = row.csrf_token
     yield client
+
+
+@pytest_asyncio.fixture
+async def sign_in(client, session):
+    """Sign in through the real form, CSRF token and all.
+
+    The login form has no session, so its token is double-submitted from a
+    cookie issued when the page is rendered — meaning a test cannot just POST.
+    """
+
+    async def _sign_in(handle: str, password: str, **extra):
+        import re
+
+        from csrf import CSRF_FIELD
+
+        # Read the token out of the rendered form rather than the cookie. A
+        # browser submits what the page contains, and the two differ when
+        # signing in while already signed in — which is exactly the case that
+        # broke when this helper used the cookie.
+        page = (await client.get("/ui/login")).text
+        match = re.search(
+            rf'name="{CSRF_FIELD}" value="([^"]*)"', page
+        )
+        response = await client.post(
+            "/ui/login",
+            data={
+                "handle": handle,
+                "password": password,
+                CSRF_FIELD: match.group(1) if match else "",
+                **extra,
+            },
+            follow_redirects=False,
+        )
+
+        # Carry the *new* session's CSRF token, so POSTs after signing in work
+        # the way they do in a browser rendering fresh forms.
+        from sqlalchemy import select
+
+        from auth import SESSION_COOKIE, _hash
+        from csrf import CSRF_HEADER
+        from models.session import UserSession
+
+        cookie = client.cookies.get(SESSION_COOKIE)
+        if cookie:
+            row = await session.scalar(
+                select(UserSession).where(UserSession.token_hash == _hash(cookie))
+            )
+            if row is not None:
+                client.headers[CSRF_HEADER] = row.csrf_token
+        return response
+
+    return _sign_in
 
 
 @pytest_asyncio.fixture

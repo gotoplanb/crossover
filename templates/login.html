@@ -10,6 +10,7 @@
   <p class="mt-4 text-sm text-red-400">{{ error }}</p>
   {% endif %}
   <form method="post" action="/ui/login" class="mt-6 space-y-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
     <input type="hidden" name="next" value="{{ next }}">
     <label class="block">
       <span class="text-sm text-zinc-300">Reader</span>

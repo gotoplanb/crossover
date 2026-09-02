@@ -73,6 +73,12 @@ random token, never the reader's database id — see `models/session.py` for why
 that distinction matters, and `make revoke-sessions handle=dave` for the remedy
 it buys.
 
+Every state-changing request needs a **CSRF token** bound to that session.
+Enforced as a router-level dependency rather than per-route, so a form added
+later cannot silently skip it; the two exemptions (`/oauth/token`, `/mcp`)
+authenticate with credentials a cross-site page cannot supply, and a test keeps
+that list from growing quietly. See `csrf.py`.
+
 `make test` runs the suite: 448 tests, 100% statement coverage. **The unit tests
 need no database** — the curation gates, link rules, record parsing and
 clustering are all pure, which is what lets the data-quality suite run before any

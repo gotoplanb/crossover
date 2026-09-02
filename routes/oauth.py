@@ -16,6 +16,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth import resolve_session
+from csrf import csrf_protect
 from db.session import get_session
 from models.user import User
 from oauth_provider import (
@@ -32,7 +33,13 @@ from oauth_provider import (
 )
 from templates_env import templates
 
-router = APIRouter(tags=["oauth"], include_in_schema=False)
+# The consent POST grants a connector access to a whole reading list, which
+# makes it the highest-value target on this surface. /oauth/token is exempt
+# inside csrf_protect: it is authenticated by client_id + client_secret and is
+# never a browser form.
+router = APIRouter(
+    tags=["oauth"], include_in_schema=False, dependencies=[Depends(csrf_protect)]
+)
 
 
 async def _is_admin(session: AsyncSession, token: str | None) -> bool:

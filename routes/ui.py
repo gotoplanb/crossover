@@ -31,6 +31,7 @@ from auth import (
     verify_reader_password,
 )
 from config.settings import get_settings
+from csrf import CSRF_COOKIE, csrf_protect, new_token, token_for
 from db.session import get_session
 from models.bookmark import Bookmark
 from models.catalog import Event, EventIssue, Issue, IssueReference
@@ -44,7 +45,14 @@ from templates_env import templates
 RACK_URL = "/ui/rack"
 _UNKNOWN_EVENT = "Unknown event"
 
-router = APIRouter(prefix="/ui", tags=["ui"], include_in_schema=False)
+# CSRF is enforced on the router, not per-route, so a form added later cannot
+# silently omit it. See csrf.py.
+router = APIRouter(
+    prefix="/ui",
+    tags=["ui"],
+    include_in_schema=False,
+    dependencies=[Depends(csrf_protect)],
+)
 
 
 def _login_redirect(next_url: str = RACK_URL) -> RedirectResponse:
@@ -81,9 +89,33 @@ async def login_form(
     next: str = RACK_URL,
 ) -> HTMLResponse:
     users = (await session.scalars(select(User).where(User.is_active.is_(True)))).all()
-    return templates.TemplateResponse(
+    # Signing in while already signed in is a real case here — two people share
+    # a machine and hand it over. csrf_protect will then expect the *existing
+    # session's* token, so the form has to carry that one; minting a pre-auth
+    # token would render a form that can never be submitted.
+    existing = token_for(request)
+    # No session: the token is double-submitted from a cookie issued here.
+    # Reused when already present, so opening the page in two tabs does not
+    # invalidate the first. Set on request.state *before* rendering — Starlette
+    # renders a TemplateResponse in its constructor, so assigning afterwards
+    # produces a form with an empty token and a guaranteed 403.
+    token = existing or request.cookies.get(CSRF_COOKIE) or new_token()
+    request.state.csrf_token = token
+
+    response = templates.TemplateResponse(
         request, "login.html", {"next": next, "users": users, "error": None}
     )
+    if existing:
+        return response
+
+    response.set_cookie(
+        CSRF_COOKIE,
+        token,
+        httponly=True,
+        secure=get_settings().ui_cookie_secure,
+        samesite="lax",
+    )
+    return response
 
 
 @router.post("/login", response_model=None)
@@ -104,12 +136,25 @@ async def login_submit(
     # enumerate who exists.
     if user is None or not user.is_active or not verify_reader_password(handle, password):
         users = (await session.scalars(select(User).where(User.is_active.is_(True)))).all()
-        return templates.TemplateResponse(
+        # Same ordering rule as above: state before render.
+        request.state.csrf_token = request.cookies.get(CSRF_COOKIE) or token_for(request)
+        failed = templates.TemplateResponse(
             request,
             "login.html",
             {"next": next, "users": users, "error": "Wrong password, or no such reader."},
             status_code=status.HTTP_401_UNAUTHORIZED,
         )
+        # Keep the same token so a mistyped password does not leave a form that
+        # can never be submitted.
+        if request.cookies.get(CSRF_COOKIE):
+            failed.set_cookie(
+                CSRF_COOKIE,
+                request.cookies[CSRF_COOKIE],
+                httponly=True,
+                secure=get_settings().ui_cookie_secure,
+                samesite="lax",
+            )
+        return failed
 
     # A fresh session per sign-in, so signing in again anywhere does not extend
     # the life of a cookie captured earlier.
@@ -125,6 +170,8 @@ async def login_submit(
         samesite="lax",
         max_age=int(SESSION_TTL.total_seconds()),
     )
+    # The pre-auth token has done its job; the session carries its own from here.
+    response.delete_cookie(CSRF_COOKIE)
     return response
 
 
@@ -312,11 +359,24 @@ async def curate_move(
             )
         )
         if neighbour is not None:
-            # Park one position out of range first: (event_id, position) is
-            # unique, so a direct swap trips the constraint mid-statement.
-            parked, current.position = current.position, -1
+            # Three steps with a flush between each, because (event_id, position)
+            # is unique and the database must never hold two rows at the same
+            # position, even mid-transaction.
+            #
+            # Parking one row and then assigning both before a single commit is
+            # not enough: SQLAlchemy orders UPDATEs by primary key, not by
+            # dependency, so whether the pair collided depended on which row
+            # happened to have the lower id. That made reordering fail
+            # intermittently with a constraint violation.
+            vacated = current.position
+            current.position = -1
             await session.flush()
-            neighbour.position, current.position = parked, neighbour.position
+
+            target = neighbour.position
+            neighbour.position = vacated
+            await session.flush()
+
+            current.position = target
             await session.commit()
     return RedirectResponse(f"/ui/curate/{slug}", status_code=status.HTTP_303_SEE_OTHER)
 

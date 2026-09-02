@@ -197,13 +197,11 @@ async def test_deleting_a_reader_removes_their_sessions(session, user) -> None:
 
 
 async def test_signing_out_revokes_rather_than_only_clearing(
-    client, user, reader_password
+    client, sign_in, user, reader_password
 ) -> None:
     """Clearing the cookie alone would leave a token that still authenticates if
     it had been captured — precisely the weakness this replaced."""
-    await client.post(
-        "/ui/login", data={"handle": user.handle, "password": reader_password}
-    )
+    await sign_in(user.handle, reader_password)
     token = client.cookies.get(SESSION_COOKIE)
     assert token and token.startswith(SESSION_TOKEN_PREFIX)
 
@@ -215,12 +213,8 @@ async def test_signing_out_revokes_rather_than_only_clearing(
     assert response.status_code == 303
 
 
-async def test_the_cookie_carries_an_expiry(client, user, reader_password) -> None:
-    response = await client.post(
-        "/ui/login",
-        data={"handle": user.handle, "password": reader_password},
-        follow_redirects=False,
-    )
+async def test_the_cookie_carries_an_expiry(sign_in, user, reader_password) -> None:
+    response = await sign_in(user.handle, reader_password)
     header = next(
         c for c in response.headers.get_list("set-cookie") if SESSION_COOKIE in c
     )

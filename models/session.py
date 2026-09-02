@@ -47,6 +47,12 @@ class UserSession(Base):
     last_used_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    # CSRF token for this session. Bound to the session rather than double
+    # -submitted from a cookie, so it cannot be forged by anything that can set
+    # a cookie for this host. Rotated with the session, and dies with it.
+    csrf_token: Mapped[str] = mapped_column(
+        String(64), nullable=False, default="", server_default=""
+    )
     # Free-text hint about where the session came from, for a future "sign out
     # my other devices". Truncated and never parsed — it is attacker-controlled.
     user_agent: Mapped[str] = mapped_column(

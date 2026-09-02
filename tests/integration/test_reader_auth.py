@@ -91,17 +91,14 @@ def test_valid_handles_are_accepted() -> None:
 
 
 async def test_each_reader_signs_in_with_their_own_password(
-    client, readers, passwords
+    client, sign_in, readers, passwords
 ) -> None:
     dave, tabitha = readers
     for handle, password, user in (
         ("dave", DAVE_PASSWORD, dave),
         ("tabitha", TABITHA_PASSWORD, tabitha),
     ):
-        response = await client.post(
-            "/ui/login", data={"handle": handle, "password": password},
-            follow_redirects=False,
-        )
+        response = await sign_in(handle, password)
         assert response.status_code == 303, handle
         cookies = response.headers.get_list("set-cookie")
         assert any(SESSION_COOKIE in c for c in cookies), handle
@@ -110,15 +107,13 @@ async def test_each_reader_signs_in_with_their_own_password(
         assert any("xo_sess_" in c for c in cookies), handle
 
 
-async def test_a_reader_cannot_sign_in_as_the_other(client, readers, passwords) -> None:
-    response = await client.post(
-        "/ui/login", data={"handle": "tabitha", "password": DAVE_PASSWORD}
-    )
+async def test_a_reader_cannot_sign_in_as_the_other(client, sign_in, readers, passwords) -> None:
+    response = await sign_in("tabitha", DAVE_PASSWORD)
     assert response.status_code == 401
     assert "Wrong password, or no such reader." in response.text
 
 
-async def test_failures_are_indistinguishable(client, readers, passwords) -> None:
+async def test_failures_are_indistinguishable(client, sign_in, readers, passwords) -> None:
     """A wrong password, an unknown handle and a deactivated reader all return
     the same thing, so the form cannot be used to enumerate who exists."""
     messages = set()
@@ -127,70 +122,60 @@ async def test_failures_are_indistinguishable(client, readers, passwords) -> Non
         ("nobody", "wrong"),
         ("tabitha", ""),
     ):
-        response = await client.post(
-            "/ui/login", data={"handle": handle, "password": password}
-        )
+        response = await sign_in(handle, password)
         assert response.status_code == 401
         messages.add("Wrong password, or no such reader." in response.text)
     assert messages == {True}
 
 
 async def test_a_deactivated_reader_cannot_sign_in(
-    client, session, readers, passwords
+    client, sign_in, session, readers, passwords
 ) -> None:
     dave, _ = readers
     dave.is_active = False
     await session.commit()
-    response = await client.post(
-        "/ui/login", data={"handle": "dave", "password": DAVE_PASSWORD}
-    )
+    response = await sign_in("dave", DAVE_PASSWORD)
     assert response.status_code == 401
 
 
 # --- admin separation ---
 
 
-async def test_signing_in_sets_exactly_one_cookie(client, readers, passwords) -> None:
+async def test_signing_in_sets_one_session_cookie(client, sign_in, readers, passwords) -> None:
     """Admin is a property of the reader the session resolves to, not a second
     cookie — so there is one credential to steal instead of two, and revoking a
-    session revokes curation access with it."""
+    session revokes curation access with it. The pre-auth CSRF cookie is cleared
+    on the way through, having done its job."""
     for handle, password in (("dave", DAVE_PASSWORD), ("tabitha", TABITHA_PASSWORD)):
-        response = await client.post(
-            "/ui/login", data={"handle": handle, "password": password},
-            follow_redirects=False,
-        )
-        cookies = [c for c in response.headers.get_list("set-cookie") if "crossover" in c]
-        assert len(cookies) == 1, handle
-        assert SESSION_COOKIE in cookies[0], handle
+        response = await sign_in(handle, password)
+        cookies = response.headers.get_list("set-cookie")
+        assert sum(SESSION_COOKIE in c for c in cookies) == 1, handle
+        assert any("crossover_csrf" in c and "Max-Age=0" in c for c in cookies), handle
 
 
 async def test_a_non_admin_is_bounced_from_the_curation_views(
-    client, readers, passwords, loaded_event
+    client, sign_in, readers, passwords, loaded_event
 ) -> None:
-    await client.post(
-        "/ui/login", data={"handle": "tabitha", "password": TABITHA_PASSWORD}
-    )
+    await sign_in("tabitha", TABITHA_PASSWORD)
     response = await client.get("/ui/curate/king-in-black", follow_redirects=False)
     assert response.status_code == 303
     assert "/ui/login" in response.headers["location"]
 
 
 async def test_a_non_admin_still_gets_their_own_rack(
-    client, readers, passwords, loaded_event
+    client, sign_in, readers, passwords, loaded_event
 ) -> None:
     """Not admin does not mean not welcome — the rack is the point."""
-    await client.post(
-        "/ui/login", data={"handle": "tabitha", "password": TABITHA_PASSWORD}
-    )
+    await sign_in("tabitha", TABITHA_PASSWORD)
     response = await client.get("/ui/rack")
     assert response.status_code == 200
     assert "Tabitha" in response.text
 
 
 async def test_an_admin_reaches_the_curation_views(
-    client, readers, passwords, loaded_event
+    client, sign_in, readers, passwords, loaded_event
 ) -> None:
-    await client.post("/ui/login", data={"handle": "dave", "password": DAVE_PASSWORD})
+    await sign_in("dave", DAVE_PASSWORD)
     assert (await client.get("/ui/curate/king-in-black")).status_code == 200
 
 
@@ -201,7 +186,9 @@ async def test_the_login_form_offers_handles_not_emails(client, readers) -> None
     assert "dave@test.local" not in html
 
 
-async def test_racks_stay_separate(client, session, readers, passwords, loaded_event) -> None:
+async def test_racks_stay_separate(
+    client, sign_in, session, readers, passwords, loaded_event
+) -> None:
     """The end result: signing in as one reader shows that reader's rack."""
     from curation.resolve import candidates_from_guide, resolve
     from service import bookmarks as bookmark_service
@@ -215,7 +202,7 @@ async def test_racks_stay_separate(client, session, readers, passwords, loaded_e
         entry = by_key[resolve(ref, pool).matched.key]
         await bookmark_service.create_bookmark(session, user_id=user.id, entry=entry)
 
-    await client.post("/ui/login", data={"handle": "tabitha", "password": TABITHA_PASSWORD})
+    await sign_in("tabitha", TABITHA_PASSWORD)
     html = (await client.get("/ui/rack")).text
     assert "Venom #34" in html
     assert "Namor" not in html

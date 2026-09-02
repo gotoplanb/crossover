@@ -6,6 +6,14 @@
   <title>{% block title %}Crossover{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+  <script>
+    // HTMX requests carry no form body, so the CSRF token rides as a header.
+    // Attached globally rather than per-element, so a new hx-post cannot forget
+    // it — the same reason the server check hangs off the router.
+    document.addEventListener("htmx:configRequest", (event) => {
+      event.detail.headers["X-CSRF-Token"] = "{{ csrf_token(request) }}";
+    });
+  </script>
   <script src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
   <style>
     [x-cloak] { display: none !important; }
@@ -23,6 +31,7 @@
         <a href="/ui/events" class="text-sm text-zinc-400 hover:text-zinc-100">Events</a>
       </div>
       <form action="/ui/logout" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
         <button class="text-sm text-zinc-400 hover:text-zinc-100">Sign out</button>
       </form>
     </div>

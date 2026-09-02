@@ -252,3 +252,47 @@ async def test_an_unknown_client_never_redirects(client) -> None:
     )
     assert response.status_code == 400
     assert "Unknown client_id" in response.text
+
+
+async def test_reordering_survives_whatever_row_ids_happen_to_be(
+    signed_in, session, loaded_event
+) -> None:
+    """Guards a real bug: the swap left both position updates pending in one
+    flush, and SQLAlchemy orders UPDATEs by primary key rather than by
+    dependency — so whether the pair collided on the unique (event, position)
+    constraint depended on which row happened to have the lower id. Reordering
+    failed intermittently with a 500.
+
+    Walking one issue the length of the list exercises both orderings many
+    times over.
+    """
+    from service import guide as guide_service
+
+    _, before = await guide_service.event_entries(session, "king-in-black")
+    target = before[0].key
+
+    for _ in range(6):
+        response = await signed_in.post(
+            "/ui/curate/king-in-black/move",
+            data={"issue_key": target, "direction": "down"},
+            follow_redirects=False,
+        )
+        assert response.status_code == 303
+
+    _, after = await guide_service.event_entries(session, "king-in-black")
+    # Still a dense 1..N sequence, and the issue actually moved.
+    assert [e.position for e in after] == list(range(1, len(after) + 1))
+    assert [e.key for e in after].index(target) == 6
+
+    # And back up again, which exercises the opposite direction.
+    for _ in range(6):
+        assert (
+            await signed_in.post(
+                "/ui/curate/king-in-black/move",
+                data={"issue_key": target, "direction": "up"},
+                follow_redirects=False,
+            )
+        ).status_code == 303
+
+    _, restored = await guide_service.event_entries(session, "king-in-black")
+    assert [e.key for e in restored] == [e.key for e in before]

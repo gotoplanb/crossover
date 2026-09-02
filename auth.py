@@ -84,6 +84,9 @@ async def create_session(
             user_id=user.id,
             expires_at=datetime.now(UTC) + SESSION_TTL,
             user_agent=(user_agent or "")[:400],
+            # Rotated with the session, so signing out invalidates the CSRF
+            # token too rather than leaving a usable one behind.
+            csrf_token=secrets.token_urlsafe(32),
         )
     )
     await session.commit()

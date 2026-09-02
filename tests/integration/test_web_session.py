@@ -57,13 +57,9 @@ async def test_the_login_form_explains_an_empty_allowlist(client, session) -> No
 
 
 async def test_signing_in_sets_a_session_cookie_and_redirects(
-    client, user, reader_password
+    sign_in, user, reader_password
 ) -> None:
-    response = await client.post(
-        "/ui/login",
-        data={"handle": user.handle, "password": reader_password},
-        follow_redirects=False,
-    )
+    response = await sign_in(user.handle, reader_password)
     assert response.status_code == 303
     assert response.headers["location"] == "/ui/rack"
     cookies = response.headers.get_list("set-cookie")
@@ -74,51 +70,39 @@ async def test_signing_in_sets_a_session_cookie_and_redirects(
     assert str(user.id) not in "".join(cookies)
 
 
-async def test_signing_in_honors_the_next_url(client, user, reader_password) -> None:
+async def test_signing_in_honors_the_next_url(sign_in, user, reader_password) -> None:
     """So the OAuth consent bounce lands back where it started."""
-    response = await client.post(
-        "/ui/login",
-        data={"handle": user.handle, "password": reader_password, "next": "/ui/events"},
-        follow_redirects=False,
-    )
+    response = await sign_in(user.handle, reader_password, next="/ui/events")
     assert response.headers["location"] == "/ui/events"
 
 
 async def test_a_wrong_password_is_401_and_re_renders_the_form(
-    client, user, reader_password
+    sign_in, user, reader_password
 ) -> None:
-    response = await client.post(
-        "/ui/login", data={"handle": user.handle, "password": "wrong"}
-    )
+    response = await sign_in(user.handle, "wrong")
     assert response.status_code == 401
     assert "Wrong password, or no such reader." in response.text
 
 
-async def test_an_unknown_handle_is_401(client) -> None:
+async def test_an_unknown_handle_is_401(sign_in) -> None:
     """Deliberately the same message as a wrong password — distinguishing them
     would turn the form into a reader-enumeration oracle."""
-    response = await client.post(
-        "/ui/login", data={"handle": "nobody", "password": "whatever"}
-    )
+    response = await sign_in("nobody", "whatever")
     assert response.status_code == 401
     assert "Wrong password, or no such reader." in response.text
 
 
 async def test_a_deactivated_reader_cannot_sign_in(
-    client, session, user, reader_password
+    sign_in, session, user, reader_password
 ) -> None:
     user.is_active = False
     await session.commit()
-    response = await client.post(
-        "/ui/login", data={"handle": user.handle, "password": reader_password}
-    )
+    response = await sign_in(user.handle, reader_password)
     assert response.status_code == 401
 
 
-async def test_signing_out_clears_the_cookie(client, user, reader_password) -> None:
-    await client.post(
-        "/ui/login", data={"handle": user.handle, "password": reader_password}
-    )
+async def test_signing_out_clears_the_cookie(client, sign_in, user, reader_password) -> None:
+    await sign_in(user.handle, reader_password)
     response = await client.post("/ui/logout", follow_redirects=False)
     assert response.status_code == 303
     assert response.headers["location"] == "/ui/login"

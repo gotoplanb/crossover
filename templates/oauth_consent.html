@@ -9,6 +9,7 @@
     <code class="text-zinc-300">{{ scope }}</code>.
   </p>
   <form method="post" action="/oauth/authorize" class="mt-6 flex gap-3">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
     {% for name, value in fields.items() %}
     <input type="hidden" name="{{ name }}" value="{{ value }}">
     {% endfor %}

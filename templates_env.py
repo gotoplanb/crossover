@@ -17,6 +17,13 @@ from marvel.links import NOT_ON_MU, attribution, one_tap_enabled
 from marvel.links import build_link as _build_link
 from marvel.records import cover_url as _cover_url
 
+
+def _csrf_token(request) -> str:
+    """The CSRF token for this request, stashed by the csrf_protect dependency."""
+    from csrf import token_for
+
+    return token_for(request)
+
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
@@ -29,3 +36,6 @@ templates.env.globals["cover_url"] = _cover_url
 templates.env.globals["build_link"] = _build_link
 templates.env.globals["one_tap_enabled"] = one_tap_enabled
 templates.env.globals["NOT_ON_MU"] = NOT_ON_MU
+# Rendered into every form by the `csrf` macro below. A global rather than a
+# per-route context value, so a new template cannot forget to pass it.
+templates.env.globals["csrf_token"] = _csrf_token

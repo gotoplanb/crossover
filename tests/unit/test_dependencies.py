@@ -34,7 +34,7 @@ DISTRIBUTION_NAMES = {
 #: Modules that are ours, or the standard library, or pulled in transitively by
 #: a declared package in a way that is part of that package's public surface.
 LOCAL_PACKAGES = {
-    "alembic", "auth", "config", "curation", "db", "lifespan", "main",
+    "alembic", "auth", "config", "csrf", "curation", "db", "lifespan", "main",
     "marvel", "mcp_server", "models", "oauth_provider", "observability",
     "routes", "scripts", "service", "templates_env", "tests",
 }
