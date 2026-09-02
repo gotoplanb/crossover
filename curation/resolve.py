@@ -20,9 +20,30 @@ from dataclasses import dataclass
 #: just "namor".
 _STOPWORDS = frozenset(
     {
-        "the", "a", "an", "one", "ones", "issue", "issues", "comic", "comics",
-        "book", "of", "that", "this", "in", "and", "from", "read", "just",
-        "finished", "number", "no", "vol", "volume", "part",
+        "the",
+        "a",
+        "an",
+        "one",
+        "ones",
+        "issue",
+        "issues",
+        "comic",
+        "comics",
+        "book",
+        "of",
+        "that",
+        "this",
+        "in",
+        "and",
+        "from",
+        "read",
+        "just",
+        "finished",
+        "number",
+        "no",
+        "vol",
+        "volume",
+        "part",
     }
 )
 
@@ -108,6 +129,25 @@ def parse_ref(raw: str) -> tuple[list[str], int | None]:
     return _tokens(raw), number
 
 
+#: Shortest token that may participate in a *prefix* match. Below this a token
+#: is a wildcard, not a hint.
+#:
+#: One character was the whole bug. "Empyre's End" tokenizes to
+#: ["web", "venom", "empyre", "s", "end"] — that possessive "s" prefix-matched
+#: every query word beginning with s, so "Some Unknown Series", "Saga",
+#: "Sandman" and "Superman" all scored 0.46 against it and, being the only
+#: candidate over the floor, came back as confident matches. Exact matching is
+#: unaffected, so a genuinely one-letter token like the "x" of "X-Men" still
+#: works.
+MIN_PREFIX_LENGTH = 3
+
+
+def _prefix_match(a: str, b: str) -> bool:
+    if min(len(a), len(b)) < MIN_PREFIX_LENGTH:
+        return False
+    return a.startswith(b) or b.startswith(a)
+
+
 def _score(query_tokens: list[str], candidate: Candidate) -> tuple[float, str]:
     """Token-overlap score in [0, 1], plus a human reason.
 
@@ -125,7 +165,7 @@ def _score(query_tokens: list[str], candidate: Candidate) -> tuple[float, str]:
     for token in query_tokens:
         if any(t == token for t in cand_tokens):
             hits += 1
-        elif any(t.startswith(token) or token.startswith(t) for t in cand_tokens):
+        elif any(_prefix_match(token, t) for t in cand_tokens):
             hits += 0.75
     coverage = hits / len(query_tokens)
     # Slight preference for the tighter title, so "King in Black" prefers the
@@ -139,6 +179,18 @@ def _score(query_tokens: list[str], candidate: Candidate) -> tuple[float, str]:
 MIN_SCORE = 0.45
 #: A leader must beat the runner-up by this much to be taken as unambiguous.
 DECISIVE_GAP = 0.15
+#: ...and must itself be this good. Having no competitor is not the same as
+#: being right: the bug this guards against returned a 0.46 match as certain
+#: purely because nothing else cleared MIN_SCORE, which is how "Some Unknown
+#: Series" became a confident answer.
+#:
+#: Chosen by measurement rather than taste. Across the curated roster the
+#: weakest *legitimate* confident match scores 0.638 ("valkyr 1", a deliberately
+#: partial word) and every other scores 0.867 or better, so this sits clear of
+#: both that and the 0.46 that caused the bug. The corpus tests in
+#: tests/unit/test_resolve_confidence.py are what actually pin the behaviour;
+#: they catch this moving too far in either direction.
+CONFIDENT_SCORE = 0.55
 
 
 def resolve(raw: str, candidates: list[Candidate]) -> Resolution:
@@ -172,13 +224,16 @@ def resolve(raw: str, candidates: list[Candidate]) -> Resolution:
     best = viable[0]
     # An explicit issue number is a strong signal: with one it is enough to be
     # the top name match, without one we need a clear gap to the runner-up.
-    if number is not None and len(
-        [m for m in viable if abs(m.score - best.score) < 1e-9]
-    ) == 1:
-        return Resolution(raw, best.candidate, [])
-    if len(viable) == 1:
-        return Resolution(raw, best.candidate, [])
-    if best.score - viable[1].score >= DECISIVE_GAP:
+    sole_top = (
+        number is not None and len([m for m in viable if abs(m.score - best.score) < 1e-9]) == 1
+    )
+    decisive = sole_top or len(viable) == 1 or best.score - viable[1].score >= DECISIVE_GAP
+
+    # Decisive *and* good enough. Falling through to `ambiguous` with a single
+    # option is deliberate: "is it this one?" is a fair question, whereas
+    # asserting a 0.46 match as certain is the milder version of the Gate B
+    # mistake this module's docstring warns about.
+    if decisive and best.score >= CONFIDENT_SCORE:
         return Resolution(raw, best.candidate, [])
     return Resolution(raw, None, viable[:8])
 

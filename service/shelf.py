@@ -105,25 +105,31 @@ def _entry_to_match(entry: GuideEntry) -> dict[str, Any]:
     }
 
 
-def _curated_matches(raw: str, pool: list[GuideEntry]) -> list[dict[str, Any]]:
-    """Curated matches for raw text.
+def _curated_matches(raw: str, pool: list[GuideEntry]) -> tuple[list[dict[str, Any]], bool]:
+    """Curated matches for raw text, and whether curation was *sure*.
 
-    A single result here does **not** mean curation was sure. The resolver
-    returns its nearest entry, and for text naming nothing in the roster that
-    nearest entry is still confidently wrong — "Some Unknown Series" resolves to
-    a real King in Black tie-in. That is why the network sources top this list
-    up rather than deferring to a curated hit: the person confirming needs the
-    alternatives in front of them.
+    The flag is trustworthy now, and was not always. `resolve` used to return
+    its nearest entry as certain even when that entry shared nothing real with
+    the query — "Some Unknown Series" resolved confidently to a King in Black
+    tie-in — so an earlier version of this optimization silently suppressed the
+    network for arbitrary text. `resolve` now requires a match to clear an
+    absolute score, not merely to have no competitor, and a corpus test holds
+    that line (tests/unit/test_resolve_confidence.py).
+
+    When curation *is* sure, that answer ends the search: it carries an event
+    and a reading position no bare catalogue record has, and topping it up with
+    three network alternatives spends a rate-limited request to make the right
+    answer harder to pick out.
     """
     resolution = resolve(raw, candidates_from_guide(pool))
     by_key = {e.key: e for e in pool}
     if resolution.matched:
-        return [_entry_to_match(by_key[resolution.matched.key])]
+        return [_entry_to_match(by_key[resolution.matched.key])], True
     return [
         _entry_to_match(by_key[m.candidate.key])
         for m in resolution.ambiguous[:MAX_MATCHES]
         if m.candidate.key in by_key
-    ]
+    ], False
 
 
 async def _marvel_matches(raw: str, client: MarvelClient | None) -> list[dict[str, Any]]:
@@ -221,11 +227,11 @@ async def propose(
         raw = raw.strip()
         if not raw:
             continue
-        matches = _curated_matches(raw, pool)
-        if len(matches) < MAX_MATCHES:
+        matches, settled = _curated_matches(raw, pool)
+        if not settled and len(matches) < MAX_MATCHES:
             seen = {m["key"] for m in matches}
             matches += [m for m in await _marvel_matches(raw, client) if m["key"] not in seen]
-        if len(matches) < MAX_MATCHES:
+        if not settled and len(matches) < MAX_MATCHES:
             # Last, because a curated issue carries an event and a reading
             # position that a bare mirror record cannot.
             seen = {m["key"] for m in matches}

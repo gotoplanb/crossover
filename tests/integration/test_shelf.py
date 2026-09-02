@@ -400,11 +400,38 @@ async def test_a_mirror_outage_degrades_to_pending(session, user, loaded_event) 
 
 
 @respx.mock
-async def test_mirror_options_sit_alongside_a_curated_hit(session, user, loaded_event) -> None:
-    """A single curated match is not proof curation was right: the resolver
-    returns its nearest entry even for text naming nothing in the roster. So the
-    mirror tops the list up instead of deferring, and the person confirming sees
-    the alternatives."""
+async def test_a_confident_curated_hit_costs_no_mirror_request(session, user, loaded_event) -> None:
+    """When curation is sure, that answer ends the search. It carries an event
+    and a reading position no bare catalogue record has, and the mirror's budget
+    is 60 requests a minute shared with other tenants.
+
+    This was briefly the other way round: `resolve` used to call arbitrary text
+    a confident match, so deferring to curation suppressed the network for
+    queries naming nothing. The corpus tests in
+    tests/unit/test_resolve_confidence.py are what make this safe."""
+    route = respx.get(f"{DEFAULT_BASE_URL}/search/issues").mock(
+        return_value=httpx.Response(200, json={"items": []})
+    )
+    async with httpx.AsyncClient() as http:
+        result = await shelf_service.propose(
+            session,
+            user_id=user.id,
+            candidates=["King in Black: Namor #1"],
+            source=ShelfSource.TYPED,
+            mirror=MirrorClient(client=http),
+        )
+    matches = result["results"][0]["matches"]
+    assert [m["source"] for m in matches] == ["curated"]
+    assert not route.called, "a settled curated match must not spend a request"
+
+
+@respx.mock
+async def test_an_unsure_curated_result_is_topped_up_from_the_mirror(
+    session, user, loaded_event
+) -> None:
+    """ "King in Black" alone matches five core issues, so curation offers
+    options rather than an answer — and the person confirming should see
+    everything, including anything the mirror knows about."""
     respx.get(f"{DEFAULT_BASE_URL}/search/issues").mock(
         return_value=httpx.Response(
             200, json={"items": [_mirror_hit(8073, "Daredevil (1964)", "181")]}
@@ -420,13 +447,12 @@ async def test_mirror_options_sit_alongside_a_curated_hit(session, user, loaded_
         result = await shelf_service.propose(
             session,
             user_id=user.id,
-            candidates=["King in Black: Namor #1"],
+            candidates=["King in Black"],
             source=ShelfSource.TYPED,
             mirror=MirrorClient(client=http),
         )
     sources = [m["source"] for m in result["results"][0]["matches"]]
-    assert sources[0] == "curated", "the curated hit stays first"
-    assert shelf_service.MIRROR_SOURCE in sources
+    assert "curated" in sources, "the curated options must still be offered"
     assert len(sources) <= shelf_service.MAX_MATCHES
 
 
