@@ -74,14 +74,14 @@ async def record(queries: list[str], directory: Path) -> int:
         mirror = MirrorClient(client=http)
         for query in queries:
             print(f"  {query}", file=sys.stderr)
-            candidates = await mirror.candidates(query, limit=4)
+            candidates, _outcome = await mirror.candidates(query, limit=4)
             if not candidates:
                 print("    ! no candidates — not recorded", file=sys.stderr)
                 continue
             for candidate in candidates:
                 # The detail call is what carries the digital id, and it is what
                 # `confirm` and `enrich` replay.
-                await mirror.record(candidate.issue_id)
+                await mirror.record(candidate.issue_id)  # recorded via the transport
             print(f"    {len(candidates)} candidates", file=sys.stderr)
     print(f"recorded {transport.recorded} new, reused {transport.skipped}", file=sys.stderr)
     return 0

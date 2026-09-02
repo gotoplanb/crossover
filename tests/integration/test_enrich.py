@@ -8,7 +8,6 @@ it is demonstrably the same issue.
 from __future__ import annotations
 
 import httpx
-import pytest
 import respx
 
 from marvel.mirror import DEFAULT_BASE_URL, MIRROR_SOURCE, MirrorClient
@@ -128,16 +127,36 @@ async def test_an_issue_with_no_lookup_id_is_reported_not_guessed(session, user)
 
 
 @respx.mock
-@pytest.mark.parametrize("failure", [httpx.Response(429), httpx.Response(500)])
-async def test_an_unreachable_mirror_leaves_the_row_alone(session, user, failure) -> None:
+async def test_an_unreachable_mirror_leaves_the_row_alone(session, user) -> None:
     issue = await _thin_issue(session, user)
-    respx.get(f"{DEFAULT_BASE_URL}/issues/8164").mock(return_value=failure)
+    respx.get(f"{DEFAULT_BASE_URL}/issues/8164").mock(return_value=httpx.Response(500))
     async with httpx.AsyncClient() as http:
         report = await enrich_bookmarked_issues(session, MirrorClient(client=http))
 
     await session.refresh(issue)
     assert report.unresolved == ["daredevil-181"]
     assert issue.digital_id is None
+
+
+@respx.mock
+async def test_a_rate_limit_stops_the_pass_instead_of_grinding_through_it(session, user) -> None:
+    """The budget is per-IP and shared, so once it is gone the remaining
+    lookups in this pass would fail the same way. Reporting them as
+    "unresolved" would say something untrue about those issues, and spending a
+    request each to find out is waste."""
+    for number in (181, 182, 183):
+        await _thin_issue(session, user, key=f"daredevil-{number}", source_id=8000 + number)
+    routes = [
+        respx.get(f"{DEFAULT_BASE_URL}/issues/{8000 + n}").mock(return_value=httpx.Response(429))
+        for n in (181, 182, 183)
+    ]
+    async with httpx.AsyncClient() as http:
+        report = await enrich_bookmarked_issues(session, MirrorClient(client=http))
+
+    assert report.unresolved == [], "a rate limit is not a statement about the issue"
+    assert len(report.rate_limited) == 3, "the untried ones are reported too"
+    assert sum(r.call_count for r in routes) == 1, "it stopped after the first 429"
+    assert "retry in a minute" in report.summary()
 
 
 @respx.mock
@@ -203,3 +222,21 @@ def test_the_cli_default_matches_the_service_default() -> None:
     at parser-build time, so pin them together here."""
     assert DEFAULT_LIMIT == 25
     from scripts.cli import main  # noqa: F401  — import guard only
+
+
+@respx.mock
+async def test_one_unresolvable_issue_does_not_stop_the_others(session, user) -> None:
+    """Unlike a rate limit, a single unknown issue says nothing about the rest
+    of the pass — it should be recorded and stepped over."""
+    for number in (181, 182):
+        await _thin_issue(session, user, key=f"daredevil-{number}", source_id=8000 + number)
+    respx.get(f"{DEFAULT_BASE_URL}/issues/8181").mock(return_value=httpx.Response(404))
+    respx.get(f"{DEFAULT_BASE_URL}/issues/8182").mock(
+        return_value=httpx.Response(200, json=_detail(8182, "Daredevil (1964)", "182", 1673))
+    )
+    async with httpx.AsyncClient() as http:
+        report = await enrich_bookmarked_issues(session, MirrorClient(client=http))
+
+    assert report.unresolved == ["daredevil-181"]
+    assert report.enriched == 1, "the second issue was still attempted"
+    assert report.rate_limited == []

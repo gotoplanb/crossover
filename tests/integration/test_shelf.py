@@ -508,3 +508,155 @@ def test_a_record_match_without_a_cover_date_still_rebuilds() -> None:
     )
     assert record is not None and record.published_on is None
     assert record.series_slug == "venom", "derived when the match predates the field"
+
+
+# --- "busy" and "no such comic" are different answers ------------------------
+
+
+@respx.mock
+async def test_a_rate_limited_lookup_says_so_instead_of_denying_the_comic(
+    session, user, loaded_event
+) -> None:
+    """The reason #29 exists. Someone standing in a shop holding a book should
+    not be told it does not exist because the catalogue was busy — the mirror's
+    60/min budget is shared with other tenants and is not about their comic."""
+    respx.get(f"{DEFAULT_BASE_URL}/search/issues").mock(return_value=httpx.Response(429))
+    async with httpx.AsyncClient() as http:
+        result = await shelf_service.propose(
+            session,
+            user_id=user.id,
+            candidates=["Daredevil 181"],
+            source=ShelfSource.PHOTO,
+            mirror=MirrorClient(client=http),
+        )
+    entry = result["results"][0]
+    assert entry["matches"] == []
+    assert entry["catalogue_unavailable"] is True
+    assert "doesn't exist" in result["next_step"]
+    assert "try again" in result["next_step"].lower()
+
+
+@respx.mock
+async def test_a_genuine_miss_does_not_claim_the_catalogue_was_busy(
+    session, user, loaded_event
+) -> None:
+    """The other half. An honest "nothing matched" must not be dressed up as an
+    outage either, or the flag means nothing."""
+    respx.get(f"{DEFAULT_BASE_URL}/search/issues").mock(
+        return_value=httpx.Response(200, json={"items": []})
+    )
+    async with httpx.AsyncClient() as http:
+        result = await shelf_service.propose(
+            session,
+            user_id=user.id,
+            candidates=["Definitely Not A Comic 9"],
+            source=ShelfSource.TYPED,
+            mirror=MirrorClient(client=http),
+        )
+    entry = result["results"][0]
+    assert entry["matches"] == []
+    assert "catalogue_unavailable" not in entry
+    assert "doesn't exist" not in result["next_step"]
+
+
+@respx.mock
+async def test_a_failed_lookup_still_keeps_the_capture(session, user, loaded_event) -> None:
+    """Whatever it says, nothing is lost — the pending row and the raw text are
+    the fallback and they do not change."""
+    respx.get(f"{DEFAULT_BASE_URL}/search/issues").mock(return_value=httpx.Response(503))
+    async with httpx.AsyncClient() as http:
+        await shelf_service.propose(
+            session,
+            user_id=user.id,
+            candidates=["Something Unreachable 4"],
+            source=ShelfSource.PHOTO,
+            mirror=MirrorClient(client=http),
+        )
+    pending = await session.scalar(
+        select(Bookmark).where(
+            Bookmark.user_id == user.id,
+            Bookmark.status == BookmarkStatus.PENDING.value,
+            Bookmark.raw_text == "Something Unreachable 4",
+        )
+    )
+    assert pending is not None
+
+
+@respx.mock
+async def test_running_out_of_budget_midway_is_reported_not_hidden(
+    session, user, loaded_event
+) -> None:
+    """The search can succeed and the per-candidate detail calls still fail.
+    A short list of options then means "we ran out of requests", not "these are
+    all the matches" — and the person confirming needs to know which."""
+    respx.get(f"{DEFAULT_BASE_URL}/search/issues").mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "items": [
+                    _mirror_hit(8073, "Daredevil (1964)", "181"),
+                    _mirror_hit(8074, "Daredevil (1964)", "182"),
+                ]
+            },
+        )
+    )
+    respx.get(f"{DEFAULT_BASE_URL}/series/1/issues").mock(
+        return_value=httpx.Response(200, json={"items": []})
+    )
+    # The first detail call works; the second is rate limited.
+    respx.get(f"{DEFAULT_BASE_URL}/issues/8073").mock(
+        return_value=httpx.Response(200, json=_mirror_detail(8073, "Daredevil (1964)", "181", 1672))
+    )
+    second = respx.get(f"{DEFAULT_BASE_URL}/issues/8074").mock(return_value=httpx.Response(429))
+    async with httpx.AsyncClient() as http:
+        result = await shelf_service.propose(
+            session,
+            user_id=user.id,
+            candidates=["Daredevil 181"],
+            source=ShelfSource.PHOTO,
+            mirror=MirrorClient(client=http),
+        )
+    entry = result["results"][0]
+    assert second.called
+    assert [m["number"] for m in entry["matches"]] == [181], "the one it managed"
+    assert entry["catalogue_unavailable"] is True
+
+
+@respx.mock
+async def test_a_full_slate_from_the_api_leaves_the_mirror_alone(
+    session, user, loaded_event
+) -> None:
+    """Sources are consulted in order and stop once there are enough options to
+    read aloud. The mirror is last and rate-limited, so filling the slate
+    earlier should not cost one of its requests."""
+    records = [
+        {
+            "id": 900 + n,
+            "digitalId": 500 + n,
+            "title": f"Nowhere Comics (2001) #{n}",
+            "issueNumber": n,
+            "series": {"name": "Nowhere Comics (2001 - 2002)"},
+            "urls": [],
+            "thumbnail": {},
+        }
+        for n in range(1, shelf_service.MAX_MATCHES + 1)
+    ]
+    respx.get(f"{BASE_URL}/comics").mock(
+        return_value=httpx.Response(200, json={"data": {"total": len(records), "results": records}})
+    )
+    mirror_route = respx.get(f"{DEFAULT_BASE_URL}/search/issues").mock(
+        return_value=httpx.Response(200, json={"items": []})
+    )
+    async with httpx.AsyncClient() as http:
+        result = await shelf_service.propose(
+            session,
+            user_id=user.id,
+            candidates=["Nowhere Comics"],
+            source=ShelfSource.TYPED,
+            client=MarvelClient("pub", "priv", client=http),
+            mirror=MirrorClient(client=http),
+        )
+    entry = result["results"][0]
+    assert len(entry["matches"]) == shelf_service.MAX_MATCHES
+    assert not mirror_route.called, "the slate was already full"
+    assert "catalogue_unavailable" not in entry

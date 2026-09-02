@@ -29,12 +29,16 @@ pytestmark = pytest.mark.skipif(
 
 async def _candidates(query: str, limit: int = 4):
     async with httpx.AsyncClient(transport=replay()) as http:
-        return await MirrorClient(client=http).candidates(query, limit=limit)
+        found, outcome = await MirrorClient(client=http).candidates(query, limit=limit)
+    assert not outcome.is_failure, f"replay reported {outcome} for {query!r}"
+    return found
 
 
 async def _record(issue_id: int):
     async with httpx.AsyncClient(transport=replay()) as http:
-        return await MirrorClient(client=http).record(issue_id)
+        record, outcome = await MirrorClient(client=http).record(issue_id)
+    assert not outcome.is_failure, f"replay reported {outcome} for issue {issue_id}"
+    return record
 
 
 async def test_an_off_event_find_resolves_from_a_real_response() -> None:

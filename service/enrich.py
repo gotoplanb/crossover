@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from marvel.mirror import MIRROR_SOURCE, MirrorClient
+from marvel.mirror import MIRROR_SOURCE, MirrorClient, Outcome
 from marvel.records import series_slug
 from marvel.sync import apply_record, promote_availability
 from models.bookmark import Bookmark
@@ -48,6 +48,10 @@ class EnrichReport:
     identity_mismatch: list[str] = field(default_factory=list)
     #: The mirror had nothing, or was unreachable.
     unresolved: list[str] = field(default_factory=list)
+    #: Ran out of request budget. Distinct from `unresolved` because it means
+    #: something different to whoever is reading: these are worth retrying in a
+    #: minute, whereas an unresolved row will be unresolved again.
+    rate_limited: list[str] = field(default_factory=list)
 
     def summary(self) -> str:
         lines = [
@@ -55,6 +59,11 @@ class EnrichReport:
             f"enriched:        {self.enriched}",
             f"newly linkable:  {self.newly_linkable}",
         ]
+        if self.rate_limited:
+            lines.append(
+                f"stopped early:   rate limited after {self.enriched} enriched — "
+                f"{len(self.rate_limited)} left, retry in a minute"
+            )
         for label, keys in (
             ("no lookup id", self.no_lookup_id),
             ("identity mismatch", self.identity_mismatch),
@@ -125,7 +134,14 @@ async def enrich_bookmarked_issues(
             if not lookup:
                 report.no_lookup_id.append(issue.key)
                 continue
-            record = await mirror.record(lookup)
+            record, outcome = await mirror.record(lookup)
+            if outcome is Outcome.RATE_LIMITED:
+                # Stop rather than grind through the rest. The budget is
+                # per-IP and shared, so the remaining lookups in this pass
+                # would fail the same way — and reporting them as
+                # "unresolved" would say something untrue about the issues.
+                report.rate_limited = [i.key for i in issues[issues.index(issue) :]]
+                break
             if record is None:
                 report.unresolved.append(issue.key)
                 continue

@@ -29,7 +29,8 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Any
+from enum import StrEnum
+from typing import Any, NamedTuple
 
 import httpx
 
@@ -63,6 +64,50 @@ def normalize_series(name: str) -> str:
     """
     folded = _WHITESPACE.sub(" ", _PUNCTUATION.sub(" ", name)).strip().lower()
     return folded[4:] if folded.startswith("the ") else folded
+
+
+class Outcome(StrEnum):
+    """Why a lookup returned what it did.
+
+    Exists because "no candidates" was previously indistinguishable from "the
+    catalogue was too busy to ask". Both surfaced as an empty list, so
+    `add_to_shelf` told someone holding a comic that it did not exist when the
+    truth was "ask again in a moment" (#29).
+    """
+
+    OK = "ok"
+    #: The mirror answered, and the answer is that there is no such thing.
+    NOT_FOUND = "not_found"
+    #: 60 requests a minute, shared with whatever else uses our address.
+    RATE_LIMITED = "rate_limited"
+    #: A 5xx, a network error, or a body that was not readable JSON.
+    UNAVAILABLE = "unavailable"
+
+    @property
+    def is_failure(self) -> bool:
+        """True when the absence of results says nothing about the query."""
+        return self in {Outcome.RATE_LIMITED, Outcome.UNAVAILABLE}
+
+
+class Page(NamedTuple):
+    items: list[dict[str, Any]]
+    outcome: Outcome
+
+
+class Detail(NamedTuple):
+    record: ComicRecord | None
+    outcome: Outcome
+
+
+class Lookup(NamedTuple):
+    """Candidates, plus why there might not be any.
+
+    A tuple so callers can unpack it — `found, outcome = await ...` — while
+    still reading `.candidates` where that is clearer.
+    """
+
+    candidates: list[Candidate]
+    outcome: Outcome
 
 
 @dataclass(frozen=True)
@@ -132,28 +177,41 @@ class MirrorClient:
     async def __aexit__(self, *exc: object) -> None:
         await self.aclose()
 
-    async def _get(self, path: str, **params: Any) -> dict | None:
+    async def _get(self, path: str, **params: Any) -> tuple[dict | None, Outcome]:
         """A GET that never raises, and never waits out a rate limit.
 
-        A 429 returns None like any other failure. Sleeping for `Retry-After`
-        is right in the snapshot script, which is a batch job with all night;
-        here it would hold a reader's tool call open, and a pending shelf entry
-        they can resolve later is the better answer.
+        Returns *why* alongside the body. It still never raises — the caller
+        should not have to handle a mirror outage to answer a reader — but a
+        failure and an empty answer are different facts, and collapsing them is
+        how the app came to tell people a comic did not exist because the
+        catalogue was busy.
+
+        Sleeping for `Retry-After` is right in the snapshot script, which is a
+        batch job with all night. Here it would hold a reader's tool call open,
+        and a pending shelf entry they can resolve later is the better answer.
         """
         try:
             response = await self._client().get(f"{self._base_url}{path}", params=params)
+            if response.status_code == 429:
+                return None, Outcome.RATE_LIMITED
+            if response.status_code == 404:
+                # An answer, not a failure: the mirror looked and there is no
+                # such issue or series.
+                return None, Outcome.NOT_FOUND
             if response.status_code >= 400:
-                return None
+                return None, Outcome.UNAVAILABLE
             body = response.json()
             # Valid JSON is not necessarily a body we can read. A bare array
             # would reach `record()`, which calls `.get()` on it and raises an
             # AttributeError that nothing here catches — turning a malformed
             # upstream response into a crashed tool call rather than a miss.
-            return body if isinstance(body, dict) else None
+            if not isinstance(body, dict):
+                return None, Outcome.UNAVAILABLE
+            return body, Outcome.OK
         except (httpx.HTTPError, ValueError):
-            return None
+            return None, Outcome.UNAVAILABLE
 
-    async def search(self, text: str, *, limit: int = 100) -> list[dict[str, Any]]:
+    async def search(self, text: str, *, limit: int = 100) -> Page:
         """Raw search hits.
 
         The width is deliberate. Results come back by relevance to the mirror,
@@ -163,11 +221,13 @@ class MirrorClient:
         """
         query = search_query(text)
         if not query:
-            return []
-        body = await self._get("/search/issues", q=query, limit=limit)
-        return (body or {}).get("items") or []
+            # Nothing askable, so nothing failed. "???" has no answer, and that
+            # is a fact about the query rather than about the mirror.
+            return Page([], Outcome.NOT_FOUND)
+        body, outcome = await self._get("/search/issues", q=query, limit=limit)
+        return Page((body or {}).get("items") or [], outcome)
 
-    async def series_issues(self, series_id: int) -> list[dict[str, Any]]:
+    async def series_issues(self, series_id: int) -> Page:
         """Every issue in one series.
 
         The only endpoint on the mirror that genuinely filters. `/issues`
@@ -175,21 +235,23 @@ class MirrorClient:
         all three**, returning the same unfiltered page whatever you pass.
         Without this, a numbered issue from a long run is unreachable.
         """
-        body = await self._get(f"/series/{series_id}/issues", limit=500)
-        return (body or {}).get("items") or []
+        body, outcome = await self._get(f"/series/{series_id}/issues", limit=500)
+        return Page((body or {}).get("items") or [], outcome)
 
-    async def record(self, issue_id: int) -> ComicRecord | None:
+    async def record(self, issue_id: int) -> Detail:
         """One full record, including the digital id that makes a link.
 
         The expensive half of resolution — call it for a confirmed match, not
-        for every candidate.
+        for every candidate. Reports the outcome like everything else here, so
+        a caller looping over many issues can tell "this one is unknown" from
+        "stop, we are out of budget".
         """
-        body = await self._get(f"/issues/{issue_id}")
+        body, outcome = await self._get(f"/issues/{issue_id}")
         if not body or not body.get("id"):
-            return None
-        return parse_comic(to_marvel_shape(body))
+            return Detail(None, outcome)
+        return Detail(parse_comic(to_marvel_shape(body)), outcome)
 
-    async def candidates(self, text: str, *, limit: int = 5) -> list[Candidate]:
+    async def candidates(self, text: str, *, limit: int = 5) -> Lookup:
         """Possible matches for a spoken or photographed title, best first.
 
         One search request, plus one more when a numbered issue needs the series
@@ -205,25 +267,17 @@ class MirrorClient:
         # ("Venom (2018 - 2021) #31"), so the year is a strong discriminator in
         # the substring match — and dropping it is what buried the Venom 2018
         # run under two dozen unrelated Venom titles.
-        hits = await self.search(f"{query} {year}" if year else query)
+        hits, outcome = await self.search(f"{query} {year}" if year else query)
         if year and not hits:
-            hits = await self.search(query)
+            hits, outcome = await self.search(query)
         if not hits:
-            return []
+            return Lookup([], outcome)
 
         ordered: list[dict[str, Any]] = []
         if wanted is not None:
-            # The drill-down is what reaches the middle of a long run, where the
-            # search page stops short.
-            for series_id in self._matching_series(hits, query, year):
-                match = [
-                    i
-                    for i in await self.series_issues(series_id)
-                    if self._number(i) == wanted and i.get("id")
-                ]
-                if match:
-                    ordered = match
-                    break
+            ordered, drill_failure = await self._drilldown(hits, query, year, wanted)
+            if drill_failure is not None:
+                outcome = drill_failure
             exact = [h for h in hits if self._number(h) == wanted]
             rest = [h for h in hits if self._number(h) != wanted]
             hits = exact + rest
@@ -234,7 +288,30 @@ class MirrorClient:
                 ordered.append(hit)
                 seen.add(hit["id"])
 
-        return [self._candidate(h) for h in ordered[:limit] if h.get("id")]
+        return Lookup([self._candidate(h) for h in ordered[:limit] if h.get("id")], outcome)
+
+    async def _drilldown(
+        self, hits: list[dict[str, Any]], query: str, year: str | None, wanted: str
+    ) -> tuple[list[dict[str, Any]], Outcome | None]:
+        """Reach a numbered issue through the series endpoint.
+
+        This is what gets past the search page, which returns one 100-result
+        page ranked by the mirror's own relevance and ignores `offset` — so the
+        middle of a long run is not on it at all.
+
+        Returns the matching issues, plus a failure outcome when the drill-down
+        itself could not be done. That second value matters: the search
+        succeeding while this fails means a *partial* answer, and the search
+        page's near misses must not be presented as the whole of it.
+        """
+        for series_id in self._matching_series(hits, query, year):
+            series_page, outcome = await self.series_issues(series_id)
+            if outcome.is_failure:
+                return [], outcome
+            match = [i for i in series_page if self._number(i) == wanted and i.get("id")]
+            if match:
+                return match, None
+        return [], None
 
     @staticmethod
     def _parse(text: str) -> tuple[str | None, str | None, str]:

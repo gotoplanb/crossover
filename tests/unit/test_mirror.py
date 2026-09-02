@@ -15,6 +15,7 @@ import respx
 from marvel.mirror import (
     DEFAULT_BASE_URL,
     MirrorClient,
+    Outcome,
     normalize_series,
     search_query,
     to_marvel_shape,
@@ -133,7 +134,7 @@ async def test_candidates_ranks_the_requested_number_first() -> None:
         return_value=httpx.Response(200, json={"items": []})
     )
     async with httpx.AsyncClient() as http:
-        found = await MirrorClient(client=http).candidates("Daredevil 181")
+        found, _outcome = await MirrorClient(client=http).candidates("Daredevil 181")
     assert [c.issue_number for c in found] == ["181", "1"]
 
 
@@ -148,7 +149,7 @@ async def test_candidates_reaches_past_the_search_page_via_the_series() -> None:
         return_value=httpx.Response(200, json={"items": [_hit(52, "Fantastic Four (1961)", "52")]})
     )
     async with httpx.AsyncClient() as http:
-        found = await MirrorClient(client=http).candidates("Fantastic Four 52")
+        found, _outcome = await MirrorClient(client=http).candidates("Fantastic Four 52")
     assert series.called
     assert found[0].issue_number == "52", "the drill-down result must outrank the search page"
 
@@ -164,7 +165,7 @@ async def test_a_number_ranks_but_never_filters() -> None:
         return_value=httpx.Response(200, json={"items": []})
     )
     async with httpx.AsyncClient() as http:
-        found = await MirrorClient(client=http).candidates("Venom 999")
+        found, _outcome = await MirrorClient(client=http).candidates("Venom 999")
     assert [c.issue_number for c in found] == ["1"]
 
 
@@ -182,7 +183,7 @@ async def test_a_year_is_searched_with_then_without() -> None:
         return_value=httpx.Response(200, json={"items": []})
     )
     async with httpx.AsyncClient() as http:
-        found = await MirrorClient(client=http).candidates("Venom 2018 1")
+        found, _outcome = await MirrorClient(client=http).candidates("Venom 2018 1")
     assert [dict(c.request.url.params)["q"] for c in route.calls] == ["Venom 2018", "Venom"]
     assert found[0].issue_number == "1"
 
@@ -190,7 +191,7 @@ async def test_a_year_is_searched_with_then_without() -> None:
 @respx.mock
 async def test_candidates_of_an_unsearchable_string_is_empty() -> None:
     async with httpx.AsyncClient() as http:
-        assert await MirrorClient(client=http).candidates("???") == []
+        assert (await MirrorClient(client=http).candidates("???")).candidates == []
 
 
 @respx.mock
@@ -209,7 +210,9 @@ async def test_every_failure_degrades_to_no_candidates(failure) -> None:
     kwargs = {key: failure}
     respx.get(f"{DEFAULT_BASE_URL}/search/issues").mock(**kwargs)
     async with httpx.AsyncClient() as http:
-        assert await MirrorClient(client=http).candidates("Venom 1") == []
+        found, outcome = await MirrorClient(client=http).candidates("Venom 1")
+    assert found == []
+    assert outcome.is_failure, "an outage must not read as 'no such comic'"
 
 
 @respx.mock
@@ -220,7 +223,9 @@ async def test_a_rate_limited_lookup_never_waits_it_out() -> None:
         return_value=httpx.Response(429, headers={"retry-after": "60"}, json={})
     )
     async with httpx.AsyncClient() as http:
-        assert await MirrorClient(client=http).candidates("Venom 1") == []
+        found, outcome = await MirrorClient(client=http).candidates("Venom 1")
+    assert found == []
+    assert outcome is Outcome.RATE_LIMITED
 
 
 @respx.mock
@@ -229,7 +234,9 @@ async def test_malformed_json_is_a_failure_not_a_crash() -> None:
         return_value=httpx.Response(200, content=b"not json")
     )
     async with httpx.AsyncClient() as http:
-        assert await MirrorClient(client=http).candidates("Venom 1") == []
+        found, outcome = await MirrorClient(client=http).candidates("Venom 1")
+    assert found == []
+    assert outcome is Outcome.UNAVAILABLE
 
 
 @respx.mock
@@ -240,7 +247,7 @@ async def test_record_carries_the_digital_id() -> None:
         )
     )
     async with httpx.AsyncClient() as http:
-        record = await MirrorClient(client=http).record(8164)
+        record, _outcome = await MirrorClient(client=http).record(8164)
     assert record is not None
     assert (record.series_name, record.issue_number) == ("Daredevil", 181)
     assert record.digital_id == 1672
@@ -252,14 +259,14 @@ async def test_record_carries_the_digital_id() -> None:
 async def test_record_of_an_empty_body_is_none(body: dict) -> None:
     respx.get(f"{DEFAULT_BASE_URL}/issues/1").mock(return_value=httpx.Response(200, json=body))
     async with httpx.AsyncClient() as http:
-        assert await MirrorClient(client=http).record(1) is None
+        assert (await MirrorClient(client=http).record(1)).record is None
 
 
 @respx.mock
 async def test_series_issues_returns_empty_when_the_series_is_unknown() -> None:
     respx.get(f"{DEFAULT_BASE_URL}/series/9/issues").mock(return_value=httpx.Response(404))
     async with httpx.AsyncClient() as http:
-        assert await MirrorClient(client=http).series_issues(9) == []
+        assert (await MirrorClient(client=http).series_issues(9)).items == []
 
 
 @respx.mock
@@ -270,7 +277,7 @@ async def test_a_hit_without_an_id_is_skipped() -> None:
         )
     )
     async with httpx.AsyncClient() as http:
-        found = await MirrorClient(client=http).candidates("Venom")
+        found, _outcome = await MirrorClient(client=http).candidates("Venom")
     assert [c.issue_id for c in found] == [2]
 
 
@@ -362,4 +369,22 @@ async def test_a_json_array_body_is_treated_as_no_result() -> None:
     call rather than a miss."""
     respx.get(f"{DEFAULT_BASE_URL}/issues/1").mock(return_value=httpx.Response(200, json=[1, 2, 3]))
     async with httpx.AsyncClient() as http:
-        assert await MirrorClient(client=http).record(1) is None
+        assert (await MirrorClient(client=http).record(1)).record is None
+
+
+@respx.mock
+async def test_a_failed_drilldown_is_reported_even_when_the_search_worked() -> None:
+    """A partial failure is still a failure. The search page can only reach the
+    front of a long run, so if the series drill-down is rate limited the answer
+    is incomplete in a way that matters — "Fantastic Four 52" would come back
+    offering #1 and #2. The near misses must not be presented as the whole
+    answer."""
+    respx.get(f"{DEFAULT_BASE_URL}/search/issues").mock(
+        return_value=httpx.Response(200, json={"items": [_hit(1, "Fantastic Four (1961)", "1")]})
+    )
+    respx.get(f"{DEFAULT_BASE_URL}/series/1/issues").mock(return_value=httpx.Response(429))
+    async with httpx.AsyncClient() as http:
+        found, outcome = await MirrorClient(client=http).candidates("Fantastic Four 52")
+
+    assert outcome is Outcome.RATE_LIMITED
+    assert [c.issue_number for c in found] == ["1"], "the search page's near miss"

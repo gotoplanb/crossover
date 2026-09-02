@@ -32,7 +32,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from curation.resolve import candidates_from_guide, resolve
 from marvel.client import MarvelAPIError, MarvelClient, MarvelCredentialsMissing
 from marvel.links import attribution
-from marvel.mirror import MIRROR_SOURCE, MirrorClient
+from marvel.mirror import MIRROR_SOURCE, MirrorClient, Outcome
 from marvel.records import ComicRecord, cover_url, parse_comics, series_slug
 from marvel.sync import apply_record, promote_availability
 from models.bookmark import Bookmark, ShelfCandidate
@@ -188,7 +188,7 @@ def record_from_match(match: dict[str, Any]) -> ComicRecord | None:
 
 async def _mirror_matches(
     raw: str, mirror: MirrorClient | None, limit: int
-) -> list[dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], Outcome]:
     """Candidates from the live mirror, for finds outside the curated set.
 
     Marvel's API is gone, so without this a comic picked up in a shop that
@@ -201,13 +201,50 @@ async def _mirror_matches(
     requests a minute and phase 1 needs the art to be confirmable out loud.
     """
     if mirror is None or limit <= 0:
-        return []
+        return [], Outcome.OK
+    found, outcome = await mirror.candidates(raw, limit=limit)
     matches: list[dict[str, Any]] = []
-    for candidate in await mirror.candidates(raw, limit=limit):
-        record = await mirror.record(candidate.issue_id)
+    for candidate in found:
+        record, detail_outcome = await mirror.record(candidate.issue_id)
         if record is not None:
             matches.append(_record_to_match(record, source=MIRROR_SOURCE))
-    return matches
+        elif detail_outcome.is_failure:
+            # Ran out of budget partway through describing the options. Say so:
+            # a short list here is not the same as a short list of real matches.
+            outcome = detail_outcome
+            break
+    return matches, outcome
+
+
+async def _gather_matches(
+    raw: str,
+    pool: list[GuideEntry],
+    client: MarvelClient | None,
+    mirror: MirrorClient | None,
+) -> tuple[list[dict[str, Any]], bool]:
+    """Every source for one raw string, best first, plus whether a lookup failed.
+
+    Order is the point. Curation first and, when it is sure, alone: a curated
+    issue carries an event and a reading position that no bare catalogue record
+    has. Only an unsure result is topped up from the network.
+
+    The boolean is not "we found nothing" — it is "we could not look". A failed
+    lookup says nothing about the comic, and conflating the two is how someone
+    holding a book came to be told it does not exist (#29).
+    """
+    matches, settled = _curated_matches(raw, pool)
+    if settled or len(matches) >= MAX_MATCHES:
+        return matches, False
+
+    seen = {m["key"] for m in matches}
+    matches += [m for m in await _marvel_matches(raw, client) if m["key"] not in seen]
+    if len(matches) >= MAX_MATCHES:
+        return matches, False
+
+    seen = {m["key"] for m in matches}
+    found, outcome = await _mirror_matches(raw, mirror, MAX_MATCHES - len(matches))
+    matches += [m for m in found if m["key"] not in seen]
+    return matches, outcome.is_failure
 
 
 async def propose(
@@ -227,19 +264,7 @@ async def propose(
         raw = raw.strip()
         if not raw:
             continue
-        matches, settled = _curated_matches(raw, pool)
-        if not settled and len(matches) < MAX_MATCHES:
-            seen = {m["key"] for m in matches}
-            matches += [m for m in await _marvel_matches(raw, client) if m["key"] not in seen]
-        if not settled and len(matches) < MAX_MATCHES:
-            # Last, because a curated issue carries an event and a reading
-            # position that a bare mirror record cannot.
-            seen = {m["key"] for m in matches}
-            matches += [
-                m
-                for m in await _mirror_matches(raw, mirror, MAX_MATCHES - len(matches))
-                if m["key"] not in seen
-            ]
+        matches, unreachable = await _gather_matches(raw, pool, client, mirror)
 
         # The pending row is created now so the capture survives even if the
         # conversation ends here — the rack picks it up for confirmation later.
@@ -261,16 +286,19 @@ async def propose(
         )
         session.add(record)
         await session.flush()
-        results.append(
-            {
-                "raw_text": raw,
-                "candidate_id": str(record.id),
-                "pending_bookmark_id": str(pending.id),
-                "matches": matches[:MAX_MATCHES],
-            }
-        )
+        entry: dict[str, Any] = {
+            "raw_text": raw,
+            "candidate_id": str(record.id),
+            "pending_bookmark_id": str(pending.id),
+            "matches": matches[:MAX_MATCHES],
+        }
+        # Only present when it happened, so the ordinary payload stays quiet.
+        if unreachable:
+            entry["catalogue_unavailable"] = True
+        results.append(entry)
 
     await session.commit()
+    unreachable_any = any(r.get("catalogue_unavailable") for r in results)
     return {
         "phase": "propose",
         "source": source.value,
@@ -280,6 +308,15 @@ async def propose(
             "number, cover date — and call add_to_shelf again with the chosen `key` "
             "and its `candidate_id`. If they don't answer, these stay pending on the "
             "rack with the original text preserved."
+            + (
+                " Note: entries marked `catalogue_unavailable` could not be looked "
+                "up just now — the catalogue was busy or unreachable. That is NOT a "
+                "statement that the comic doesn't exist, so don't tell them it "
+                "isn't real. Nothing is lost: the entry is on the rack with what "
+                "they said. Offer to try again in a moment."
+                if unreachable_any
+                else ""
+            )
         ),
         "attribution": attribution(),
     }

@@ -79,8 +79,8 @@ async def test_a_repeated_lookup_costs_no_request(session_factory) -> None:
     transport = CachingTransport(session_factory=session_factory)
 
     async with httpx.AsyncClient(transport=transport) as http:
-        first = await MirrorClient(client=http).record(8164)
-        second = await MirrorClient(client=http).record(8164)
+        first, _ = await MirrorClient(client=http).record(8164)
+        second, _ = await MirrorClient(client=http).record(8164)
 
     assert route.call_count == 1, "the second lookup must not reach the mirror"
     assert first.digital_id == second.digital_id == 1672
@@ -96,7 +96,7 @@ async def test_a_stale_entry_is_refetched(session, session_factory) -> None:
 
     transport = CachingTransport(session_factory=session_factory)
     async with httpx.AsyncClient(transport=transport) as http:
-        assert (await MirrorClient(client=http).record(8164)) is not None
+        assert (await MirrorClient(client=http).record(8164)).record is not None
     assert respx.calls.call_count == 1, "an expired entry must not be served"
 
 
@@ -107,7 +107,7 @@ async def test_a_rate_limit_is_never_cached(session, session_factory) -> None:
     respx.get(URL).mock(return_value=httpx.Response(429))
     transport = CachingTransport(session_factory=session_factory)
     async with httpx.AsyncClient(transport=transport) as http:
-        assert await MirrorClient(client=http).record(8164) is None
+        assert (await MirrorClient(client=http).record(8164)).record is None
     assert await session.scalar(select(MirrorResponseCache)) is None
 
 
@@ -146,7 +146,7 @@ async def test_a_dead_cache_still_answers_from_the_mirror() -> None:
     async with httpx.AsyncClient(
         transport=CachingTransport(session_factory=exploding_factory)
     ) as http:
-        record = await MirrorClient(client=http).record(8164)
+        record, _ = await MirrorClient(client=http).record(8164)
 
     assert route.called
     assert record is not None and record.digital_id == 1672
@@ -162,7 +162,7 @@ async def test_a_failed_write_still_returns_the_response(monkeypatch, session_fa
     async with httpx.AsyncClient(
         transport=CachingTransport(session_factory=session_factory)
     ) as http:
-        assert (await MirrorClient(client=http).record(8164)).digital_id == 1672
+        assert (await MirrorClient(client=http).record(8164)).record.digital_id == 1672
 
 
 # --- storage -----------------------------------------------------------------
@@ -233,8 +233,8 @@ async def test_cached_mirror_is_a_working_client(session_factory, monkeypatch) -
     )
     route = respx.get(URL).mock(return_value=httpx.Response(200, json=BODY))
     async with mirror_cache.cached_mirror() as mirror:
-        first = await mirror.record(8164)
-        second = await mirror.record(8164)
+        first, _ = await mirror.record(8164)
+        second, _ = await mirror.record(8164)
 
     assert first.digital_id == second.digital_id == 1672
     assert route.call_count == 1, "cached_mirror must read through the cache"
