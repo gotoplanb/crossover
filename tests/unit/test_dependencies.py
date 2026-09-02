@@ -47,7 +47,6 @@ LOCAL_PACKAGES = {
     "models",
     "oauth_provider",
     "observability",
-    "oauth_conformance",
     "routes",
     "scripts",
     "service",
@@ -64,8 +63,10 @@ def _declared() -> set[str]:
     groups += list(data.get("dependency-groups", {}).values())
     for group in groups:
         for spec in group:
-            # "sqlalchemy[asyncio]>=2.0.36" -> "sqlalchemy"
-            name = spec.split(";")[0].split("[")[0]
+            # "sqlalchemy[asyncio]>=2.0.36" -> "sqlalchemy", and PEP 508's
+            # direct-reference form "name @ git+https://..." -> "name". Without
+            # the second, any git dependency reads as undeclared.
+            name = spec.split(";")[0].split(" @ ")[0].split("[")[0]
             for operator in (">=", "==", "<=", "~=", ">", "<", "!="):
                 name = name.split(operator)[0]
             names.add(name.strip().lower().replace("_", "-"))

@@ -50,6 +50,10 @@ dev = [
     "pytest-asyncio>=0.24",
     "pytest-cov>=6.0",
     "respx>=0.21",
+    # The OAuth contract this service is checked against, shared with the other
+    # authorization servers in the fleet. Pinned to a tag: an unpinned contract
+    # could start failing a build because somebody else tightened a rule.
+    "oauth-conformance @ git+https://github.com/gotoplanb/oauth-conformance@v0.1.0",
     "ruff>=0.7",
 ]
 
