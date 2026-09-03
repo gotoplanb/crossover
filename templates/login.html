@@ -32,6 +32,16 @@
     No account? <a href="/ui/register" class="text-zinc-200 underline">Create one</a>
     — you'll need the invite code.
   </p>
+  {% else %}
+  {# Silence here reads as "this app has no sign-up" when the truth is "this
+     deployment has not turned it on". Say which, so somebody looking for a way
+     in learns it in five seconds rather than concluding the feature is
+     missing. Names no reader and reveals no configuration beyond a state
+     already obvious from the absence of a link. #}
+  <p class="mt-6 text-sm text-zinc-500">
+    Registration is closed on this instance — ask whoever runs it for an
+    account.
+  </p>
   {% endif %}
 </div>
 {% endblock %}

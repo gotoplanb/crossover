@@ -56,6 +56,27 @@ async def test_the_login_form_offers_registration_only_when_it_is_open(client, m
     get_settings.cache_clear()
 
 
+async def test_a_closed_instance_says_so_instead_of_going_quiet(client, monkeypatch) -> None:
+    """Hiding the link is right — the route 404s — but hiding it *silently*
+    leaves somebody looking for a way in unable to tell "this app has no
+    sign-up" from "this deployment has not turned it on". They should learn
+    which in five seconds rather than concluding the feature does not exist."""
+    from config.settings import get_settings
+
+    monkeypatch.delenv("CROSSOVER_INVITE_CODE", raising=False)
+    get_settings.cache_clear()
+    closed = (await client.get("/ui/login")).text
+    assert "Registration is closed on this instance" in closed
+    assert "/ui/register" not in closed, "still must not link a route that 404s"
+
+    monkeypatch.setenv("CROSSOVER_INVITE_CODE", "let-me-in-please")
+    get_settings.cache_clear()
+    opened = (await client.get("/ui/login")).text
+    assert "Registration is closed" not in opened, "both messages must never show"
+    assert "Create one" in opened
+    get_settings.cache_clear()
+
+
 async def test_signing_in_sets_a_session_cookie_and_redirects(
     sign_in, user, reader_password
 ) -> None:
