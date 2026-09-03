@@ -77,8 +77,29 @@ separates one person's rack from another's — a shared key could not.
 **Registration is closed unless `CROSSOVER_INVITE_CODE` is set.** Unset means
 closed, not open: the app writes to your database and spends a rate-limited
 third-party quota on every shelf lookup, so forgetting to configure the gate
-should not be the mistake that opens the door. Rotate the code to stop admitting
-people.
+should not be the mistake that opens the door.
+
+When it is unset, `/ui/register` returns 404 and the login page says
+registration is closed on this instance — so the state is legible rather than
+looking like a missing feature.
+
+```bash
+# Read the current code, to hand to somebody
+heroku config:get CROSSOVER_INVITE_CODE -a crossover
+
+# Open registration, or rotate to stop admitting anyone holding the old code
+heroku config:set -a crossover CROSSOVER_INVITE_CODE="$(make -s reader-password)"
+
+# Close registration entirely
+heroku config:unset -a crossover CROSSOVER_INVITE_CODE
+```
+
+Locally the same variable lives in `.env`. Setting or unsetting it on Heroku
+restarts the dyno, so allow a few seconds before the change shows up.
+
+Rotating does **not** sign out anyone who already registered — the code gates
+account *creation*, nothing else. To remove someone, deactivate their reader;
+to sign them out everywhere, `make revoke-sessions handle=<theirs>`.
 
 Registration never grants admin. Admins reach the curation views and can approve
 an OAuth grant; `is_admin` is a flag set deliberately by someone who already has
