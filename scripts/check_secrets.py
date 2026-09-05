@@ -65,9 +65,10 @@ RULES: list[tuple[str, re.Pattern[str], str]] = [
     (
         "oauth-secret",
         # The prefixes this project mints: xos_ client secrets, xo_at_/xo_rt_ tokens.
-        # xo_sess_ is a web session cookie; the rest are OAuth. All are
+        # xo_sess_ is a web session cookie, xo_rst_ a password reset link;
+        # the rest are OAuth. All are
         # replayable verbatim, which is what makes them worth matching.
-        re.compile(r"\b(?:xos_|xo_at_|xo_rt_|xo_sess_)[A-Za-z0-9_-]{20,}"),
+        re.compile(r"\b(?:xos_|xo_at_|xo_rt_|xo_sess_|xo_rst_)[A-Za-z0-9_-]{20,}"),
         "a Crossover session, OAuth secret or token",
     ),
     (

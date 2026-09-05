@@ -29,8 +29,10 @@ from auth import (
     SESSION_COOKIE,
     SESSION_TTL,
     authenticate,
+    consume_reset_token,
     create_session,
     hash_password,
+    resolve_reset_token,
     resolve_session,
     revoke_session,
 )
@@ -305,6 +307,124 @@ async def register_submit(
         token,
         httponly=True,
         secure=settings.ui_cookie_secure,
+        samesite="lax",
+        max_age=int(SESSION_TTL.total_seconds()),
+    )
+    response.delete_cookie(CSRF_COOKIE)
+    return response
+
+
+#: One phrasing for every way a reset link can be dead — mistyped, expired, or
+#: already spent. Deliberately does not say which: the three are
+#: indistinguishable to whoever is holding the URL, and guessing wrong at them
+#: would be worse than the honest superset.
+LINK_DEAD = "This reset link is invalid, expired, or already used."
+
+
+def _dead_link(request: Request, token: str) -> HTMLResponse:
+    """410 rather than 404, on both GET and POST.
+
+    Somebody handed a URL cannot tell a typo from an expiry from a link already
+    used, and "not found" answers none of those.
+    """
+    return _reset_page(
+        request,
+        token,
+        valid=False,
+        error=LINK_DEAD,
+        status_code=status.HTTP_410_GONE,
+    )
+
+
+def _reset_page(
+    request: Request,
+    token: str,
+    *,
+    error: str | None = None,
+    valid: bool = True,
+    status_code: int = 200,
+) -> HTMLResponse:
+    """Render the set-a-new-password form, or explain why the link is dead.
+
+    Same CSRF dance as login and register — no session yet, so the token is
+    double-submitted from a cookie, set on `request.state` before the response
+    is constructed because Starlette renders in the constructor.
+    """
+    csrf = request.cookies.get(CSRF_COOKIE) or new_token()
+    request.state.csrf_token = csrf
+    response = templates.TemplateResponse(
+        request,
+        "reset.html",
+        {
+            "token": token,
+            "error": error,
+            "valid": valid,
+            "min_password_length": MIN_PASSWORD_LENGTH,
+        },
+        status_code=status_code,
+    )
+    response.set_cookie(
+        CSRF_COOKIE,
+        csrf,
+        httponly=True,
+        secure=get_settings().ui_cookie_secure,
+        samesite="lax",
+    )
+    return response
+
+
+@router.get("/reset/{token}", response_class=HTMLResponse, response_model=None)
+async def reset_form(
+    request: Request,
+    token: str,
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> HTMLResponse:
+    # A dead link explains itself rather than 404ing. Somebody holding a URL
+    # they were handed cannot tell a typo from an expiry from a link already
+    # used, and "not found" answers none of those.
+    if await resolve_reset_token(session, token) is None:
+        return _dead_link(request, token)
+    return _reset_page(request, token)
+
+
+@router.post("/reset/{token}", response_model=None)
+async def reset_submit(
+    request: Request,
+    token: str,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    password: Annotated[str, Form()] = "",
+    password_confirm: Annotated[str, Form()] = "",
+) -> HTMLResponse | RedirectResponse:
+    if await resolve_reset_token(session, token) is None:
+        return _dead_link(request, token)
+    if len(password) < MIN_PASSWORD_LENGTH:
+        return _reset_page(
+            request,
+            token,
+            error=f"Use at least {MIN_PASSWORD_LENGTH} characters.",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+    if password != password_confirm:
+        return _reset_page(
+            request,
+            token,
+            error="Those passwords don't match.",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Sets the password, retires the link, and signs the reader out of every
+    # existing session — whoever prompted the reset may be holding one.
+    user = await consume_reset_token(session, token, password)
+    if user is None:
+        return _dead_link(request, token)
+
+    fresh = await create_session(session, user, user_agent=request.headers.get("user-agent", ""))
+    response = RedirectResponse(RACK_URL, status_code=status.HTTP_303_SEE_OTHER)
+    response.set_cookie(
+        SESSION_COOKIE,
+        fresh,
+        httponly=True,
+        secure=get_settings().ui_cookie_secure,
         samesite="lax",
         max_age=int(SESSION_TTL.total_seconds()),
     )

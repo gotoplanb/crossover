@@ -3,6 +3,7 @@ from models.cache import MarvelResponseCache
 from models.catalog import Event, EventIssue, Issue, IssueReference
 from models.mirror_cache import MirrorResponseCache
 from models.oauth import OAuthAuthorizationCode, OAuthClient, OAuthToken
+from models.reset import PasswordResetToken
 from models.session import UserSession
 from models.types import (
     Availability,
@@ -32,6 +33,7 @@ __all__ = [
     "IssueRole",
     "MarvelResponseCache",
     "MirrorResponseCache",
+    "PasswordResetToken",
     "NarrativeRole",
     "OAuthAuthorizationCode",
     "OAuthClient",

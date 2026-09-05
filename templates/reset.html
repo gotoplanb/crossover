@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Set a new password — Crossover{% endblock %}
+{% block content %}
+<div class="max-w-sm mx-auto">
+  <h1 class="text-2xl font-semibold tracking-tight">Set a new password</h1>
+  {% if error %}
+  <p class="mt-4 text-sm text-red-400">{{ error }}</p>
+  {% endif %}
+  {% if valid %}
+  <p class="text-sm text-zinc-400 mt-2">
+    This link works once and expires within the hour. Setting a password here
+    also signs you out everywhere else.
+  </p>
+  <form method="post" action="/ui/reset/{{ token }}" class="mt-6 space-y-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+    <label class="block">
+      <span class="text-sm text-zinc-300">New password</span>
+      <input type="password" name="password" autocomplete="new-password" autofocus
+             class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm">
+      <span class="text-xs text-zinc-500">
+        At least {{ min_password_length }} characters. Length is the only rule.
+      </span>
+    </label>
+    <label class="block">
+      <span class="text-sm text-zinc-300">New password again</span>
+      <input type="password" name="password_confirm" autocomplete="new-password"
+             class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm">
+    </label>
+    <button class="w-full bg-zinc-100 text-zinc-900 rounded px-3 py-2 text-sm font-medium">
+      Set password and sign in
+    </button>
+  </form>
+  {% else %}
+  <p class="text-sm text-zinc-400 mt-2">
+    Ask whoever runs this for a new link — they expire within the hour and each
+    one works only once.
+  </p>
+  <p class="mt-6 text-sm">
+    <a href="/ui/login" class="text-zinc-200 underline">Back to sign in</a>
+  </p>
+  {% endif %}
+</div>
+{% endblock %}

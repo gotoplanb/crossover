@@ -298,6 +298,44 @@ async def _enrich(limit: int | None) -> int:
     return 0
 
 
+async def _reset_link(handle: str, issuer: str) -> int:
+    """Mint a one-time reset link for a reader, to hand over yourself.
+
+    There is no email here, so this is the recovery path: an admin generates a
+    URL and sends it however they already talk to that person. That channel is
+    chosen deliberately, which is a better property than an emailed link to
+    whatever address happens to be on file.
+
+    Printed once and stored only as a SHA-256 hash, so re-running this issues a
+    new link and retires the previous one.
+    """
+    from sqlalchemy import select
+
+    from auth import RESET_TTL, create_reset_token
+    from db.session import SessionLocal
+    from models.user import User
+
+    async with SessionLocal() as session:
+        user = await session.scalar(select(User).where(User.handle == handle))
+        if user is None:
+            print(f"no reader with handle {handle!r}")
+            return 1
+        admin = None
+        if issuer:
+            admin = await session.scalar(select(User).where(User.handle == issuer))
+            if admin is None or not admin.is_admin:
+                print(f"--issued-by {issuer!r} is not an admin")
+                return 1
+        raw = await create_reset_token(session, user, issued_by=admin)
+
+    base = get_settings().public_base_url.rstrip("/")
+    hours = int(RESET_TTL.total_seconds() // 3600)
+    print(f"Reset link for {user.handle} (expires in {hours}h, works once):\n")
+    print(f"  {base}/ui/reset/{raw}\n")
+    print("Send it however you like. Using it signs them out everywhere else.")
+    return 0
+
+
 async def _set_password(handle: str) -> int:
     """Set a reader's password, read from a prompt rather than argv.
 
@@ -432,6 +470,14 @@ def main(argv: list[str] | None = None) -> int:
     p_pw = sub.add_parser("set-password", help="set a reader's password (prompts)")
     p_pw.add_argument("handle")
 
+    p_link = sub.add_parser("reset-link", help="mint a one-time password reset link for a reader")
+    p_link.add_argument("handle")
+    p_link.add_argument(
+        "--issued-by",
+        default="",
+        help="handle of the admin issuing it, recorded for audit",
+    )
+
     p_mirror = sub.add_parser("purge-mirror-cache", help="drop old cached mirror responses")
     p_mirror.add_argument("--older-than-days", type=int, default=90)
 
@@ -462,6 +508,8 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_enrich(args.limit))
         case "set-password":
             return asyncio.run(_set_password(args.handle))
+        case "reset-link":
+            return asyncio.run(_reset_link(args.handle, args.issued_by))
         case "purge-mirror-cache":
             return asyncio.run(_purge_mirror_cache(args.older_than_days))
         case "register-connector":

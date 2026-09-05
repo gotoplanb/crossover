@@ -106,9 +106,23 @@ an OAuth grant; `is_admin` is a flag set deliberately by someone who already has
 it (`make seed ... admin=1`), so there is **no master admin key** to leak or
 share, and the invite code buys a rack and nothing more.
 
-Nothing here sends email, so there is no password reset. Recovery is
-`python -m scripts.cli set-password <handle>`, run by whoever operates the
-deployment.
+Nothing here sends email, so there is no self-service password reset. Recovery
+is an admin minting a one-time link and handing it over — by text, by email,
+however you already talk to that person. That channel is chosen deliberately,
+which is a better property than an emailed link to whatever address happens to
+be on file.
+
+```bash
+heroku run -a crossover -- python -m scripts.cli reset-link tabitha --issued-by dave
+```
+
+The link expires within the hour, works exactly once, and issuing a new one
+retires any previous. Using it also signs that reader out of every existing
+session — whoever prompted the reset may be holding a live cookie, and a reset
+that leaves it working is not a reset.
+
+`python -m scripts.cli set-password <handle>` still exists for setting a
+password directly, when you would rather not send a link at all.
 
 Accounts created before passwords moved into the database accept their old
 `CROSSOVER_PASSWORD_{HANDLE}` once, hash it, and never read the environment

@@ -32,6 +32,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.settings import get_settings
+from models.reset import PasswordResetToken
 from models.session import UserSession
 from models.user import User
 
@@ -67,6 +68,15 @@ _TIMING_EQUALIZER = _hasher.hash(secrets.token_urlsafe(32))
 #: Length only, no composition rules — current NIST guidance, and composition
 #: rules are what push people towards "Password1!".
 MIN_PASSWORD_LENGTH = 12
+
+#: Prefixed like every other credential this project mints, so a leaked one is
+#: recognisable and `scripts/check_secrets.py` can match on it.
+RESET_TOKEN_PREFIX = "xo_rst_"
+
+#: Short on purpose. A working reset link is a full account takeover, which is
+#: sharper than anything else handed around here, and an admin issuing one is
+#: about to send it immediately — there is no reason for it to outlive that.
+RESET_TTL = timedelta(hours=1)
 
 
 def _hash(raw: str) -> str:
@@ -158,6 +168,81 @@ async def authenticate(session: AsyncSession, handle: str, password: str) -> Use
 
     verify_password(_TIMING_EQUALIZER, password)
     return None
+
+
+async def create_reset_token(
+    session: AsyncSession, user: User, *, issued_by: User | None = None
+) -> str:
+    """Mint a one-time reset link for `user`. Returns the raw token, shown once.
+
+    Any unspent tokens for that reader are invalidated first. Two live links
+    for one account means the older one keeps working after the newer has been
+    handed to somebody, which is the kind of thing nobody notices until it
+    matters.
+    """
+    await session.execute(
+        update(PasswordResetToken)
+        .where(
+            PasswordResetToken.user_id == user.id,
+            PasswordResetToken.used_at.is_(None),
+        )
+        .values(used_at=datetime.now(UTC))
+    )
+    raw = f"{RESET_TOKEN_PREFIX}{secrets.token_urlsafe(32)}"
+    session.add(
+        PasswordResetToken(
+            token_hash=_hash(raw),
+            user_id=user.id,
+            issued_by=issued_by.id if issued_by else None,
+            expires_at=datetime.now(UTC) + RESET_TTL,
+        )
+    )
+    await session.commit()
+    return raw
+
+
+async def resolve_reset_token(session: AsyncSession, raw: str | None) -> User | None:
+    """The reader a live reset link belongs to, or None.
+
+    Looked up by hash, so the raw value is never compared against anything and
+    there is no prefix to time. Expired and already-spent rows resolve to None
+    but are kept, so a replayed link is distinguishable in the table from one
+    that never existed.
+    """
+    if not raw:
+        return None
+    row = await session.scalar(
+        select(PasswordResetToken).where(PasswordResetToken.token_hash == _hash(raw))
+    )
+    if row is None or row.used_at is not None:
+        return None
+    if _aware(row.expires_at) < datetime.now(UTC):
+        return None
+    user = await session.get(User, row.user_id)
+    return user if user is not None and user.is_active else None
+
+
+async def consume_reset_token(session: AsyncSession, raw: str, new_password: str) -> User | None:
+    """Spend a reset link: set the password, retire the link, sign them out.
+
+    The sign-out is the part worth insisting on. A reset that leaves existing
+    cookies working is not a reset — whoever prompted it may be holding one.
+    """
+    user = await resolve_reset_token(session, raw)
+    if user is None or len(new_password) < MIN_PASSWORD_LENGTH:
+        return None
+
+    user.password_hash = hash_password(new_password)
+    await session.execute(
+        update(PasswordResetToken)
+        .where(PasswordResetToken.token_hash == _hash(raw))
+        .values(used_at=datetime.now(UTC))
+    )
+    await session.commit()
+    # After the commit, so a failure above cannot sign somebody out without
+    # having changed anything.
+    await revoke_all_for_user(session, user.id)
+    return user
 
 
 async def create_session(session: AsyncSession, user: User, *, user_agent: str = "") -> str:
