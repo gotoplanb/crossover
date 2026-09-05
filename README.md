@@ -124,10 +124,19 @@ that leaves it working is not a reset.
 `python -m scripts.cli set-password <handle>` still exists for setting a
 password directly, when you would rather not send a link at all.
 
-Accounts created before passwords moved into the database accept their old
-`CROSSOVER_PASSWORD_{HANDLE}` once, hash it, and never read the environment
-again — so nobody has to be told a new password, and those config vars can be
-deleted after one sign-in each.
+Passwords are never read from the environment. A reader either has an argon2
+hash or has no way in:
+
+```bash
+crossover seed you@example.com --handle you --admin --set-password  # create and prompt
+crossover set-password you                                          # change one
+crossover reset-link you --issued-by admin                          # mint a link instead
+```
+
+There was briefly a legacy path that accepted a `CROSSOVER_PASSWORD_{HANDLE}`
+env var once and hashed it. It is gone: one way in is easier to reason about
+than two, and the second one existed only to avoid telling two people a new
+password.
 
 Signing in mints a **revocable, expiring session token**. The cookie carries a
 random token, never the reader's database id — see `models/session.py` for why

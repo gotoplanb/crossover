@@ -108,12 +108,14 @@ async def _load_curation() -> int:
     return 0
 
 
-async def _seed(email: str, name: str, handle: str = "", is_admin: bool = False) -> int:
+async def _seed(
+    email: str, name: str, handle: str = "", is_admin: bool = False, with_password: bool = False
+) -> int:
     """Create or update a reader. Idempotent. The allowlist is small by design.
 
-    A reader signs in with `CROSSOVER_PASSWORD_{HANDLE}`, so the handle is not
-    cosmetic — without a matching config var the reader exists but cannot log in,
-    which this reports rather than leaving to be discovered at the login form.
+    A reader with no password cannot sign in, so this says so rather than
+    leaving it to be discovered at the login form. Pass `--set-password` to be
+    prompted for one, or mint a link later with `reset-link`.
     """
     from sqlalchemy import select
 
@@ -142,7 +144,11 @@ async def _seed(email: str, name: str, handle: str = "", is_admin: bool = False)
 
     role = "admin" if user.is_admin else "reader"
     print(f"{role}: {user.display_name} <{user.email}> handle={user.handle}")
-    if not user.password_hash and get_settings().reader_password(user.handle) is None:
+    if with_password:
+        # Prompted rather than an argument, so it never lands in shell history
+        # or `ps`. Opt-in because `bootstrap` calls this on a dyno with no tty.
+        return await _set_password(user.handle)
+    if not user.password_hash:
         print(
             f"  ! {user.handle} has no password yet. Set one with: "
             f"python -m scripts.cli set-password {user.handle}"
@@ -153,11 +159,11 @@ async def _seed(email: str, name: str, handle: str = "", is_admin: bool = False)
 async def _give_owner_a_password(email: str) -> list[str]:
     """Hash `CROSSOVER_OWNER_PASSWORD` onto the first reader, if one is offered.
 
-    Deliberately *not* `CROSSOVER_PASSWORD_{HANDLE}`. That legacy variable's
-    name depends on the handle, so a one-click deploy where somebody changed
-    the handle away from the default produced an app with a password set under
-    a name nothing reads — a login page that cannot be passed, for a reason
-    invisible from the config screen.
+    Named independently of the handle. The variable this replaced was
+    `CROSSOVER_PASSWORD_{HANDLE}`, whose name depended on the handle — so a
+    one-click deploy where somebody changed the handle produced an app with a
+    password set under a name nothing read, and a login page that could not be
+    passed for a reason invisible from the config screen.
 
     Idempotent, and never clobbers: an existing password stays. Re-running a
     postdeploy hook must not silently reset the owner's credential.
@@ -456,6 +462,11 @@ def main(argv: list[str] | None = None) -> int:
     p_seed.add_argument(
         "--admin", action="store_true", help="grant the curation views and OAuth consent"
     )
+    p_seed.add_argument(
+        "--set-password",
+        action="store_true",
+        help="prompt for a password after creating the reader",
+    )
 
     p_enrich = sub.add_parser(
         "enrich", help="fill in bookmarked issues missing cover art or a digital id"
@@ -503,7 +514,9 @@ def main(argv: list[str] | None = None) -> int:
         case "purge-sessions":
             return asyncio.run(_purge_sessions(args.keep_days))
         case "seed":
-            return asyncio.run(_seed(args.email, args.name, args.handle, args.admin))
+            return asyncio.run(
+                _seed(args.email, args.name, args.handle, args.admin, args.set_password)
+            )
         case "enrich":
             return asyncio.run(_enrich(args.limit))
         case "set-password":

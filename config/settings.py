@@ -1,11 +1,8 @@
-import os
 from functools import lru_cache
 from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-from models.user import valid_handle
 
 #: The repo root, so the .env fallback below resolves the same regardless of
 #: which directory a command was run from.
@@ -84,44 +81,6 @@ class Settings(BaseSettings):
     @property
     def has_marvel_credentials(self) -> bool:
         return bool(self.marvel_public_key and self.marvel_private_key)
-
-    @staticmethod
-    def _env_file_values() -> dict[str, str]:
-        """Parse the .env file the same way pydantic-settings does.
-
-        Needed because reader passwords are looked up by *dynamic* key —
-        `CROSSOVER_PASSWORD_{HANDLE}` — so they cannot be declared as fields and
-        pydantic never loads them. Without this, a password in .env would work
-        in production (where config vars are real environment variables) and
-        silently fail locally, which is the worst possible split.
-        """
-        if not ENV_FILE.exists():
-            return {}
-        values: dict[str, str] = {}
-        for line in ENV_FILE.read_text().splitlines():
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                key, _, value = line.partition("=")
-                values[key.strip()] = value.strip()
-        return values
-
-    def reader_password(self, handle: str) -> str | None:
-        """The password for one reader, from `CROSSOVER_PASSWORD_{HANDLE}`.
-
-        Read from the environment at call time rather than declared as fields,
-        because the set of readers is data — adding one should be a config var
-        and a seed, not a code change.
-
-        Stored as the plaintext the operator chose. For a two-person deployment
-        that is the same exposure any config var carries: visible to anyone who
-        can read the config, and not a hash. If this ever grows past people who
-        share a household, hash them.
-        """
-        if not valid_handle(handle):
-            return None
-        key = f"CROSSOVER_PASSWORD_{handle.upper()}"
-        # Real environment first, so a config var always beats a stale .env.
-        return os.environ.get(key) or self._env_file_values().get(key) or None
 
 
 @lru_cache

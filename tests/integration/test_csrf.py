@@ -183,9 +183,7 @@ def test_every_unsafe_ui_route_is_covered() -> None:
     ]
     assert unsafe, "expected the UI router to have state-changing routes"
     # The dependency is declared on the router, so every route inherits it.
-    assert any(
-        "csrf_protect" in str(d.dependency) for d in routes.ui.router.dependencies
-    )
+    assert any("csrf_protect" in str(d.dependency) for d in routes.ui.router.dependencies)
 
 
 @pytest.mark.parametrize("prefix", EXEMPT_PREFIXES)
@@ -218,9 +216,7 @@ async def test_the_token_endpoint_still_works_without_a_csrf_token(client) -> No
 async def test_the_mcp_endpoint_is_not_csrf_gated(client) -> None:
     """Bearer-authenticated; a 401 proves it reached the auth gate rather than
     being turned away at the CSRF check."""
-    response = await client.post(
-        "/mcp", json={"jsonrpc": "2.0", "id": 1, "method": "tools/list"}
-    )
+    response = await client.post("/mcp", json={"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
     assert response.status_code == 401
 
 
@@ -260,19 +256,15 @@ async def test_login_rejects_a_missing_token(client, user, reader_password) -> N
 
 
 async def test_signing_in_while_already_signed_in_works(
-    client, sign_in, session, user, other_user, reader_password, monkeypatch
+    client, sign_in, session, user, other_user, reader_password
 ) -> None:
     """Two people share a machine and hand it over — so the login form has to
     work when a session already exists. It broke when the form rendered a
     pre-auth token while the check expected the existing session's."""
-    from config.settings import get_settings
+    from auth import set_password
 
-    monkeypatch.setenv(
-        f"CROSSOVER_PASSWORD_{other_user.handle.upper()}", "second-reader-pw"
-    )
-    get_settings.cache_clear()
-    try:
-        assert (await sign_in(user.handle, reader_password)).status_code == 303
-        assert (await sign_in(other_user.handle, "second-reader-pw")).status_code == 303
-    finally:
-        get_settings.cache_clear()
+    second = "second-reader-passphrase"  # pragma: allowlist secret
+    await set_password(session, other_user, second)
+
+    assert (await sign_in(user.handle, reader_password)).status_code == 303
+    assert (await sign_in(other_user.handle, second)).status_code == 303

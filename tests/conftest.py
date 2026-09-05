@@ -253,15 +253,18 @@ async def app(db_conn: AsyncConnection):
 
 
 @pytest_asyncio.fixture
-async def reader_password(user, monkeypatch) -> str:
-    """Give the fixture reader a password, the way a deployment would."""
-    password = "fixture-reader-password"  # pragma: allowlist secret
-    monkeypatch.setenv(f"CROSSOVER_PASSWORD_{user.handle.upper()}", password)
-    from config.settings import get_settings
+async def reader_password(session, user) -> str:
+    """Give the fixture reader a password, the way an admin would.
 
-    get_settings.cache_clear()
-    yield password
-    get_settings.cache_clear()
+    Sets a real argon2 hash rather than an environment variable. Passwords used
+    to come from `CROSSOVER_PASSWORD_{HANDLE}`, which meant every sign-in test
+    exercised a path that no longer exists.
+    """
+    from auth import set_password
+
+    password = "fixture-reader-password"  # pragma: allowlist secret
+    await set_password(session, user, password)
+    return password
 
 
 @pytest_asyncio.fixture

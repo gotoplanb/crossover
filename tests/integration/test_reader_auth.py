@@ -3,29 +3,34 @@
 Two people share this deployment. A shared key would let either of them open the
 other's rack, which defeats the point of a per-person reading list — so each
 reader signs in with their own password, supplied as
-`CROSSOVER_PASSWORD_{HANDLE}`, and only admins receive the curation cookie.
+their own argon2-hashed password, and only admins reach the curation views.
 """
 
 from __future__ import annotations
 
 import pytest
+import pytest_asyncio
 
-from auth import SESSION_COOKIE, verify_reader_password
-from config.settings import get_settings
+from auth import SESSION_COOKIE
 from models.user import User, valid_handle
 
 DAVE_PASSWORD = "dave-local-password-1"  # pragma: allowlist secret
 TABITHA_PASSWORD = "tabitha-local-password-2"  # pragma: allowlist secret
 
 
-@pytest.fixture
-def passwords(monkeypatch):
-    monkeypatch.setenv("CROSSOVER_PASSWORD_DAVE", DAVE_PASSWORD)
-    monkeypatch.setenv("CROSSOVER_PASSWORD_TABITHA", TABITHA_PASSWORD)
-    monkeypatch.delenv("CROSSOVER_PASSWORD_NOBODY", raising=False)
-    get_settings.cache_clear()
-    yield
-    get_settings.cache_clear()
+@pytest_asyncio.fixture
+async def passwords(session, readers):
+    """Give both readers a password, the way an admin would.
+
+    Real argon2 hashes. These used to be environment variables, one per reader,
+    which meant every sign-in test below exercised a path that no longer
+    exists.
+    """
+    from auth import set_password
+
+    dave, tabitha = readers
+    await set_password(session, dave, DAVE_PASSWORD)
+    await set_password(session, tabitha, TABITHA_PASSWORD)
 
 
 @pytest.fixture
@@ -41,43 +46,16 @@ async def readers(session):
     return dave, tabitha
 
 
-# --- the password check itself ---
-
-
-def test_the_right_password_verifies(passwords) -> None:
-    assert verify_reader_password("dave", DAVE_PASSWORD) is True
-
-
-def test_one_readers_password_does_not_work_for_another(passwords) -> None:
-    """The whole point. A shared secret could not do this."""
-    assert verify_reader_password("dave", TABITHA_PASSWORD) is False
-    assert verify_reader_password("tabitha", DAVE_PASSWORD) is False
-
-
-def test_an_unset_password_never_verifies(passwords) -> None:
-    """A seeded reader with no config var must not be loginable with anything,
-    least of all an empty string."""
-    assert verify_reader_password("nobody", "") is False
-    assert verify_reader_password("nobody", "anything") is False
-
-
-def test_an_empty_submission_is_rejected(passwords) -> None:
-    assert verify_reader_password("dave", "") is False
-
-
-def test_a_near_miss_is_rejected(passwords) -> None:
-    """Guards the comparison: `==` would short-circuit and leak the password a
-    character at a time, which is why this uses hmac.compare_digest."""
-    assert verify_reader_password("dave", DAVE_PASSWORD[:-1]) is False
-    assert verify_reader_password("dave", DAVE_PASSWORD + "x") is False
+# --- handles ---
 
 
 @pytest.mark.parametrize("handle", ["../etc/passwd", "DAVE", "has space", "1leading", "", "a" * 40])
-def test_a_handle_that_cannot_name_an_env_var_is_refused(handle, passwords) -> None:
-    """A handle becomes part of an environment variable name, so anything that
-    is not a legal suffix must never reach `os.environ.get`."""
+def test_a_malformed_handle_is_refused(handle) -> None:
+    """The constraint originally existed because a handle named an environment
+    variable. Passwords live in the database now, so it is no longer
+    load-bearing — but it is kept, because handles are typed at a login form
+    and read aloud, and the narrow character set keeps them unambiguous."""
     assert valid_handle(handle) is False
-    assert verify_reader_password(handle, "anything") is False
 
 
 def test_valid_handles_are_accepted() -> None:
@@ -211,57 +189,3 @@ async def test_racks_stay_separate(
 
 
 # --- where the password is read from ---
-
-
-def test_a_password_in_the_env_file_is_found(monkeypatch, tmp_path) -> None:
-    """Reader passwords are looked up by a *dynamic* key, so pydantic never
-    loads them from .env the way it does declared fields. Without an explicit
-    fallback a password in .env works in production — where config vars are real
-    environment variables — and silently fails locally, which is the worst
-    possible split.
-    """
-    from config import settings as settings_module
-
-    env_file = tmp_path / ".env"
-    env_file.write_text(
-        "# a comment\n"
-        "\n"
-        "CROSSOVER_PASSWORD_FROMFILE=from-the-file\n"  # pragma: allowlist secret
-        "MALFORMED_LINE_WITHOUT_EQUALS\n"
-    )
-    monkeypatch.setattr(settings_module, "ENV_FILE", env_file)
-    monkeypatch.delenv("CROSSOVER_PASSWORD_FROMFILE", raising=False)
-    get_settings.cache_clear()
-    try:
-        assert get_settings().reader_password("fromfile") == "from-the-file"
-    finally:
-        get_settings.cache_clear()
-
-
-def test_a_real_environment_variable_beats_the_env_file(monkeypatch, tmp_path) -> None:
-    """A Heroku config var must win over a stale checked-out .env."""
-    from config import settings as settings_module
-
-    env_file = tmp_path / ".env"
-    env_file.write_text("CROSSOVER_PASSWORD_BOTH=from-the-file\n")  # pragma: allowlist secret
-    monkeypatch.setattr(settings_module, "ENV_FILE", env_file)
-    monkeypatch.setenv("CROSSOVER_PASSWORD_BOTH", "from-the-environment")
-    get_settings.cache_clear()
-    try:
-        assert get_settings().reader_password("both") == "from-the-environment"
-    finally:
-        get_settings.cache_clear()
-
-
-def test_a_missing_env_file_is_not_an_error(monkeypatch, tmp_path) -> None:
-    """A container has no .env at all — only real environment variables."""
-    from config import settings as settings_module
-
-    monkeypatch.setattr(settings_module, "ENV_FILE", tmp_path / "nope.env")
-    monkeypatch.setenv("CROSSOVER_PASSWORD_ONLYENV", "set")
-    get_settings.cache_clear()
-    try:
-        assert get_settings().reader_password("onlyenv") == "set"
-        assert get_settings().reader_password("absent") is None
-    finally:
-        get_settings.cache_clear()

@@ -8,45 +8,7 @@ from __future__ import annotations
 
 import hashlib
 
-import pytest
-
-from auth import SESSION_TOKEN_PREFIX, SESSION_TTL, _hash, verify_reader_password
-from config.settings import get_settings
-
-PASSWORD = "unit-test-reader-password"  # pragma: allowlist secret
-
-
-@pytest.fixture
-def configured(monkeypatch):
-    monkeypatch.setenv("CROSSOVER_PASSWORD_UNITREADER", PASSWORD)
-    get_settings.cache_clear()
-    yield
-    get_settings.cache_clear()
-
-
-def test_the_right_password_verifies(configured) -> None:
-    assert verify_reader_password("unitreader", PASSWORD) is True
-
-
-def test_a_wrong_password_does_not(configured) -> None:
-    assert verify_reader_password("unitreader", "nope") is False
-
-
-def test_an_empty_password_never_verifies(configured) -> None:
-    assert verify_reader_password("unitreader", "") is False
-
-
-def test_an_unconfigured_reader_never_verifies(configured) -> None:
-    """A seeded reader with no config var must not be loginable with anything."""
-    assert verify_reader_password("nobodyhere", "anything") is False
-    assert verify_reader_password("nobodyhere", "") is False
-
-
-def test_a_prefix_of_the_password_does_not_verify(configured) -> None:
-    """Guards the comparison: `==` would short-circuit and leak the password one
-    character at a time, which is why this uses hmac.compare_digest."""
-    assert verify_reader_password("unitreader", PASSWORD[:-1]) is False
-    assert verify_reader_password("unitreader", PASSWORD + "x") is False
+from auth import SESSION_TOKEN_PREFIX, SESSION_TTL, _hash
 
 
 def test_only_the_hash_of_a_token_is_ever_stored() -> None:

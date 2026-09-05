@@ -12,17 +12,16 @@ web surface is a household sharing one deployment, so it has two pieces:
   is one cookie and one credential, not two.
 
 Passwords used to be plaintext in config, one env var per reader
-(`CROSSOVER_PASSWORD_{HANDLE}`). That was proportionate for a household and does
-not scale past one: admitting a person meant a deploy. `authenticate` still
-accepts a legacy env password *once*, hashes it, and never consults the
-environment for that reader again — so nobody has to be told a new password and
-the config vars can be deleted once everyone has signed in.
+(`CROSSOVER_PASSWORD_{HANDLE}`). That was proportionate for a household and did
+not scale past one: admitting a person meant a deploy. Nothing reads the
+environment for a password any more — a reader either has a hash or has no way
+in, and the way in is minted by an admin (`crossover set-password`,
+`crossover reset-link`) or chosen at registration.
 """
 
 from __future__ import annotations
 
 import hashlib
-import hmac
 import secrets
 from datetime import UTC, datetime, timedelta
 
@@ -31,7 +30,6 @@ from argon2.exceptions import InvalidHashError, VerificationError, VerifyMismatc
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from config.settings import get_settings
 from models.reset import PasswordResetToken
 from models.session import UserSession
 from models.user import User
@@ -83,28 +81,6 @@ def _hash(raw: str) -> str:
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
-def verify_reader_password(handle: str, password: str) -> bool:
-    """Check a reader's *legacy* env-var password in constant time.
-
-    Superseded by `password_hash`, and consulted only by `authenticate`, only
-    for an account with no stored hash yet. Delete once every reader has signed
-    in once and the `CROSSOVER_PASSWORD_*` config vars are gone.
-
-    Returns False for an unknown handle or an unset password, and does so after
-    a comparison of the same shape, so a configured reader and an unconfigured
-    one take the same path. Not a defence against a determined attacker — the
-    login form is not rate limited — but it costs nothing and stops the response
-    time from announcing which handles exist.
-    """
-    expected = get_settings().reader_password(handle)
-    if not password:
-        return False
-    if expected is None:
-        hmac.compare_digest(password, password)
-        return False
-    return hmac.compare_digest(password, expected)
-
-
 def hash_password(raw: str) -> str:
     return _hasher.hash(raw)
 
@@ -133,14 +109,11 @@ async def authenticate(session: AsyncSession, handle: str, password: str) -> Use
     distinguish those to the person at the form: a login page that says "no such
     reader" is a list of who exists.
 
-    Three paths, in order:
+Two paths:
 
-    1. A stored argon2 hash, the normal case. Rehashed in place if the library's
-       parameters have moved on since it was written.
-    2. No stored hash, but the legacy `CROSSOVER_PASSWORD_{HANDLE}` matches.
-       Accepted once and hashed into the database, so the environment is never
-       consulted for that reader again.
-    3. Anything else fails, after an equalizing verification so a missing
+    1. A stored argon2 hash, the only way in. Rehashed in place if the
+       library's parameters have moved on since it was written.
+    2. Anything else fails, after an equalizing verification so a missing
        account costs what a wrong password costs.
     """
     # Normalized here rather than at each call site: registration lowercases a
@@ -160,12 +133,8 @@ async def authenticate(session: AsyncSession, handle: str, password: str) -> Use
             await set_password(session, user, password)
         return user
 
-    if verify_reader_password(handle, password):
-        # Migrate on the way through, silently: they typed the password they
-        # already had and it worked.
-        await set_password(session, user, password)
-        return user
-
+    # No hash means no way in. That is a real state — the `claude` reader
+    # authenticates only by OAuth token — and it must never authenticate.
     verify_password(_TIMING_EQUALIZER, password)
     return None
 

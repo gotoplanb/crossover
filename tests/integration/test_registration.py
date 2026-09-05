@@ -172,28 +172,6 @@ async def test_a_registered_reader_can_sign_in(client, session, invite_code) -> 
 # --- the migration path ------------------------------------------------------
 
 
-async def test_a_legacy_env_password_is_accepted_once_then_hashed(
-    session, user, monkeypatch
-) -> None:
-    """Nobody should have to be told a new password. The env var is honoured on
-    the next sign-in, hashed into the database, and never consulted again."""
-    legacy = "the-old-env-password"  # pragma: allowlist secret
-    monkeypatch.setenv(f"CROSSOVER_PASSWORD_{user.handle.upper()}", legacy)
-    get_settings.cache_clear()
-    user.password_hash = ""
-    await session.commit()
-
-    assert await authenticate(session, user.handle, legacy) is not None
-    await session.refresh(user)
-    assert user.password_hash.startswith("$argon2id$")
-
-    # Now independent of the environment.
-    monkeypatch.delenv(f"CROSSOVER_PASSWORD_{user.handle.upper()}")
-    get_settings.cache_clear()
-    assert await authenticate(session, user.handle, legacy) is not None
-    get_settings.cache_clear()
-
-
 async def test_an_account_with_no_password_cannot_sign_in(session, user) -> None:
     """The `claude` reader authenticates only by OAuth token. An empty hash is a
     real state, and it must never authenticate — including against an empty

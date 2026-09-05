@@ -22,16 +22,6 @@ def admin_key() -> str:
     return get_settings().admin_key
 
 
-@pytest.fixture
-def reader_password(user, monkeypatch) -> str:
-    """Give the fixture reader a password, the way a deployment would."""
-    password = "fixture-reader-password"  # pragma: allowlist secret
-    monkeypatch.setenv(f"CROSSOVER_PASSWORD_{user.handle.upper()}", password)
-    get_settings.cache_clear()
-    yield password
-    get_settings.cache_clear()
-
-
 # --- login ---
 
 
