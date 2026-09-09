@@ -54,7 +54,7 @@ dev = [
     # authorization servers in the fleet. Pinned to a tag: an unpinned contract
     # could start failing a build because somebody else tightened a rule.
     "oauth-conformance @ git+https://github.com/gotoplanb/oauth-conformance@v0.1.0",
-    "ruff>=0.7",
+    "ruff>=0.16.6",
 ]
 
 [tool.ruff]
