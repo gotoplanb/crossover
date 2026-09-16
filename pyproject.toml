@@ -22,7 +22,7 @@ dependencies = [
     "pyyaml>=6.0",
     "jinja2>=3.1",
     "python-multipart>=0.0.20",
-    "mcp>=2.0",
+    "mcp>=2.2.0",
     # Telemetry. Hard dependencies, not extras: main.py instruments the app at
     # module import time (it has to — Starlette freezes the middleware stack
     # before the lifespan runs), so the imports happen even when OTEL_ENABLED is
