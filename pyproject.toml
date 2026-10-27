@@ -27,7 +27,7 @@ dependencies = [
     # module import time (it has to — Starlette freezes the middleware stack
     # before the lifespan runs), so the imports happen even when OTEL_ENABLED is
     # false and the exporters stay idle.
-    "opentelemetry-api>=1.28",
+    "opentelemetry-api>=1.45.1",
     "opentelemetry-sdk>=1.28",
     "opentelemetry-exporter-otlp-proto-grpc>=1.28",
     "opentelemetry-instrumentation-fastapi>=0.49b0",
